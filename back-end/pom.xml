@@ -14,7 +14,7 @@
 	<name>ipark_admin</name>
 	<description>Admin dashboard of iPark</description>
 	<properties>
-		<java.version>22</java.version>
+		<java.version>21</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
