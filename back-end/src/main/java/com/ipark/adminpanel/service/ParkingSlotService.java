@@ -7,6 +7,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,8 @@ public class ParkingSlotService {
     
     
     public void savingSlot(ParkingSlot parkingSlot) {
+        parkingSlot.setTime(LocalDateTime.now());
+        parkingSlot.setIsBooked(false);
         parkingSlotRepo.save(parkingSlot);
 
     }
@@ -30,5 +33,19 @@ public class ParkingSlotService {
     }
     public void deleteSlot(ObjectId id){
         parkingSlotRepo.deleteById(id);
+    }
+
+    public ParkingSlot updateSlotById(ObjectId id) {
+        ParkingSlot slot = parkingSlotRepo.findById(id).orElse(null);
+        if(slot != null) {
+            slot.setIsBooked(!slot.getIsBooked());
+            slot.setTime(LocalDateTime.now());
+            parkingSlotRepo.save(slot);
+        }
+        return slot;
+    }
+
+    public List<ParkingSlot> isEmpty() {
+        return parkingSlotRepo.findByIsBooked(false);
     }
 }
