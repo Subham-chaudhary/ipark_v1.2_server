@@ -1,6 +1,50 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.dashboard-container {
+  display: flex;
+ flex: 1;
+ flex-wrap: wrap;
+}
+
+
+.update-section{
+  flex: 1;
+  overflow-y: auto;
+  height: 100vh;
+}
+.object-section {
+  display: flex;
+  flex: 1; /* make each container take up an equal amount of space */
+  overflow-y: auto;
+  height: 100vh;
+  flex-direction: column;
+}
+
+.map-section {
+  flex: 1.5; /* make the map-section take up a bit more space than the other two */
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column; /* make containers stack vertically on smaller screens */
+  }
+}
+
+.mini-map{
+  flex: .5;
+}
+.minimap-sections{
+  flex:.5;
+}
+.minimaps{
+  overflow-y: auto;
+  max-height: 300px; 
+}
+.col{
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
