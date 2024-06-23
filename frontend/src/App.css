@@ -48,3 +48,16 @@
   overflow-wrap: break-word;
   white-space: normal;
 }
+.toggler-container{
+  display: flex;  
+  justify-content: space-between;
+}
+
+.update-toggler,.object-toggler{
+  margin-top: .5rem;
+}
+
+.rotated {
+  transform: rotate(180deg);
+  transition: transform 0.3s ease-in-out;
+}

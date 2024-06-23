@@ -4,7 +4,16 @@ import './App.css'
 
 
 function App() {
+  const [isUpdateSectionVisible, setIsUpdateSectionVisible] = useState(true);
+  const [objectSectionVisible, setObjectSectionVisible] = useState(true);
 
+  const [updateTogglerRotated, setUpdateTogglerRotated] = useState(false);
+  const [objectTogglerRotated, setObjectTogglerRotated] = useState(false);
+
+  const handleToggle = () => {
+    setIsUpdateSectionVisible(!isUpdateSectionVisible);
+    setUpdateTogglerRotated(!updateTogglerRotated);
+  };
 
   return (
     <>
@@ -29,8 +38,36 @@ function App() {
             </div>
           </div>
         </nav>
+
+        <div class="container-fluid toggler-container">
+          <button className="btn btn-primary update-toggler" onClick={handleToggle}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" className={updateTogglerRotated ? 'rotated' : ''}>
+              <g>
+                <path d="M12,2A10,10,0,1,0,22,12,10.011,10.011,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,12,20Z" />
+                <polygon points="13.293 7.293 8.586 12 13.293 16.707 14.707 15.293 11.414 12 14.707 8.707 13.293 7.293" />
+              </g>
+            </svg>
+
+          </button>
+
+          <button
+            className="btn btn-primary object-toggler"
+            onClick={() => {
+              // toggle object section visibility
+              setObjectSectionVisible(!objectSectionVisible);
+              setObjectTogglerRotated(!objectTogglerRotated);
+            }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" className={objectTogglerRotated ? 'rotated' : ''}
+            >
+              <path d="M10,20A10,10,0,1,0,0,10,10,10,0,0,0,10,20ZM8.711,4.3l5.7,5.766L8.7,15.711,7.3,14.289l4.289-4.242L7.289,5.7Z" />
+            </svg>
+          </button>
+        </div>
+
         <div class="container-fluid dashboard-container">
-          <div class="container update-section">
+          <div class="container update-section"
+            style={{ display: isUpdateSectionVisible ? 'block' : 'none' }}>
             <h2></h2>
             <div class="card w-100">
               <div class="card-body">
@@ -49,34 +86,39 @@ function App() {
               </div>
             </div>
           </div>
-          <div class="container object-section">
+          <div class="container object-section"
+            style={{ display: objectSectionVisible ? 'block' : 'none' }}>
             <h2></h2>
-            <div class="card w-100 mini-map">
-              <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a href="#" class="btn btn-primary">View</a>
-              </div>
-            </div>
+            {objectSectionVisible && (
+              <div>
+                <div className="card w-100 mini-map">
+                  <div className="card-body">
+                    <h5 className="card-title">Card title</h5>
+                    <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                    <a href="#" className="btn btn-primary">View</a>
+                  </div>
+                </div>
 
-            <div class="container text-center minimap-section">
-              <div class="row row-cols-2 minimaps">
-                <div class="col">1</div>
-                <div class="col">2</div>
-                <div class="col">3</div>
-                <div class="col">4</div>
-                <div class="col">5</div>
-                <div class="col">6</div>
-                <div class="col">7</div>
-                <div class="col">8</div>
-                <div class="col">9</div>
-                <div class="col">10</div>
-                <div class="col">11</div>
-                <div class="col">12</div>
-                <div class="col">13</div>
-                <div class="col">14</div>
+                <div className="container text-center minimap-section">
+                  <div className="row row-cols-2 minimaps">
+                    <div className="col">1</div>
+                    <div className="col">2</div>
+                    <div className="col">3</div>
+                    <div className="col">4</div>
+                    <div className="col">5</div>
+                    <div className="col">6</div>
+                    <div className="col">7</div>
+                    <div className="col">8</div>
+                    <div className="col">9</div>
+                    <div className="col">10</div>
+                    <div className="col">11</div>
+                    <div className="col">12</div>
+                    <div className="col">13</div>
+                    <div className="col">14</div>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
