@@ -48,4 +48,8 @@ public class ParkingSlotService {
     public List<ParkingSlot> isEmpty() {
         return parkingSlotRepo.findByIsBooked(false);
     }
+
+    public ParkingSlot getFirstAvailableSlot() {
+        return parkingSlotRepo.findByIsBooked(false).getFirst();
+    }
 }
