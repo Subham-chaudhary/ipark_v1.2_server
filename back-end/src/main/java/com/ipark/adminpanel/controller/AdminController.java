@@ -60,7 +60,7 @@ public class AdminController {
         return new ResponseEntity<>("DATABASE EMPTY", HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/delete/customer/{phoneNumber}")
+    @DeleteMapping("/delete/customer/{phoneNumber}")
     public ResponseEntity<?> deleteCustomerByPhoneNumber(@PathVariable String phoneNumber) {
         Customer user = customerService.findByPhoneNumber(phoneNumber);
         if (user != null) {
@@ -70,7 +70,7 @@ public class AdminController {
         return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/delete/employee/{phoneNumber}")
+    @DeleteMapping("/delete/employee/{phoneNumber}")
     public ResponseEntity<?> deleteEmployeeByPhoneNumber(@PathVariable String phoneNumber) {
         Operator user = operatorService.findByPhoneNumber(phoneNumber);
         if (user != null) {

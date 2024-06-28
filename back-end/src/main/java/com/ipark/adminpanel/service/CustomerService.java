@@ -32,6 +32,7 @@ public class CustomerService {
         customerRepo.deleteByPhoneNumber(phoneNumber);
     }
 
+    @Transactional
     public void updateCustomerByCheckIn(CheckIn data) {
         Customer user = findByPhoneNumber(data.getPhoneNumber());
         List<CheckIn> list = user.getCheckIns();
