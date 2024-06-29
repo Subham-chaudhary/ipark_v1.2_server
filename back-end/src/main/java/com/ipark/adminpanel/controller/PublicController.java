@@ -6,6 +6,7 @@ import com.ipark.adminpanel.service.UserDetailsServiceImpl;
 import com.ipark.adminpanel.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,6 +33,17 @@ public class PublicController {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody Operator user) {
+        try {
+            operatorService.saveAdmin(user);
+            return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
+        } catch (Exception e) {
+            log.error("Exception occurred while registering user", e);
+            return new ResponseEntity<>("An error occurred", HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Operator user) {
