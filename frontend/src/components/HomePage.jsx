@@ -88,10 +88,8 @@ const HomePage = () => {
 
 
                 <div class="container object-section"
-                    style={{ display: objectSectionVisible ? 'block' : 'none' }}>
+                    style={{ display: objectSectionVisible ? 'flex' : 'none' }}>
                     <h2></h2>
-                    {objectSectionVisible && (
-                        <div>
                             <div className="card w-100 mini-map">
                                 <div className="card-body">
                                     <h5 className="card-title">Card title</h5>
@@ -118,8 +116,6 @@ const HomePage = () => {
                                     <div className="col">14</div>
                                 </div>
                             </div>
-                        </div>
-                    )}
                 </div>
             </div>
         </div>

@@ -32,9 +32,7 @@
   .mini-map{
     flex: .5;
   }
-  .minimap-sections{
-    flex:.5;
-  }
+  
   .minimaps{
     overflow-y: auto;
     max-height: 300px; 
