@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import MapHolder from "./MapHolder";
 import './HomePage.css';
 
 const HomePage = () => {
@@ -46,10 +48,10 @@ const HomePage = () => {
         });
     };
 
-    //for updates 
+    //for updating the notification slide bar
 
     const [updates, setUpdates] = useState([]);
-    const [visibleUpdatesCount, setVisibleUpdatesCount] = useState(5); // Number of updates to show initially
+    const [visibleUpdatesCount, setVisibleUpdatesCount] = useState(5);
 
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -73,10 +75,21 @@ const HomePage = () => {
         setVisibleUpdatesCount(prevCount => Math.min(prevCount + 5, updates.length));
     };
 
+    //map section for zooming in and out
+    // const [zoomLevel, setZoomLevel] = useState(1); // Initial zoom level 
+
+    // const handleZoomIn = () => {
+    //     setZoomLevel(prevZoom => prevZoom * 1.2); // Increase zoom level by 20%
+    // };
+
+    // const handleZoomOut = () => {
+    //     setZoomLevel(prevZoom => Math.max(1, prevZoom / 1.2)); //Decrease zoom level by 20%, with a minimum zoom level of 1
+    // };
+
 
     return (
         <>
-            <div className="container-fluid">
+            <div className="container-fluid mainpage-container">
                 <nav className="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
                     <div className="container-fluid">
                         <a className="navbar-brand" href="#">i-Park</a>
@@ -85,12 +98,12 @@ const HomePage = () => {
                         </button>
                         <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                             <div className="navbar-nav" style={{ flex: 1, justifyContent: 'space-around' }}>
-                                <a className="nav-link active" href="#">Map</a>
-                                <a className="nav-link" href="#">Analytics</a>
-                                <a className="nav-link" href="#">Graph</a>
-                                <a className="nav-link" href="#">Operators</a>
-                                <a className="nav-link" href="#">Records</a>
-                                <a className="nav-link" href="#">Settings</a>
+                                <Link className="nav-link active" to="/">Map</Link>
+                                <Link className="nav-link" to="/analytics">Analytics</Link>
+                                <Link className="nav-link" to="/graph">Graph</Link>
+                                <Link className="nav-link" to="/operators">Operators</Link>
+                                <Link className="nav-link" to="/records">Records</Link>
+                                <Link className="nav-link" to="/settings">Settings</Link>
                             </div>
                         </div>
                     </div>
@@ -114,7 +127,7 @@ const HomePage = () => {
                 </div>
 
                 <div className="container-fluid dashboard-container">
-                <div className="container update-section"
+                    <div className="container update-section"
                         style={{ display: isUpdateSectionVisible ? 'block' : 'none' }}>
                         <h2>Upcoming Updates</h2>
                         {updates.slice(0, visibleUpdatesCount).map(update => (
@@ -132,22 +145,31 @@ const HomePage = () => {
                     </div>
 
                     <div className="container map-section">
-                        <div className="card w-100">
-                            <div className="card-body">
-                                {/* Map content goes here */}
-                            </div>
+                        <div className="svg-container">
+                            <MapHolder/>
+
+                            {/* <img
+                                src="/maps/map1.svg"
+                                alt="Main Map"
+                                style={{
+                                    transform: `scale(${zoomLevel})`,
+                                    transformOrigin: 'center'
+                                }}
+                            /> */}
                         </div>
+                        {/* <div className="zoom-controls">
+                            <button className="zoom-button" onClick={handleZoomIn}>+</button>
+                            <button className="zoom-button" onClick={handleZoomOut}>-</button>
+                        </div> */}
                     </div>
 
                     <div className="container object-section" style={{ display: objectSectionVisible ? 'flex' : 'none' }}>
                         <div className="mini-map-container">
                             <div className="mini-map">
-                                <div className="card w-100">
-                                    <div className="card-body">
-                                        <h5 className="card-title">Mini Map</h5>
-                                        <p className="card-text">Supporting text for mini map.</p>
-                                    </div>
-                                </div>
+                                <img
+                                    src="/maps/map1.svg"
+                                    alt="Mini Map"
+                                />
                             </div>
 
                             <div className="minimap-section">
