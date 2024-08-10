@@ -12,4 +12,5 @@ public interface OperatorRepo extends MongoRepository<Operator, ObjectId> {
     Operator findByPhoneNumber(String phoneNumber);
     void deleteByPhoneNumber(String phoneNumber);
     Operator findByUserName(String userName);
+    Operator findById(String id);
 }
