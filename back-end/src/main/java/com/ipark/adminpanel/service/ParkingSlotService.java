@@ -21,6 +21,7 @@ public class ParkingSlotService {
     
     public void savingSlot(ParkingSlot parkingSlot) {
         parkingSlot.setTime(LocalDateTime.now());
+        parkingSlot.setIsBooked(false);
         parkingSlotRepo.save(parkingSlot);
 
     }
