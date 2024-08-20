@@ -16,9 +16,6 @@ import java.util.Map;
 @Slf4j
 public class JwtUtil {
 
-    private int ACCESS_TOKEN_EXPIRATION = 1000 * 30;
-    private int REFRESH_TOKEN_EXPIRATION = 1000 * 60;
-
     private SecretKey getAccessTokenSigningKey() {
         String SECRET_KEY = "ae232c19b86cd1627225b55e20939553f6ce254db3fb5c4335a9df9000a27ec467d05d0780cc9568ee352b042b13beb9558e43b15c88c2ad6781cf9cb83b8ae16a8a4ae793e8e78eb96e42b194d90c7e001aa9a48b20c6764f1f55d49ab13a2f09ecf96396d2befb06a3babbbe6c8437ff06fc48ea92913af0f91414179e6bfa140909e8637226a30c0e72fa7df164d9c0a0d18a52e016d35f2868c845b3c7962a03b0b44fad22784f927ec33b8f4d5249c683ab89fed6b18940906d4644ed1ced8f101d49b1252a1356bb874859deedf6c29c4a5ff38da5e09c868fafe6b98be41f9f4858c712aa48d06ded4b85a34b1c89f0bee4ad2e035e50e8e8790e3493cdec1044dbd645adbdf2010edffde042d459ccb14de24b43a2e3c3f62f53d3f6d172102c9bb53f2b7ce3c57bd51a912bf35f62e2116bde8f6456256e69dc08a8f562626b35c2ae01e8bb3239d1a847f02fe9b2e70d768dd98c93e1efe95c16b1f277303ddef6f3d61c18b64dc95586462cdf9c1d50a4c3e19dcc32e01751732ff9573dc0c05a24cc50ffdf05a9f49316b859a09eee8feb6b8a35b16995e3680da6c25227fe3e1e03909c8651a3cb01578e801bc5718e54c97ca2a28c366bbf3ccde9336b82b58e398a62f8e5d1c39ef6d8ce26386cee4e16e9e55628c806b4088266acd65b43124c8d138510ea1e6b8c2614fc321f3e6953b9fb9c3a5b7d2b30";
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
@@ -88,12 +85,14 @@ public class JwtUtil {
     public String generateAccessToken(String uid, List<String> roles) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("ROLES", roles);
+        int ACCESS_TOKEN_EXPIRATION = 1000 * 30;
         return createToken(claims, uid, ACCESS_TOKEN_EXPIRATION, getAccessTokenSigningKey());
     }
 
     public String generateRefreshToken(String uid, List<String> roles) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("ROLES", roles);
+        int REFRESH_TOKEN_EXPIRATION = 1000 * 60;
         return createToken(claims, uid, REFRESH_TOKEN_EXPIRATION, getRefreshTokenSigningKey());
     }
 
