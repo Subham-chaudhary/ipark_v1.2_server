@@ -26,7 +26,7 @@ public class ParkingLots {
     /**
      * Name of the parking lot.
      */
-    @Column(name="name", nullable = true, unique = true)
+    @Column(name="name", nullable = false)
     private String name;
 
     /**
@@ -68,7 +68,7 @@ public class ParkingLots {
     /**
      * Sections within the parking lot.
      */
-    @Column(name="sections", nullable = true)
+    @Column(name="sections", nullable = false)
     private String sections;
 
     /*
@@ -94,12 +94,12 @@ public class ParkingLots {
     /**
      * Location of the parking lot.
      */
-    @Column(name="location", nullable = true, unique = true)
+    @Column(name="location", nullable = false)
     private String location;
 
     /**
      * Type of the parking lot.
      */
-    @Column(name="type_of_lot", nullable = true, unique = true)
+    @Column(name="type_of_lot", nullable = false)
     private String typeOfLot;
 }
