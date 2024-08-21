@@ -33,8 +33,20 @@ public class Clients {
     @Column(name = "created_at", nullable = false)
     private String created_at;
 
+    @Column(name="added_by", nullable = false)
+    private String added_by;
+
+    @Column(name="updated_at")
+    private String updated_at;
+
+    @Column(name="updated_by")
+    private String updated_by;
+
     @Column(name = "last_login_at", nullable = false)
     private String last_login_at;
+
+    @Column(name = "is_bot")
+    private boolean is_bot;
 
     @Column(name = "is_active")
     private boolean is_active;

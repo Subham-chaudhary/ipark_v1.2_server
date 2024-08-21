@@ -66,4 +66,11 @@ public class Events {
      */
     @Column(name = "consumer_uid", nullable = false)
     private String consumer_uid;
+
+    @Column(name="recorded_at")
+    private String recorded_at;
+
+    @Column(name="slot_uid")
+    private String slot_uid;
+
 }

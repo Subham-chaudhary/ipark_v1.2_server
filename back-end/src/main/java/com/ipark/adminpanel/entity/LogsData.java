@@ -72,7 +72,12 @@ public class LogsData {
      */
     @Column(name = "user_agent", nullable = false)
     private String user_agent;
-
+    @Column(name="consumer_uid")
+    private String consumer_uid;
+    @Column(name="event_uid")
+    private String event_uid;
+    @Column(name="timestamp")
+    private String timestamp;
     /**
      * Type of the related entity.
      */

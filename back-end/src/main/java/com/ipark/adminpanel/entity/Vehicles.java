@@ -70,6 +70,9 @@ public class Vehicles {
     /**
      * Unique identifier for the consumer who owns the vehicle.
      */
-    @Column(name = "consumer_id", nullable = false)
-    private String consumer_id;
+    @Column(name = "consumer_uid", nullable = false)
+    private String consumer_uid;
+
+    @Column(name = "added_at")
+    private String added_at;
 }

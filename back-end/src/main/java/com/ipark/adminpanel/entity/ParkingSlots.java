@@ -60,4 +60,7 @@ public class ParkingSlots {
      */
     @Column(name = "physical_property", nullable = false)
     private String physical_property;
+
+    @Column(name = "added_at")
+    private String added_at;
 }

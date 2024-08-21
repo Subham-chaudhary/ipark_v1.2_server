@@ -30,6 +30,9 @@ public class Consumers {
     @Column(name = "is_active")
     private boolean is_active;
 
+    @Column(name = "created_at")
+    private String created_at;
+
     @Column(name = "vehicle_uid")
     private String vehicle_id;
 

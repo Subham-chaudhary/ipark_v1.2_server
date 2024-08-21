@@ -50,8 +50,8 @@ public class ParkingLots {
     /**
      * ZIP code of the parking lot.
      */
-    @Column(name="lot_zip", nullable = false)
-    private String lot_zip;
+    @Column(name="zip_code", nullable = false)
+    private String zip_code;
 
     /**
      * Number of available slots in the parking lot.
@@ -71,23 +71,19 @@ public class ParkingLots {
     @Column(name="sections", nullable = true)
     private String sections;
 
-    /**
-     * Number of floors above ground.
-     */
-    @Column(name="floors_above_ground", nullable = true)
-    private int floors_above_ground;
-
-    /**
-     * Number of floors below ground.
-     */
-    @Column(name="floors_below_ground", nullable=true)
-    private int floors_below_ground;
-
+    /*
+    * Floors within the parking lot.
+    * */
+    @Column(name="floors", nullable = false)
+    private String floors;
     /**
      * Owner of the parking lot.
      */
     @Column(name="lot_owner", nullable = false)
     private String lot_owner;
+
+    @Column(name="added_at")
+    private String added_at;
 
     /**
      * Indicates whether the parking lot is closed.
