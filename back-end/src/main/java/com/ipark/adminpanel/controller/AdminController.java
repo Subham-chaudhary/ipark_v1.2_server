@@ -80,7 +80,7 @@ public class AdminController {
         return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("get-admin")
+    @GetMapping("/get-admin")
     public ResponseEntity<?> getAllAdmins() {
         List<Operator> user = operatorService.getAllAdmin();
         if (user != null) {
