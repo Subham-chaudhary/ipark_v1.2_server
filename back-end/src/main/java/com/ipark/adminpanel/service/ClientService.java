@@ -1,14 +1,23 @@
 package com.ipark.adminpanel.service;
 
+import com.ipark.adminpanel.convert.ClientDtoConverter;
+import com.ipark.adminpanel.dto.ClientDto;
 import com.ipark.adminpanel.entity.Clients;
 import com.ipark.adminpanel.repository.ClientRepo;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
+@Slf4j
 @Service
 public class ClientService {
-private final ClientRepo clientRepo;
+    private final ClientRepo clientRepo;
+
+    @Autowired
+    ClientDtoConverter clientDtoConverter;
 
     public ClientService(ClientRepo clientRepo) {
         this.clientRepo = clientRepo;
@@ -18,19 +27,18 @@ private final ClientRepo clientRepo;
         return clientRepo.findAll();
     }
 
-    public Clients getClientById(String id) {
-        return clientRepo.findById(id).orElse(null);
-    }
+    @Transactional
+    public Clients addClient(ClientDto clientDto) {
+        // Convert ClientDto to Clients entity using the converter
+        Clients clients = ClientDtoConverter.convertToEntity(clientDto);
 
-    public Clients addClient(Clients client) {
-        return clientRepo.save(client);
-    }
+        // Additional logic before saving
+        if (Objects.equals(clients.getRole(), "admin") || Objects.equals(clients.getRole(), "parq")) {
+            clientRepo.save(clients);
+        }
 
-    public Clients updateClient(Clients client) {
-        return clientRepo.save(client);
-    }
+        return clients;
 
-    public void deleteClient(String id) {
-        clientRepo.deleteById(id);
+
     }
 }
