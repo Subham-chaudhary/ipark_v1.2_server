@@ -122,15 +122,60 @@ const HomePage = () => {
                         </button>
                         <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                             <div className="navbar-nav" style={{ flex: 1, justifyContent: 'space-around' }}>
-                                {['map', 'analytics', 'graph', 'staff', 'records', 'settings'].map(tab => (
-                                    <label
-                                        key={tab}
-                                        className={`nav-link ${activeTab === tab ? 'active' : ''}`}
-                                        onClick={() => handleTabChange(tab)}
-                                    >
-                                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                                    </label>
-                                ))}
+                                <label className={`nav-link ${activeTab === 'map' ? 'active' : ''}`}>
+                                    <input
+                                        type="radio"
+                                        name="tab"
+                                        checked={activeTab === 'map'}
+                                        onChange={() => handleTabChange('map')}
+                                    />
+                                    Map
+                                </label>
+                                <label className={`nav-link ${activeTab === 'analytics' ? 'active' : ''}`}>
+                                    <input
+                                        type="radio"
+                                        name="tab"
+                                        checked={activeTab === 'analytics'}
+                                        onChange={() => handleTabChange('analytics')}
+                                    />
+                                    Analytics
+                                </label>
+                                <label className={`nav-link ${activeTab === 'graph' ? 'active' : ''}`}>
+                                    <input
+                                        type="radio"
+                                        name="tab"
+                                        checked={activeTab === 'graph'}
+                                        onChange={() => handleTabChange('graph')}
+                                    />
+                                    Graph
+                                </label>
+                                <label className={`nav-link ${activeTab === 'operators' ? 'active' : ''}`}>
+                                    <input
+                                        type="radio"
+                                        name="tab"
+                                        checked={activeTab === 'operators'}
+                                        onChange={() => handleTabChange('operators')}
+                                    />
+                                    Operators
+                                </label>
+                                <label className={`nav-link ${activeTab === 'records' ? 'active' : ''}`}>
+                                    <input
+                                        type="radio"
+                                        name="tab"
+                                        checked={activeTab === 'records'}
+                                        onChange={() => handleTabChange('records')}
+                                    />
+                                    Records
+                                </label>
+                                <label className={`nav-link ${activeTab === 'settings' ? 'active' : ''}`}>
+                                    <input
+                                        type="radio"
+                                        name="tab"
+                                        checked={activeTab === 'settings'}
+                                        onChange={() => handleTabChange('settings')}
+                                    />
+                                    Settings
+                                </label>
                             </div>
                         </div>
                     </div>
