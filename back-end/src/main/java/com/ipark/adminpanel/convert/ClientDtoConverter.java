@@ -4,6 +4,8 @@ import com.ipark.adminpanel.dto.ClientDto;
 import com.ipark.adminpanel.entity.Clients;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 public class ClientDtoConverter {
 
@@ -14,12 +16,14 @@ public class ClientDtoConverter {
         clients.setEmail(clientDto.getEmail());
         clients.setPreUID(clientDto.getPreUID());
         clients.setSecondaryNumber(clientDto.getSecondary_number());
-        clients.setRegisteredPhone(clientDto.getRegisteredPhone());
-        clients.setShiftSchedule(clientDto.getShiftSchedule());
+        clients.setRegisteredPhone(clientDto.getRegistered_phone());
+        clients.setShiftSchedule(clientDto.getShift_schedule());
         clients.setAddedBy(clientDto.getAddedBy());
+        clients.setCreatedAt(LocalDateTime.now());
+//        clients.setOnline(clientDto.getIsOnline());
         clients.setBot(clientDto.isBot());
         clients.setRole(clientDto.getRole());
-        return clients;
+        return  clients;
     }
 
     // Convert Clients entity to ClientDto
@@ -29,8 +33,8 @@ public class ClientDtoConverter {
         clientDto.setEmail(clients.getEmail());
         clientDto.setPreUID(clients.getPreUID());
         clientDto.setSecondary_number(clients.getSecondaryNumber());
-        clientDto.setRegisteredPhone(clients.getRegisteredPhone());
-        clientDto.setShiftSchedule(clients.getShiftSchedule());
+        clientDto.setRegistered_phone(clients.getRegisteredPhone());
+        clientDto.setShift_schedule(clients.getShiftSchedule());
         clientDto.setAddedBy(clients.getAddedBy());
         clientDto.setBot(clients.isBot());
         clientDto.setRole(clients.getRole());

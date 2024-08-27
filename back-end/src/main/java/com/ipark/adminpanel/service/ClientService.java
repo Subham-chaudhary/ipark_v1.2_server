@@ -27,18 +27,33 @@ public class ClientService {
         return clientRepo.findAll();
     }
 
+//    public List<Map<String, Object>> getAllClientsWithAllColumns() {
+//        return clientRepo.findAllClientsWithAllColumns();
+//    }
+//
+//    public Optional<Map<String, Object>> getClientByIdWithAllColumns(UUID id) {
+//        return clientRepo.findClientByIdWithAllColumns(id);
+//    }
+    public Clients getClientById(UUID id) {
+        return clientRepo.findById(id).orElse(null);
+    }
+
+    public Clients ClientLogin(String phoneNumber) {
+        Clients client = clientRepo.findByRegisteredPhone(phoneNumber);
+        if (client != null) {
+            client.setOnline(true);
+           Clients saved=clientRepo.save(client);
+            System.out.println("saved = " + saved);
+
+        }
+        return client;
+    }
+
+
     @Transactional
     public Clients addClient(ClientDto clientDto) {
-        // Convert ClientDto to Clients entity using the converter
         Clients clients = ClientDtoConverter.convertToEntity(clientDto);
-
-        // Additional logic before saving
-        if (Objects.equals(clients.getRole(), "admin") || Objects.equals(clients.getRole(), "parq")) {
-            clientRepo.save(clients);
-        }
-
-        return clients;
-
-
+        System.out.println("clients = " + clients);
+        return clientRepo.save(clients);
     }
 }

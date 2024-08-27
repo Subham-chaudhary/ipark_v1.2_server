@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -46,8 +47,8 @@ public class Clients {
     private String role;
 
 //     Timestamp when the client was created, with time zone support.
-    @Column(name = "created_at", updatable = false)
-    private ZonedDateTime createdAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
 
     // Timestamp when the client last logged in, with time zone support.
@@ -56,18 +57,18 @@ public class Clients {
 
     // Indicates whether the client is a bot.
     @Column(name = "is_bot", nullable = false)
-    private boolean isBot = false;
+    private boolean isBot;
 
     @Column(name="added_by")
     private UUID addedBy;
 
     // Indicates whether the client is active.
     @Column(name = "is_active")
-    private boolean isActive = true;
+    private boolean isActive ;
 
     // Indicates whether the client is online.
     @Column(name = "is_online")
-    private boolean isOnline = false;
+    private boolean isOnline;
 
     @Column(name = "pre_uid" )
     private String preUID;

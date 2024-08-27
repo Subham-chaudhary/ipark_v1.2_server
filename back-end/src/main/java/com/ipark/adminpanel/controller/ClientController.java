@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -21,47 +23,56 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
-
-
     @GetMapping("/list-all")
     public ResponseEntity<?> getAllClients() {
+//        List<Map<String, Object>> clients = clientService.getAllClientsWithAllColumns();
         List<Clients> clients = clientService.getAllClients();
-        if (clients != null && !clients.isEmpty()) return new ResponseEntity<>(clients, HttpStatus.OK);
+        if (!clients.isEmpty()) {
+            return new ResponseEntity<>(clients, HttpStatus.OK);
+        }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/phone/{phoneNumber}")
+    public ResponseEntity<?> ClientLogin(@PathVariable String phoneNumber) {
+        Clients client = clientService.ClientLogin(phoneNumber);
+        if (client != null) {
+            return new ResponseEntity<>(client, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getClientById(@PathVariable UUID id) {
+//        Optional<Map<String, Object>> client = clientService.getClientByIdWithAllColumns(id);
+//        return client.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+//                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        Clients client = clientService.getClientById(id);
+        if (client != null) {
+            return new ResponseEntity<>(client, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("/admin/add")
     public ResponseEntity<?> addAdmin(@RequestBody ClientDto clientDto) {
-        // Set the role and preUID specific to admin
         clientDto.setRole("admin");
         clientDto.setPreUID("ADM-0-");
-
-        // Add the client using the service method
-        Clients clients = clientService.addClient(clientDto);
-
-        // Check if the client was added successfully
-        if (clients != null) {
-            return new ResponseEntity<>("Admin Added", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // or HttpStatus.BAD_REQUEST depending on your logic
+        Clients client = clientService.addClient(clientDto);
+        if (client != null) {
+            return new ResponseEntity<>(client, HttpStatus.CREATED);
         }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-        @PostMapping("/operator/add")
-        public ResponseEntity<?> addOperator(@RequestBody ClientDto clientDto) {
-            // Set the role and preUID specific to operator
-            clientDto.setRole("admin");
-            clientDto.setPreUID("OPR-0-");
-
-            // Add the client using the service method
-            Clients clients = clientService.addClient(clientDto);
-
-            // Check if the client was added successfully
-            if (clients != null) {
-                return new ResponseEntity<>("Operator Added", HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND); // or HttpStatus.BAD_REQUEST depending on your logic
-            }
+    @PostMapping("/operator/add")
+    public ResponseEntity<?> addOperator(@RequestBody ClientDto clientDto) {
+        clientDto.setRole("operator");
+        clientDto.setPreUID("OPR-0-");
+        Clients client = clientService.addClient(clientDto);
+        if (client != null) {
+            return new ResponseEntity<>(client, HttpStatus.CREATED);
         }
-
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+}
