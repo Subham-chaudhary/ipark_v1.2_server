@@ -3,6 +3,27 @@
   margin-bottom: 1rem;
 }
 
+.nav-link input[type="radio"] {
+  display:none; 
+}
+
+.nav-link {
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.nav-link.active {
+  background-color: #007bff; /* Active tab background color */
+  color: white; /* Active tab text color */
+}
+
+.nav-link:hover {
+  background-color: #405876; /* Tab hover color */
+  color: white; /* Tab hover text color */
+}
+
 .dashboard-container {
   display: flex;
   flex: 1;

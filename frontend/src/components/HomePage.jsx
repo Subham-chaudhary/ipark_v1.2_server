@@ -1,7 +1,21 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect, Suspense, lazy } from "react";
 import MapHolder from "./MapHolder";
 import './HomePage.css';
+
+
+// Lazy load sidebar content components
+const LeftSidebarContentMap = lazy(() => import('./LeftSidebarContentMap'));
+const LeftSidebarContentAnalytics = lazy(() => import('./LeftSidebarContentAnalytics'));
+const LeftSidebarContentGraph = lazy(() => import('./LeftSidebarContentGraph'));
+const LeftSidebarContentRecords = lazy(() => import('./LeftSidebarContentRecords'));
+const LeftSidebarContentStaff = lazy(() => import('./LeftSidebarContentStaff'));
+
+
+const RightSidebarContentMap = lazy(() => import('./RightSidebarContentMap'));
+const RightSidebarContentAnalytics = lazy(() => import('./RightSidebarContentAnalytics'));
+const RightSidebarContentGraph = lazy(() => import('./RightSidebarContentGraph'));
+const RightSidebarContentRecords = lazy(() => import('./RightSidebarContentRecords'));
+const RightSidebarContentStaff = lazy(() => import('./RightSidebarContentStaff'));
 
 const HomePage = () => {
     const [isUpdateSectionVisible, setIsUpdateSectionVisible] = useState(true);
@@ -10,16 +24,18 @@ const HomePage = () => {
     const [updateTogglerRotated, setUpdateTogglerRotated] = useState(false);
     const [objectTogglerRotated, setObjectTogglerRotated] = useState(false);
 
+    //to toggle the sidebar buttons
     const handleToggle = () => {
         setIsUpdateSectionVisible(!isUpdateSectionVisible);
         setUpdateTogglerRotated(!updateTogglerRotated);
     };
-
+    //to toggle the sidebars 
     const handleObjectToggle = () => {
         setObjectSectionVisible(!objectSectionVisible);
         setObjectTogglerRotated(!objectTogglerRotated);
     };
 
+    //this is pop-up a scroll to top button when users scrolls down a bit
     const [showButton, setShowButton] = useState(false);
 
     useEffect(() => {
@@ -48,32 +64,40 @@ const HomePage = () => {
         });
     };
 
-    //for updating the notification slide bar
 
-    const [updates, setUpdates] = useState([]);
-    const [visibleUpdatesCount, setVisibleUpdatesCount] = useState(5);
+    // State to manage active tab
+    const [activeTab, setActiveTab] = useState('map');
 
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            const newUpdate = {
-                id: updates.length + 1,
-                title: `Update ${updates.length + 1}`,
-                description: `This is the description for update ${updates.length + 1}.`,
-                timestamp: new Date().toLocaleTimeString()
-            };
+    const handleTabChange = (tab) => {
+        console.log("hel");
 
-            setUpdates(prevUpdates => {
-                const updatedUpdates = [newUpdate, ...prevUpdates];
-                return updatedUpdates.length > 25 ? updatedUpdates.slice(0, 25) : updatedUpdates;
-            });
-        }, 10000); // Add a new update every 3 seconds
-
-        return () => clearInterval(intervalId);
-    }, [updates]);
-
-    const loadMoreUpdates = () => {
-        setVisibleUpdatesCount(prevCount => Math.min(prevCount + 5, updates.length));
+        setActiveTab(tab);
     };
+
+    const getLeftSidebarContent = () => {
+        switch (activeTab) {
+            case 'map':
+                return <LeftSidebarContentMap />;
+            case 'analytics':
+                return <LeftSidebarContentAnalytics />;
+            // Add other cases for each tab
+            default:
+                return <div>Select a tab</div>;
+        }
+    };
+
+    const getRightSidebarContent = () => {
+        switch (activeTab) {
+            case 'map':
+                return <RightSidebarContentMap />;
+            case 'analytics':
+                return <RightSidebarContentAnalytics />;
+            // Add other cases for each tab
+            default:
+                return <div>Select a tab</div>;
+        }
+    };
+
 
     //map section for zooming in and out
     // const [zoomLevel, setZoomLevel] = useState(1); // Initial zoom level 
@@ -98,12 +122,15 @@ const HomePage = () => {
                         </button>
                         <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                             <div className="navbar-nav" style={{ flex: 1, justifyContent: 'space-around' }}>
-                                <Link className="nav-link active" to="/">Map</Link>
-                                <Link className="nav-link" to="/analytics">Analytics</Link>
-                                <Link className="nav-link" to="/graph">Graph</Link>
-                                <Link className="nav-link" to="/operators">Operators</Link>
-                                <Link className="nav-link" to="/records">Records</Link>
-                                <Link className="nav-link" to="/settings">Settings</Link>
+                                {['map', 'analytics', 'graph', 'staff', 'records', 'settings'].map(tab => (
+                                    <label
+                                        key={tab}
+                                        className={`nav-link ${activeTab === tab ? 'active' : ''}`}
+                                        onClick={() => handleTabChange(tab)}
+                                    >
+                                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                                    </label>
+                                ))}
                             </div>
                         </div>
                     </div>
@@ -127,26 +154,24 @@ const HomePage = () => {
                 </div>
 
                 <div className="container-fluid dashboard-container">
+
+                    {/* update section container sidebar */}
                     <div className="container update-section"
                         style={{ display: isUpdateSectionVisible ? 'block' : 'none' }}>
-                        <h2>Upcoming Updates</h2>
-                        {updates.slice(0, visibleUpdatesCount).map(update => (
-                            <div key={update.id} className="card w-100 mb-3">
-                                <div className="card-body">
-                                    <h5 className="card-title">{update.title}</h5>
-                                    <p className="card-text">{update.description}</p>
-                                    <p className="card-text"><small className="text-muted">{update.timestamp}</small></p>
-                                </div>
-                            </div>
-                        ))}
-                        {visibleUpdatesCount < updates.length && (
-                            <button className="btn btn-primary" onClick={loadMoreUpdates}>Load More</button>
-                        )}
+                        <Suspense fallback={<div>Loading...</div>}>
+                            {getLeftSidebarContent()}
+                        </Suspense>
                     </div>
+
 
                     <div className="container map-section">
                         <div className="svg-container">
-                            <MapHolder/>
+                            {activeTab === 'map' && <MapHolder />}
+                            {activeTab === 'analytics' && <div><h2>Analytics Section</h2></div>}
+                            {activeTab === 'graph' && <div><h2>Graph Section</h2></div>}
+                            {activeTab === 'staff' && <div><h2>Staff Section</h2></div>}
+                            {activeTab === 'records' && <div><h2>Records Section</h2></div>}
+                            {activeTab === 'settings' && <div><h2>Settings Section</h2></div>}
 
                             {/* <img
                                 src="/maps/map1.svg"
