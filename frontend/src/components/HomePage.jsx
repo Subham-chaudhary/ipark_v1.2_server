@@ -66,8 +66,6 @@ const HomePage = () => {
     const [activeTab, setActiveTab] = useState('map');
 
     const handleTabChange = (tab) => {
-        console.log("hel");
-
         setActiveTab(tab);
     };
 
@@ -90,7 +88,12 @@ const HomePage = () => {
                 return <RightSidebarContentMap />;
             case 'analytics':
                 return <RightSidebarContentAnalytics />;
-            // Add other cases for each tab
+            case 'graph':
+                return <RightSidebarContentGraph />;
+            case 'records':
+                return <RightSidebarContentRecords />;
+            case 'staff':
+                return <RightSidebarContentStaff />;
             default:
                 return <div>Select a tab</div>;
         }
