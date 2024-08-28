@@ -33,13 +33,19 @@ public class ClientController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/phone/{phoneNumber}")
+    @GetMapping("/login/{phoneNumber}")
     public ResponseEntity<?> ClientLogin(@PathVariable String phoneNumber) {
         Clients client = clientService.ClientLogin(phoneNumber);
         if (client != null) {
             return new ResponseEntity<>(client, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping ("/logout/{uid}")
+    public ResponseEntity<?> ClientLogout(@PathVariable UUID uid) {
+        Clients client = clientService.ClientLogout(uid);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -69,10 +75,26 @@ public class ClientController {
     public ResponseEntity<?> addOperator(@RequestBody ClientDto clientDto) {
         clientDto.setRole("operator");
         clientDto.setPreUID("OPR-0-");
+        System.out.println("clientDto1 = " + clientDto.isBot());
+//        clientDto.setBot(true);
+//        System.out.println("clientDto2 = " + clientDto.isBot());
         Clients client = clientService.addClient(clientDto);
+        System.out.println("client = " + client.isBot());
         if (client != null) {
             return new ResponseEntity<>(client, HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+    @PutMapping("/admin/update/{id}")
+    public ResponseEntity<?> updateClient(@PathVariable UUID id, @RequestBody ClientDto clientDto) {
+//        System.out.println("clientDto = " + clientDto);
+        Clients client = clientService.updateClient(id, clientDto);
+//        System.out.println("clientController = " + client);
+        if (client != null) {
+            return new ResponseEntity<>(client, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+
 }

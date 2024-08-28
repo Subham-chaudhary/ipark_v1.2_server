@@ -27,15 +27,17 @@ public class ClientService {
         return clientRepo.findAll();
     }
 
-//    public List<Map<String, Object>> getAllClientsWithAllColumns() {
-//        return clientRepo.findAllClientsWithAllColumns();
-//    }
-//
-//    public Optional<Map<String, Object>> getClientByIdWithAllColumns(UUID id) {
-//        return clientRepo.findClientByIdWithAllColumns(id);
-//    }
     public Clients getClientById(UUID id) {
         return clientRepo.findById(id).orElse(null);
+    }
+
+    public Clients ClientLogout(UUID uuid) {
+        Clients client = clientRepo.findById(uuid).orElse(null);
+        if (client != null) {
+            client.setOnline(false);
+            clientRepo.save(client);
+        }
+        return client;
     }
 
     public Clients ClientLogin(String phoneNumber) {
@@ -50,10 +52,31 @@ public class ClientService {
     }
 
 
+
     @Transactional
     public Clients addClient(ClientDto clientDto) {
         Clients clients = ClientDtoConverter.convertToEntity(clientDto);
         System.out.println("clients = " + clients);
+        Clients addedByUid=clientRepo.findById(clientDto.getAddedBy()).orElse(null);
+        if (addedByUid != null) {
+            clients.setLotUID(addedByUid.getLotUID());
+        }
+
+        return clientRepo.save(clients);
+    }
+
+    @Transactional
+    public Clients updateClient(UUID id, ClientDto clientDto) {
+    Clients clients = clientRepo.findById(id).orElse(null);
+//        System.out.println("clientsBeforeUpdate = " + clients);
+    if (clients != null) {
+    clients.setName(clientDto.getName());
+    clients.setSecondaryNumber(clientDto.getSecondary_number());
+    clients.setEmail(clientDto.getEmail());
+    clients.setShiftSchedule(clientDto.getShift_schedule());
+    }
+//    System.out.println("clientsAfterUpdate = " + clients);
+        assert clients != null;
         return clientRepo.save(clients);
     }
 }

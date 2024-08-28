@@ -21,7 +21,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "clients0")
 public class Clients {
-
     // Unique identifier of the client.
     @Id
     @Column(name = "client_uid", nullable = false)
@@ -46,7 +45,7 @@ public class Clients {
     @Column(name = "role")
     private String role;
 
-//     Timestamp when the client was created, with time zone support.
+    // Timestamp when the client was created, with time zone support.
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -56,7 +55,7 @@ public class Clients {
     private ZonedDateTime lastLoginAt;
 
     // Indicates whether the client is a bot.
-    @Column(name = "is_bot", nullable = false)
+    @Column(name = "is_bot")
     private boolean isBot;
 
     @Column(name="added_by")
@@ -72,7 +71,7 @@ public class Clients {
 
     @Column(name = "pre_uid" )
     private String preUID;
-     //Unique identifier for the parking lot associated with the client.
+    //Unique identifier for the parking lot associated with the client.
 
     @Column(name = "lot_uid")
     private UUID lotUID;
@@ -81,4 +80,5 @@ public class Clients {
     // Shift schedule of the client, stored as JSONB.
     @Column(name = "shift_schedule")
     private String shiftSchedule;
+
 }
