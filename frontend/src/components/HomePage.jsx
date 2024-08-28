@@ -1,25 +1,22 @@
 import { useState, useEffect, Suspense, lazy } from "react";
 import MapHolder from "./MapHolder";
-import './HomePage.css';
-
-
+import './Styles/HomePage.css';
+// import Graph from "./Tabs/Graph";
+import Records from "./Tabs/Records"
+import Staff from "./Tabs/Staff"
 // Lazy load sidebar content components
 const LeftSidebarContentMap = lazy(() => import('./LeftSidebarContentMap'));
-const LeftSidebarContentAnalytics = lazy(() => import('./LeftSidebarContentAnalytics'));
-const LeftSidebarContentGraph = lazy(() => import('./LeftSidebarContentGraph'));
-const LeftSidebarContentRecords = lazy(() => import('./LeftSidebarContentRecords'));
-const LeftSidebarContentStaff = lazy(() => import('./LeftSidebarContentStaff'));
+// const LeftSidebarContentAnalytics = lazy(() => import('./LeftSidebarContentAnalytics'));
+// const LeftSidebarContentGraph = lazy(() => import('./LeftSidebarContentGraph'));
+// const LeftSidebarContentRecords = lazy(() => import('./LeftSidebarContentRecords'));
+// const LeftSidebarContentStaff = lazy(() => import('./LeftSidebarContentStaff'));
 
 
-const RightSidebarContentMap = lazy(() => import('./RightSidebarContentMap'));
-const RightSidebarContentAnalytics = lazy(() => import('./RightSidebarContentAnalytics'));
-const RightSidebarContentGraph = lazy(() => import('./RightSidebarContentGraph'));
-const RightSidebarContentRecords = lazy(() => import('./RightSidebarContentRecords'));
-const RightSidebarContentStaff = lazy(() => import('./RightSidebarContentStaff'));
+// const RightSidebarContentMap = lazy(() => import('./RightSidebarContentMap'));
 
 const HomePage = () => {
-    const [isUpdateSectionVisible, setIsUpdateSectionVisible] = useState(true);
-    const [objectSectionVisible, setObjectSectionVisible] = useState(true);
+    const [isUpdateSectionVisible, setIsUpdateSectionVisible] = useState(false);
+    const [objectSectionVisible, setObjectSectionVisible] = useState(false);
 
     const [updateTogglerRotated, setUpdateTogglerRotated] = useState(false);
     const [objectTogglerRotated, setObjectTogglerRotated] = useState(false);
@@ -80,6 +77,7 @@ const HomePage = () => {
                 return <LeftSidebarContentMap />;
             case 'analytics':
                 return <LeftSidebarContentAnalytics />;
+           
             // Add other cases for each tab
             default:
                 return <div>Select a tab</div>;
@@ -122,14 +120,18 @@ const HomePage = () => {
                         </button>
                         <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                             <div className="navbar-nav" style={{ flex: 1, justifyContent: 'space-around' }}>
-                                {['map', 'analytics', 'graph', 'staff', 'records', 'settings'].map(tab => (
-                                    <label
+                                {['map', 'analytics', 'graph', 'staff', 'records', 'settings'].map(tab => (<div>
+            
+                                <label   className={`nav-link ${activeTab === tab ? 'active' : ''}`}>
+                               <input
                                         key={tab}
-                                        className={`nav-link ${activeTab === tab ? 'active' : ''}`}
-                                        onClick={() => handleTabChange(tab)}
-                                    >
-                                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                                    </label>
+                                        type="radio"
+                                        name="piku"
+                                    
+                                        onChange={() => handleTabChange(tab)}
+                                    />
+                                       {tab.charAt(0).toUpperCase() + tab.slice(1)}</label> 
+                                      </div>
                                 ))}
                             </div>
                         </div>
@@ -159,7 +161,7 @@ const HomePage = () => {
                     <div className="container update-section"
                         style={{ display: isUpdateSectionVisible ? 'block' : 'none' }}>
                         <Suspense fallback={<div>Loading...</div>}>
-                            {getLeftSidebarContent()}
+                            {/* {getLeftSidebarContent()} */}
                         </Suspense>
                     </div>
 
@@ -168,11 +170,11 @@ const HomePage = () => {
                         <div className="svg-container">
                             {activeTab === 'map' && <MapHolder />}
                             {activeTab === 'analytics' && <div><h2>Analytics Section</h2></div>}
-                            {activeTab === 'graph' && <div><h2>Graph Section</h2></div>}
-                            {activeTab === 'staff' && <div><h2>Staff Section</h2></div>}
-                            {activeTab === 'records' && <div><h2>Records Section</h2></div>}
+                            {activeTab === 'graph' && <Graph/>}
+                            {activeTab === 'staff' && <Staff/>}
+                            {activeTab === 'records' && <Records/>}
                             {activeTab === 'settings' && <div><h2>Settings Section</h2></div>}
-
+                            {/* <div><h2>Records Section</h2></div> */}
                             {/* <img
                                 src="/maps/map1.svg"
                                 alt="Main Map"
