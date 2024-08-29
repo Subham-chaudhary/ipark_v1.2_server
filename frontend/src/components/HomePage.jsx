@@ -167,27 +167,25 @@ const HomePage = () => {
 
 
                     <div className="container map-section">
-                        <div className="svg-container">
-                            {activeTab === 'map' && <Suspense fallback={<div>Loading...</div>}>
-                                <MapHolder />
-                            </Suspense>}
-                            {activeTab === 'analytics' && <Suspense fallback={<div>Loading...</div>}>
-                                <AnalyticSection />
-                            </Suspense>}
-                            {activeTab === 'graph' && <Suspense fallback={<div>Loading...</div>}>
-                                <GraphSection />
-                            </Suspense>}
-                            {activeTab === 'staff' && <Suspense fallback={<div>Loading...</div>}>
-                                <OperatorSection />
-                            </Suspense>}
-                            {activeTab === 'records' && <Suspense fallback={<div>Loading...</div>}>
-                                <RecordSection />
-                            </Suspense>}
-                            {activeTab === 'settings' && <Suspense fallback={<div>Loading...</div>}>
-                                <SettingSection />
-                            </Suspense>}
-
-                            {/* <img
+                        {activeTab === 'map' && <Suspense fallback={<div>Loading...</div>}>
+                            <MapHolder />
+                        </Suspense>}
+                        {activeTab === 'analytics' && <Suspense fallback={<div>Loading...</div>}>
+                            <AnalyticSection />
+                        </Suspense>}
+                        {activeTab === 'graph' && <Suspense fallback={<div>Loading...</div>}>
+                            <GraphSection />
+                        </Suspense>}
+                        {activeTab === 'staff' && <Suspense fallback={<div>Loading...</div>}>
+                            <OperatorSection />
+                        </Suspense>}
+                        {activeTab === 'records' && <Suspense fallback={<div>Loading...</div>}>
+                            <RecordSection />
+                        </Suspense>}
+                        {activeTab === 'settings' && <Suspense fallback={<div>Loading...</div>}>
+                            <SettingSection />
+                        </Suspense>}
+                        {/* <img
                                 src="/maps/map1.svg"
                                 alt="Main Map"
                                 style={{
@@ -195,7 +193,7 @@ const HomePage = () => {
                                     transformOrigin: 'center'
                                 }}
                             /> */}
-                        </div>
+
                         {/* <div className="zoom-controls">
                             <button className="zoom-button" onClick={handleZoomIn}>+</button>
                             <button className="zoom-button" onClick={handleZoomOut}>-</button>

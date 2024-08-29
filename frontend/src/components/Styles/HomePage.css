@@ -159,8 +159,7 @@ body.scrolled #back-to-top-btn {
   position: relative;
   width: 60%;
   height: 100vh;
-  overflow: auto;
-  border: 1px solid #ccc;
+  padding: 0rem;
 }
 .svg-container {
   width: 100%;
