@@ -1,25 +1,26 @@
-import MapHolder from "./MapHolder";
-import './Styles/HomePage.css';
-// import Graph from "./Tabs/Graph";
-import Records from "./Tabs/Records"
-import Staff from "./Tabs/Staff"
 import { useState, useEffect, Suspense, lazy, startTransition } from "react";
-import './HomePage.css';
-
+import './Styles/HomePage.css';
 
 // Lazy load sidebar content components
 const LeftSidebarContentMap = lazy(() => import('./LeftSidebarContentMap'));
-// const LeftSidebarContentAnalytics = lazy(() => import('./LeftSidebarContentAnalytics'));
-// const LeftSidebarContentGraph = lazy(() => import('./LeftSidebarContentGraph'));
-// const LeftSidebarContentRecords = lazy(() => import('./LeftSidebarContentRecords'));
-// const LeftSidebarContentStaff = lazy(() => import('./LeftSidebarContentStaff'));
 
+const RightSidebarContentMap = lazy(() => import('./RightSidebar/RightSidebarContentMap'));
+const RightSidebarContentAnalytics = lazy(() => import('./RightSidebar/RightSidebarContentAnalytics'));
+const RightSidebarContentGraph = lazy(() => import('./RightSidebar/RightSidebarContentGraph'));
+const RightSidebarContentRecords = lazy(() => import('./RightSidebar/RightSidebarContentRecords'));
+const RightSidebarContentStaff = lazy(() => import('./RightSidebar/RightSidebarContentStaff'));
 
-// const RightSidebarContentMap = lazy(() => import('./RightSidebarContentMap'));
+//imports for the tabs
+const MapHolder = lazy(() => import('./Tabs/MapHolder'))
+const AnalyticSection = lazy(() => import('./Tabs/Analytics'));
+const GraphSection = lazy(() => import('./Tabs/Graph'));
+const OperatorSection = lazy(() => import('./Tabs/Operators'));
+const RecordSection = lazy(() => import('./Tabs/Records'));
+const SettingSection = lazy(() => import('./Tabs/Settings'));
 
 const HomePage = () => {
-    const [isUpdateSectionVisible, setIsUpdateSectionVisible] = useState(false);
-    const [objectSectionVisible, setObjectSectionVisible] = useState(false);
+    const [isUpdateSectionVisible, setIsUpdateSectionVisible] = useState(true);
+    const [objectSectionVisible, setObjectSectionVisible] = useState(true);
 
     const [updateTogglerRotated, setUpdateTogglerRotated] = useState(false);
     const [objectTogglerRotated, setObjectTogglerRotated] = useState(false);
@@ -69,20 +70,13 @@ const HomePage = () => {
     const [activeTab, setActiveTab] = useState('map');
 
     const handleTabChange = (tab) => {
-        setActiveTab(tab);
+        startTransition(() => {
+            setActiveTab(tab);
+        });
     };
 
     const getLeftSidebarContent = () => {
-        switch (activeTab) {
-            case 'map':
-                return <LeftSidebarContentMap />;
-            case 'analytics':
-                return <LeftSidebarContentAnalytics />;
-           
-            // Add other cases for each tab
-            default:
-                return <div>Select a tab</div>;
-        }
+        return <LeftSidebarContentMap />;
     };
 
     const getRightSidebarContent = () => {
@@ -127,17 +121,17 @@ const HomePage = () => {
                         <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                             <div className="navbar-nav" style={{ flex: 1, justifyContent: 'space-around' }}>
                                 {['map', 'analytics', 'graph', 'staff', 'records', 'settings'].map(tab => (<div>
-            
-                                <label   className={`nav-link ${activeTab === tab ? 'active' : ''}`}>
-                               <input
-                                        key={tab}
-                                        type="radio"
-                                        name="piku"
-                                    
-                                        onChange={() => handleTabChange(tab)}
-                                    />
-                                       {tab.charAt(0).toUpperCase() + tab.slice(1)}</label> 
-                                      </div>
+
+                                    <label className={`nav-link ${activeTab === tab ? 'active' : ''}`}>
+                                        <input
+                                            key={tab}
+                                            type="radio"
+                                            name="piku"
+
+                                            onChange={() => handleTabChange(tab)}
+                                        />
+                                        {tab.charAt(0).toUpperCase() + tab.slice(1)}</label>
+                                </div>
                                 ))}
                             </div>
                         </div>
@@ -167,38 +161,31 @@ const HomePage = () => {
                     <div className="container update-section"
                         style={{ display: isUpdateSectionVisible ? 'block' : 'none' }}>
                         <Suspense fallback={<div>Loading...</div>}>
-                            {/* {getLeftSidebarContent()} */}
+                            {getLeftSidebarContent()}
                         </Suspense>
                     </div>
 
 
                     <div className="container map-section">
                         <div className="svg-container">
-                            {activeTab === 'map' && <MapHolder />}
-                            {activeTab === 'analytics' && <div><h2>Analytics Section</h2></div>}
-                            {activeTab === 'graph' && <Graph/>}
-                            {activeTab === 'staff' && <Staff/>}
-                            {activeTab === 'records' && <Records/>}
-                            {activeTab === 'settings' && <div><h2>Settings Section</h2></div>}
-                            {/* <div><h2>Records Section</h2></div> */}
                             {activeTab === 'map' && <Suspense fallback={<div>Loading...</div>}>
-                            <MapHolder />
-                        </Suspense>}
+                                <MapHolder />
+                            </Suspense>}
                             {activeTab === 'analytics' && <Suspense fallback={<div>Loading...</div>}>
-                            <AnalyticSection />
-                        </Suspense>}
+                                <AnalyticSection />
+                            </Suspense>}
                             {activeTab === 'graph' && <Suspense fallback={<div>Loading...</div>}>
                                 <GraphSection />
                             </Suspense>}
-                            {activeTab === 'operators' && <Suspense fallback={<div>Loading...</div>}>
+                            {activeTab === 'staff' && <Suspense fallback={<div>Loading...</div>}>
                                 <OperatorSection />
                             </Suspense>}
                             {activeTab === 'records' && <Suspense fallback={<div>Loading...</div>}>
-                            <RecordSection />
-                        </Suspense>}
+                                <RecordSection />
+                            </Suspense>}
                             {activeTab === 'settings' && <Suspense fallback={<div>Loading...</div>}>
-                            <SettingSection />
-                        </Suspense>}
+                                <SettingSection />
+                            </Suspense>}
 
                             {/* <img
                                 src="/maps/map1.svg"
