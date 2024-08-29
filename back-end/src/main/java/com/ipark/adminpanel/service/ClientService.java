@@ -45,7 +45,7 @@ public class ClientService {
         if (client != null) {
             client.setOnline(true);
            Clients saved=clientRepo.save(client);
-            System.out.println("saved = " + saved);
+            System.out.println("Retrieved = " + saved);
 
         }
         return client;
@@ -57,10 +57,7 @@ public class ClientService {
     public Clients addClient(ClientDto clientDto) {
         Clients clients = ClientDtoConverter.convertToEntity(clientDto);
         System.out.println("clients = " + clients);
-        Clients addedByUid=clientRepo.findById(clientDto.getAddedBy()).orElse(null);
-        if (addedByUid != null) {
-            clients.setLotUID(addedByUid.getLotUID());
-        }
+        clientRepo.findById(clientDto.getAddedBy()).ifPresent(addedByUid -> clients.setLotUID(addedByUid.getLotUID()));
 
         return clientRepo.save(clients);
     }

@@ -42,15 +42,15 @@ public class JwtUtil {
         return null;
     }
 
-    public List<String> extractAccessTokenRoles(String token) {
+    public String extractAccessTokenPreUid(String token) {
         if(validateAccessToken(token)) {
             Claims claims = extractAllClaims(token, getAccessTokenSigningKey());
-            return (List<String>) claims.get("ROLES");
+            return (String) claims.get("PreUid");
         }
         return null;
     }
 
-    public String extractRefreshTokenRoles(String token) {
+    public String extractRefreshTokenPreUid(String token) {
         if(validateRefreshToken(token)) {
             Claims claims = extractAllClaims(token, getRefreshTokenSigningKey());
             return (String) claims.get("PreUid");
@@ -110,7 +110,7 @@ public class JwtUtil {
 
     public String refreshAccessToken(String refreshToken) {
         if(validateRefreshToken(refreshToken)) {
-            return generateAccessToken(extractRefreshTokenUid(refreshToken), extractRefreshTokenRoles(refreshToken));
+            return generateAccessToken(extractRefreshTokenUid(refreshToken), extractRefreshTokenPreUid(refreshToken));
         }
         return null;
     }
