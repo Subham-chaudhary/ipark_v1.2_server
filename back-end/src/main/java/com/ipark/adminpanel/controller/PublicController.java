@@ -50,34 +50,34 @@ public class PublicController {
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Operator user, HttpServletResponse res) {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPhoneNumber())
-            );
-            UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUserName());
-            Operator users = operatorRepo.findByUserName(user.getUserName());
-            String accessToken = jwtUtil.generateAccessToken(users.getId().toString(), users.getRoles());
-            String refreshToken = jwtUtil.generateRefreshToken(users.getId().toString(), users.getRoles());
-            ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
-                    .httpOnly(true)
-                    .secure(false)
-                    .path("/")
-                    .build();
-            res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-            cookie = ResponseCookie.from("accessToken", accessToken)
-                    .httpOnly(true)
-                    .secure(false)
-                    .path("/")
-                    .build();
-            res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-            return new ResponseEntity<>("User Logged In", HttpStatus.OK);
-        } catch (Exception e) {
-            log.error("Exception occurred while createAuthenticationToken", e);
-            return new ResponseEntity<>("Incorrect username or password", HttpStatus.BAD_REQUEST);
-        }
-    }
+//    @PostMapping("/login")
+//    public ResponseEntity<?> login(@RequestBody Operator user, HttpServletResponse res) {
+//        try {
+//            authenticationManager.authenticate(
+//                    new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPhoneNumber())
+//            );
+//            UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUserName());
+//            Operator users = operatorRepo.findByUserName(user.getUserName());
+//            String accessToken = jwtUtil.generateAccessToken(users.getId().toString(), users.getRoles());
+//            String refreshToken = jwtUtil.generateRefreshToken(users.getId().toString(), users.getRoles());
+//            ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+//                    .httpOnly(true)
+//                    .secure(false)
+//                    .path("/")
+//                    .build();
+//            res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+//            cookie = ResponseCookie.from("accessToken", accessToken)
+//                    .httpOnly(true)
+//                    .secure(false)
+//                    .path("/")
+//                    .build();
+//            res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+//            return new ResponseEntity<>("User Logged In", HttpStatus.OK);
+//        } catch (Exception e) {
+//            log.error("Exception occurred while createAuthenticationToken", e);
+//            return new ResponseEntity<>("Incorrect username or password", HttpStatus.BAD_REQUEST);
+//        }
+//    }
 
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(HttpServletRequest req, HttpServletResponse res) {

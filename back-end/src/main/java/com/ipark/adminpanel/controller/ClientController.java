@@ -5,8 +5,12 @@ import com.ipark.adminpanel.convert.ClientDtoConverter;
 import com.ipark.adminpanel.dto.ClientDto;
 import com.ipark.adminpanel.entity.Clients;
 import com.ipark.adminpanel.service.ClientService;
+import com.ipark.adminpanel.utils.JwtUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,10 +27,15 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
-    @GetMapping("/list-all")
-    public ResponseEntity<?> getAllClients() {
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @GetMapping("/list/{lotID}")
+    public ResponseEntity<?> getAllClients(@RequestHeader("Cookie") String Cookie, @PathVariable UUID lotID) {
+        System.out.println(Cookie);
+
 //        List<Map<String, Object>> clients = clientService.getAllClientsWithAllColumns();
-        List<Clients> clients = clientService.getAllClients();
+        List<Clients> clients = clientService.getAllClients(lotID);
         if (!clients.isEmpty()) {
             return new ResponseEntity<>(clients, HttpStatus.OK);
         }
@@ -34,9 +43,23 @@ public class ClientController {
     }
 
     @GetMapping("/login/{phoneNumber}")
-    public ResponseEntity<?> ClientLogin(@PathVariable String phoneNumber) {
+    public ResponseEntity<?> ClientLogin(@PathVariable String phoneNumber, HttpServletResponse res) {
         Clients client = clientService.ClientLogin(phoneNumber);
         if (client != null) {
+            String accessToken = jwtUtil.generateAccessToken(client.getClientUid().toString(), client.getPreUID());
+            String refreshToken = jwtUtil.generateRefreshToken(client.getClientUid().toString(), client.getPreUID());
+            ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+                    .httpOnly(true)
+                    .secure(false)
+                    .path("/")
+                    .build();
+            res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            cookie = ResponseCookie.from("accessToken", accessToken)
+                    .httpOnly(true)
+                    .secure(false)
+                    .path("/")
+                    .build();
+            res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
             return new ResponseEntity<>(client, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);

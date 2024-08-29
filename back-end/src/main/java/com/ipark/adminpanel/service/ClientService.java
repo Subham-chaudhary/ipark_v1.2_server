@@ -23,8 +23,8 @@ public class ClientService {
         this.clientRepo = clientRepo;
     }
 
-    public List<Clients> getAllClients() {
-        return clientRepo.findAll();
+    public List<Clients> getAllClients(UUID lotID) {
+        return clientRepo.findByLotUID(lotID);
     }
 
     public Clients getClientById(UUID id) {
