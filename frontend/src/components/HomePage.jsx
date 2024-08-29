@@ -1,4 +1,4 @@
-import { useState, useEffect, Suspense, lazy, startTransition } from "react";
+import { useState, useEffect, Suspense, lazy } from "react";
 import './HomePage.css';
 
 
@@ -71,9 +71,7 @@ const HomePage = () => {
     const [activeTab, setActiveTab] = useState('map');
 
     const handleTabChange = (tab) => {
-        startTransition(() => {
-            setActiveTab(tab);
-        });
+        setActiveTab(tab);
     };
 
     const getLeftSidebarContent = () => {
@@ -211,11 +209,11 @@ const HomePage = () => {
                     <div className="container map-section">
                         <div className="svg-container">
                             {activeTab === 'map' && <Suspense fallback={<div>Loading...</div>}>
-                                <MapHolder />
-                            </Suspense>}
+                            <MapHolder />
+                        </Suspense>}
                             {activeTab === 'analytics' && <Suspense fallback={<div>Loading...</div>}>
-                                <AnalyticSection />
-                            </Suspense>}
+                            <AnalyticSection />
+                        </Suspense>}
                             {activeTab === 'graph' && <Suspense fallback={<div>Loading...</div>}>
                                 <GraphSection />
                             </Suspense>}
@@ -223,11 +221,11 @@ const HomePage = () => {
                                 <OperatorSection />
                             </Suspense>}
                             {activeTab === 'records' && <Suspense fallback={<div>Loading...</div>}>
-                                <RecordSection />
-                            </Suspense>}
+                            <RecordSection />
+                        </Suspense>}
                             {activeTab === 'settings' && <Suspense fallback={<div>Loading...</div>}>
-                                <SettingSection />
-                            </Suspense>}
+                            <SettingSection />
+                        </Suspense>}
 
                             {/* <img
                                 src="/maps/map1.svg"
