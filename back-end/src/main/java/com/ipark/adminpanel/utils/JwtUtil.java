@@ -50,10 +50,10 @@ public class JwtUtil {
         return null;
     }
 
-    public List<String> extractRefreshTokenRoles(String token) {
+    public String extractRefreshTokenRoles(String token) {
         if(validateRefreshToken(token)) {
             Claims claims = extractAllClaims(token, getRefreshTokenSigningKey());
-            return (List<String>) claims.get("ROLES");
+            return (String) claims.get("PreUid");
         }
         return null;
     }
@@ -82,17 +82,17 @@ public class JwtUtil {
         return extractRefreshTokenExpiration(token).before(new Date());
     }
 
-    public String generateAccessToken(String uid, List<String> roles) {
+    public String generateAccessToken(String uid, String preUid) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("ROLES", roles);
-        int ACCESS_TOKEN_EXPIRATION = 1000 * 30;
+        claims.put("PreUid", preUid);
+        int ACCESS_TOKEN_EXPIRATION = 1000 * 60* 60;
         return createToken(claims, uid, ACCESS_TOKEN_EXPIRATION, getAccessTokenSigningKey());
     }
 
-    public String generateRefreshToken(String uid, List<String> roles) {
+    public String generateRefreshToken(String uid, String preUid) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("ROLES", roles);
-        int REFRESH_TOKEN_EXPIRATION = 1000 * 60;
+        claims.put("PreUid", preUid);
+        int REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7;
         return createToken(claims, uid, REFRESH_TOKEN_EXPIRATION, getRefreshTokenSigningKey());
     }
 

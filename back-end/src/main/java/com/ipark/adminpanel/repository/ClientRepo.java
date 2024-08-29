@@ -14,6 +14,7 @@ import java.util.UUID;
 @Repository
 public interface ClientRepo extends JpaRepository<Clients, UUID> {
     Clients findByRegisteredPhone(String registeredPhone);
+    List<Clients> findByLotUID(UUID lotUID);
 
 //    @Query(value = "SELECT * FROM clients0", nativeQuery = true)
 //    List<Map<String, Object>> findAllClientsWithAllColumns();

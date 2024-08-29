@@ -35,6 +35,7 @@ public class SpringSecurity {
                         .requestMatchers("/parkingSlot/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/employee/**", "/park/**").hasRole("EMPLOYEE")
+                        .requestMatchers(("/v1/client/**")).permitAll()
                         .anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

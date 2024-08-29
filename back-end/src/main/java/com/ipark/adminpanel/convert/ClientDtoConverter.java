@@ -20,6 +20,7 @@ public class ClientDtoConverter {
         clients.setShiftSchedule(clientDto.getShift_schedule());
         clients.setAddedBy(clientDto.getAddedBy());
         clients.setCreatedAt(LocalDateTime.now());
+        clients.setActive(clientDto.isActive());
 //        clients.setOnline(clientDto.getIsOnline());
         clients.setBot(clientDto.isBot());
         clients.setRole(clientDto.getRole());
