@@ -5,11 +5,11 @@ import './App.css'
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: '/login',
     element: <LoginSignupForm />
   },
   {
-    path: '/homepage',
+    path: '/',
     element: <HomePage />
   }
 ]);
