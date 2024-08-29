@@ -1,23 +1,22 @@
 import { useState, useEffect, Suspense, lazy, startTransition } from "react";
-import './HomePage.css';
-
+import './Styles/HomePage.css';
 
 // Lazy load sidebar content components
 const LeftSidebarContentMap = lazy(() => import('./LeftSidebarContentMap'));
 
-const RightSidebarContentMap = lazy(() => import('./RightSidebarContentMap'));
-const RightSidebarContentAnalytics = lazy(() => import('./RightSidebarContentAnalytics'));
-const RightSidebarContentGraph = lazy(() => import('./RightSidebarContentGraph'));
-const RightSidebarContentRecords = lazy(() => import('./RightSidebarContentRecords'));
-const RightSidebarContentStaff = lazy(() => import('./RightSidebarContentStaff'));
+const RightSidebarContentMap = lazy(() => import('./RightSidebar/RightSidebarContentMap'));
+const RightSidebarContentAnalytics = lazy(() => import('./RightSidebar/RightSidebarContentAnalytics'));
+const RightSidebarContentGraph = lazy(() => import('./RightSidebar/RightSidebarContentGraph'));
+const RightSidebarContentRecords = lazy(() => import('./RightSidebar/RightSidebarContentRecords'));
+const RightSidebarContentStaff = lazy(() => import('./RightSidebar/RightSidebarContentStaff'));
 
 //imports for the tabs
-const MapHolder = lazy(() => import('./MapHolder'))
-const AnalyticSection = lazy(() => import('./Analytics'));
-const GraphSection = lazy(() => import('./Graph'));
-const OperatorSection = lazy(() => import('./Operators'));
-const RecordSection = lazy(() => import('./Records'));
-const SettingSection = lazy(() => import('./Settings'));
+const MapHolder = lazy(() => import('./Tabs/MapHolder'))
+const AnalyticSection = lazy(() => import('./Tabs/Analytics'));
+const GraphSection = lazy(() => import('./Tabs/Graph'));
+const OperatorSection = lazy(() => import('./Tabs/Operators'));
+const RecordSection = lazy(() => import('./Tabs/Records'));
+const SettingSection = lazy(() => import('./Tabs/Settings'));
 
 const HomePage = () => {
     const [isUpdateSectionVisible, setIsUpdateSectionVisible] = useState(true);
