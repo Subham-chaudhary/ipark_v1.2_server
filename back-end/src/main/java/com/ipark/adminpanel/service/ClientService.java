@@ -1,11 +1,13 @@
 package com.ipark.adminpanel.service;
 
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.ipark.adminpanel.convert.ClientDtoConverter;
 import com.ipark.adminpanel.dto.ClientDto;
 import com.ipark.adminpanel.entity.Clients;
 import com.ipark.adminpanel.repository.ClientRepo;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +17,15 @@ import java.util.*;
 @Service
 public class ClientService {
     private final ClientRepo clientRepo;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    ClientDtoConverter clientDtoConverter;
+    private ClientDtoConverter clientDtoConverter;
 
-    public ClientService(ClientRepo clientRepo) {
+    @Autowired
+    public ClientService(ClientRepo clientRepo, ModelMapper modelMapper) {
         this.clientRepo = clientRepo;
+        this.modelMapper = modelMapper;
     }
 
     public List<Clients> getAllClients(UUID lotID) {
@@ -31,7 +36,7 @@ public class ClientService {
         return clientRepo.findById(id).orElse(null);
     }
 
-    public Clients ClientLogout(UUID uuid) {
+    public Clients clientLogout(UUID uuid) {
         Clients client = clientRepo.findById(uuid).orElse(null);
         if (client != null) {
             client.setOnline(false);
@@ -40,40 +45,51 @@ public class ClientService {
         return client;
     }
 
-    public Clients ClientLogin(String phoneNumber) {
+    public Clients clientLogin(String phoneNumber) {
         Clients client = clientRepo.findByRegisteredPhone(phoneNumber);
         if (client != null) {
             client.setOnline(true);
-           Clients saved=clientRepo.save(client);
+            Clients saved = clientRepo.save(client);
             System.out.println("Retrieved = " + saved);
-
         }
         return client;
     }
 
-
+//    @Transactional
+//    public Clients addClient(ClientDto clientDto) {
+//        Clients clients = ClientDtoConverter.convertToEntity(clientDto);
+//        System.out.println("clients = " + clients);
+//        Clients save=clientRepo.save(clients);
+//        //clientRepo.findById(clientDto.getCreatedBy()).ifPresent(addedByUid -> clients.setLotUID(addedByUid.getLotUID()));
+//        System.out.println("Retrieved = " + save);
+//        return save;
+//    }
+//
+//@Transactional
+//public Clients updateClient(UUID id, ClientDto clientDto) {
+//    Clients existingClient = clientRepo.findById(id).orElse(null);
+//    if (existingClient != null) {
+//        Clients updatedClient = ClientDtoConverter.convertToEntity(clientDto);
+//        updatedClient.setClientUid(existingClient.getClientUid());
+//        return clientRepo.save(updatedClient);
+//    }
+//    return null;
 
     @Transactional
     public Clients addClient(ClientDto clientDto) {
-        Clients clients = ClientDtoConverter.convertToEntity(clientDto);
+        Clients clients = modelMapper.map(clientDto, Clients.class);
         System.out.println("clients = " + clients);
-        clientRepo.findById(clientDto.getAddedBy()).ifPresent(addedByUid -> clients.setLotUID(addedByUid.getLotUID()));
-
+        //clientRepo.findById(clientDto.getCreatedBy()).ifPresent(addedByUid -> clients.setLotUID(addedByUid.getLotUID()));
         return clientRepo.save(clients);
     }
 
     @Transactional
     public Clients updateClient(UUID id, ClientDto clientDto) {
-    Clients clients = clientRepo.findById(id).orElse(null);
-//        System.out.println("clientsBeforeUpdate = " + clients);
-    if (clients != null) {
-    clients.setName(clientDto.getName());
-    clients.setSecondaryNumber(clientDto.getSecondary_number());
-    clients.setEmail(clientDto.getEmail());
-    clients.setShiftSchedule(clientDto.getShift_schedule());
-    }
-//    System.out.println("clientsAfterUpdate = " + clients);
-        assert clients != null;
-        return clientRepo.save(clients);
+        Clients existingClient = clientRepo.findById(id).orElse(null);
+        if (existingClient != null) {
+            modelMapper.map(clientDto, existingClient);
+            return clientRepo.save(existingClient);
+        }
+        return null;
     }
 }

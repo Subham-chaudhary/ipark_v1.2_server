@@ -1,14 +1,19 @@
 package com.ipark.adminpanel.entity;
 
 
+import com.ipark.adminpanel.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
 
 
@@ -19,47 +24,56 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@DynamicInsert
 @Table(name = "clients0")
 public class Clients {
-    // Unique identifier of the client.
+
     @Id
-    @Column(name = "client_uid", nullable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "client_uid")
     private UUID clientUid;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "name", nullable = false,columnDefinition = "jsonb")
+    private Map<String, Object> name;
 
 
-    @Column(name = "email", nullable = false)
-    private String email;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "contacts", nullable = false,columnDefinition = "jsonb")
+    private Map<String, Object> contacts;
 
-    @Column(name = "secondary_number", nullable = false)
-    private String secondaryNumber;
 
     // Registered phone number of the client.
-    @Column(name = "registered_phone", nullable = false, unique = true)
+    @Column(name = "registered_phone", nullable = false)
     private String registeredPhone;
 
     // Role of the client.
-    @Column(name = "role")
-    private String role;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role",columnDefinition = "role_type")
+    private Role role;
+
+    @Column(name = "current_session")
+    private UUID currentSession;
 
     // Timestamp when the client was created, with time zone support.
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
 
-    // Timestamp when the client last logged in, with time zone support.
-    @Column(name = "last_login_at")
-    private ZonedDateTime lastLoginAt;
 
     // Indicates whether the client is a bot.
     @Column(name = "is_bot")
     private boolean isBot;
 
-    @Column(name="added_by")
-    private UUID addedBy;
+    @Column(name="created_by")
+    private UUID createdBy;
+
+    @Column(name="updated_by")
+    private UUID updatedBy;
+
+    @Column(name="updated_at")
+    private TimeZone updatedAt;
 
     // Indicates whether the client is active.
     @Column(name = "is_active")
@@ -69,16 +83,15 @@ public class Clients {
     @Column(name = "is_online")
     private boolean isOnline;
 
-    @Column(name = "pre_uid" )
-    private String preUID;
-    //Unique identifier for the parking lot associated with the client.
 
     @Column(name = "lot_uid")
     private UUID lotUID;
 
 
     // Shift schedule of the client, stored as JSONB.
-    @Column(name = "shift_schedule")
-    private String shiftSchedule;
+    @Column(name = "shift_schedule", nullable = false,columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
+    private Map<String, Object> shiftSchedule;
+
 
 }

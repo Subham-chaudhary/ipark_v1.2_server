@@ -1,9 +1,9 @@
 package com.ipark.adminpanel.controller;
 
-
-import com.ipark.adminpanel.convert.ClientDtoConverter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ipark.adminpanel.dto.ClientDto;
 import com.ipark.adminpanel.entity.Clients;
+import com.ipark.adminpanel.enums.Role;
 import com.ipark.adminpanel.service.ClientService;
 import com.ipark.adminpanel.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,13 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 
 @RestController
-@RequestMapping("v1/client")
+@RequestMapping("v2/client")
 public class ClientController {
 
     @Autowired
@@ -33,8 +31,6 @@ public class ClientController {
     @GetMapping("/list/{lotID}")
     public ResponseEntity<?> getAllClients(@RequestHeader("Cookie") String Cookie, @PathVariable UUID lotID) {
         System.out.println(Cookie);
-
-//        List<Map<String, Object>> clients = clientService.getAllClientsWithAllColumns();
         List<Clients> clients = clientService.getAllClients(lotID);
         if (!clients.isEmpty()) {
             return new ResponseEntity<>(clients, HttpStatus.OK);
@@ -43,39 +39,39 @@ public class ClientController {
     }
 
     @GetMapping("/login/{phoneNumber}")
-    public ResponseEntity<?> ClientLogin(@PathVariable String phoneNumber, HttpServletResponse res) {
-        Clients client = clientService.ClientLogin(phoneNumber);
+    public ResponseEntity<?> clientLogin(@PathVariable String phoneNumber, HttpServletResponse res) {
+        Clients client = clientService.clientLogin(phoneNumber);
         if (client != null) {
-            String accessToken = jwtUtil.generateAccessToken(client.getClientUid().toString(), client.getPreUID());
-            String refreshToken = jwtUtil.generateRefreshToken(client.getClientUid().toString(), client.getPreUID());
-            ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+            String roleName = client.getRole().name();
+            String accessToken = jwtUtil.generateAccessToken(client.getClientUid().toString(), roleName);
+            String refreshToken = jwtUtil.generateRefreshToken(client.getClientUid().toString(), roleName);
+
+            ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                     .httpOnly(true)
                     .secure(false)
                     .path("/")
                     .build();
-            res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-            cookie = ResponseCookie.from("accessToken", accessToken)
+            res.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+
+            ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
                     .httpOnly(true)
                     .secure(false)
                     .path("/")
                     .build();
-            res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            res.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+
             return new ResponseEntity<>(client, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
-    @GetMapping ("/logout/{uid}")
-    public ResponseEntity<?> ClientLogout(@PathVariable UUID uid) {
-        Clients client = clientService.ClientLogout(uid);
+    @GetMapping("/logout/{uid}")
+    public ResponseEntity<?> clientLogout(@PathVariable UUID uid) {
+        Clients client = clientService.clientLogout(uid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getClientById(@PathVariable UUID id) {
-//        Optional<Map<String, Object>> client = clientService.getClientByIdWithAllColumns(id);
-//        return client.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-//                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
         Clients client = clientService.getClientById(id);
         if (client != null) {
             return new ResponseEntity<>(client, HttpStatus.OK);
@@ -85,8 +81,7 @@ public class ClientController {
 
     @PostMapping("/admin/add")
     public ResponseEntity<?> addAdmin(@RequestBody ClientDto clientDto) {
-        clientDto.setRole("admin");
-        clientDto.setPreUID("ADM-0-");
+        clientDto.setRole(Role.admin);
         Clients client = clientService.addClient(clientDto);
         if (client != null) {
             return new ResponseEntity<>(client, HttpStatus.CREATED);
@@ -96,28 +91,20 @@ public class ClientController {
 
     @PostMapping("/operator/add")
     public ResponseEntity<?> addOperator(@RequestBody ClientDto clientDto) {
-        clientDto.setRole("operator");
-        clientDto.setPreUID("OPR-0-");
-        System.out.println("clientDto1 = " + clientDto.isBot());
-//        clientDto.setBot(true);
-//        System.out.println("clientDto2 = " + clientDto.isBot());
+        clientDto.setRole(Role.valueOf("operator"));
         Clients client = clientService.addClient(clientDto);
-        System.out.println("client = " + client.isBot());
         if (client != null) {
             return new ResponseEntity<>(client, HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+
     @PutMapping("/admin/update/{id}")
     public ResponseEntity<?> updateClient(@PathVariable UUID id, @RequestBody ClientDto clientDto) {
-//        System.out.println("clientDto = " + clientDto);
         Clients client = clientService.updateClient(id, clientDto);
-//        System.out.println("clientController = " + client);
         if (client != null) {
             return new ResponseEntity<>(client, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
-
-
 }
