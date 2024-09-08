@@ -96,6 +96,7 @@ const HomePage = () => {
         }
     };
 
+    
 
     //map section for zooming in and out
     // const [zoomLevel, setZoomLevel] = useState(1); // Initial zoom level 
