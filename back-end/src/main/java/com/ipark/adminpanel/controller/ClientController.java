@@ -83,6 +83,7 @@ public class ClientController {
     public ResponseEntity<?> addAdmin(@RequestBody ClientDto clientDto) {
         clientDto.setRole(Role.admin);
         Clients client = clientService.addClient(clientDto);
+//        System.out.println("fetched enity:: "+client);
         if (client != null) {
             return new ResponseEntity<>(client, HttpStatus.CREATED);
         }

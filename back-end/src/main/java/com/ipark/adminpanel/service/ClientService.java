@@ -55,41 +55,42 @@ public class ClientService {
         return client;
     }
 
-//    @Transactional
-//    public Clients addClient(ClientDto clientDto) {
-//        Clients clients = ClientDtoConverter.convertToEntity(clientDto);
-//        System.out.println("clients = " + clients);
-//        Clients save=clientRepo.save(clients);
-//        //clientRepo.findById(clientDto.getCreatedBy()).ifPresent(addedByUid -> clients.setLotUID(addedByUid.getLotUID()));
-//        System.out.println("Retrieved = " + save);
-//        return save;
-//    }
-//
-//@Transactional
-//public Clients updateClient(UUID id, ClientDto clientDto) {
-//    Clients existingClient = clientRepo.findById(id).orElse(null);
-//    if (existingClient != null) {
-//        Clients updatedClient = ClientDtoConverter.convertToEntity(clientDto);
-//        updatedClient.setClientUid(existingClient.getClientUid());
-//        return clientRepo.save(updatedClient);
-//    }
-//    return null;
-
     @Transactional
     public Clients addClient(ClientDto clientDto) {
-        Clients clients = modelMapper.map(clientDto, Clients.class);
+        Clients clients = ClientDtoConverter.convertToEntity(clientDto);
         System.out.println("clients = " + clients);
-        //clientRepo.findById(clientDto.getCreatedBy()).ifPresent(addedByUid -> clients.setLotUID(addedByUid.getLotUID()));
-        return clientRepo.save(clients);
+        clientRepo.save(clients);
+        Optional<Clients> fecthed = Optional.ofNullable(clientRepo.findByClientUid(clients.getClientUid()));
+        System.out.println("Fetched = " + fecthed);
+        return fecthed.get();
     }
+//
+@Transactional
+public Clients updateClient(UUID id, ClientDto clientDto) {
+    Clients existingClient = clientRepo.findById(id).orElse(null);
+    if (existingClient != null) {
+        Clients updatedClient = ClientDtoConverter.convertToEntity(clientDto);
+        updatedClient.setClientUid(existingClient.getClientUid());
+        return clientRepo.save(updatedClient);
+    }
+    return null;}
 
-    @Transactional
-    public Clients updateClient(UUID id, ClientDto clientDto) {
-        Clients existingClient = clientRepo.findById(id).orElse(null);
-        if (existingClient != null) {
-            modelMapper.map(clientDto, existingClient);
-            return clientRepo.save(existingClient);
-        }
-        return null;
-    }
+//    @Transactional
+//    public Clients addClient(ClientDto clientDto) {
+//        Clients clients = modelMapper.map(clientDto, Clients.class);
+//        System.out.println("clients = " + clients);
+//        //clientRepo.findById(clientDto.getCreatedBy()).ifPresent(addedByUid -> clients.setLotUID(addedByUid.getLotUID()));
+//        clientRepo.save(clients);
+//        return clientRepo.findByClientUid(clients.getClientUid());
+//    }
+
+//    @Transactional
+//    public Clients updateClient(UUID id, ClientDto clientDto) {
+//        Clients existingClient = clientRepo.findById(id).orElse(null);
+//        if (existingClient != null) {
+//            modelMapper.map(clientDto, existingClient);
+//            return clientRepo.save(existingClient);
+//        }
+//        return null;
+//    }
 }

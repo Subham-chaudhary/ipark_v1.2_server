@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -23,13 +24,13 @@ public class ClientDto {
     private String registeredPhone;
     private Role role;
     private UUID currentSession;
-    private LocalDateTime createdAt;
-    private boolean isBot;
+//    private ZonedDateTime createdAt;
     private UUID createdBy;
     private UUID updatedBy;
-    private TimeZone updatedAt;
-    private boolean isActive;
-    private boolean isOnline;
+    private ZonedDateTime updatedAt;
+    private boolean isBot;
+//    private boolean isActive;
+//    private boolean isOnline;
     private UUID lotUID;
     private Map<String, Object> shiftSchedule;
 }

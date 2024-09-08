@@ -58,13 +58,7 @@ public class Clients {
 
     // Timestamp when the client was created, with time zone support.
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-
-
-    // Indicates whether the client is a bot.
-    @Column(name = "is_bot")
-    private boolean isBot;
+    private ZonedDateTime createdAt;
 
     @Column(name="created_by")
     private UUID createdBy;
@@ -73,14 +67,19 @@ public class Clients {
     private UUID updatedBy;
 
     @Column(name="updated_at")
-    private TimeZone updatedAt;
+    private ZonedDateTime updatedAt;
+
 
     // Indicates whether the client is active.
-    @Column(name = "is_active")
+    @Column(name = "is_active", columnDefinition = "boolean default true")
     private boolean isActive ;
 
+    // Indicates whether the client is a bot.
+    @Column(name = "is_bot", columnDefinition = "boolean default false")
+    private boolean isBot;
+
     // Indicates whether the client is online.
-    @Column(name = "is_online")
+    @Column(name = "is_online", columnDefinition = "boolean default false")
     private boolean isOnline;
 
 
