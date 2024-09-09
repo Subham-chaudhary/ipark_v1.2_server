@@ -32,12 +32,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
 
         Role clientRole = client.getRole();
-        String roleName = clientRole.name();
-
+        List<String> roles = new ArrayList<>();
+        roles.add(clientRole.name());
+        System.out.println("Client Role: " + clientRole);
+        System.out.println("Client Role List: " + roles);
         return org.springframework.security.core.userdetails.User.builder()
                 .username(client.getRegisteredPhone())
                 .password("{noop}" + client.getClientUid())
-                .roles(roleName)
+                .roles(roles.toArray(new String[0]))
                 .build();
     }
 }

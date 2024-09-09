@@ -42,18 +42,20 @@ public class JwtUtil {
         return null;
     }
 
-    public String extractAccessTokenPreUid(String token) {
+    public String extractAccessTokenPhoneNumber(String token) {
         if(validateAccessToken(token)) {
             Claims claims = extractAllClaims(token, getAccessTokenSigningKey());
-            return (String) claims.get("PreUid");
+            System.out.println("Claims" + claims.get("PhoneNumber"));
+            return (String) claims.get("PhoneNumber");
         }
         return null;
     }
 
-    public String extractRefreshTokenPreUid(String token) {
+    public String extractRefreshTokenPhoneNumber(String token) {
         if(validateRefreshToken(token)) {
             Claims claims = extractAllClaims(token, getRefreshTokenSigningKey());
-            return (String) claims.get("PreUid");
+            System.out.println("Claims" + claims.get("PhoneNumber"));
+            return (String) claims.get("PhoneNumber");
         }
         return null;
     }
@@ -82,16 +84,16 @@ public class JwtUtil {
         return extractRefreshTokenExpiration(token).before(new Date());
     }
 
-    public String generateAccessToken(String uid, String preUid) {
+    public String generateAccessToken(String uid, String phoneNumber) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("PreUid", preUid);
+        claims.put("PhoneNumber", phoneNumber);
         int ACCESS_TOKEN_EXPIRATION = 1000 * 60* 60;
         return createToken(claims, uid, ACCESS_TOKEN_EXPIRATION, getAccessTokenSigningKey());
     }
 
-    public String generateRefreshToken(String uid, String preUid) {
+    public String generateRefreshToken(String uid, String phoneNumber) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("PreUid", preUid);
+        claims.put("PhoneNumber", phoneNumber);
         int REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7;
         return createToken(claims, uid, REFRESH_TOKEN_EXPIRATION, getRefreshTokenSigningKey());
     }
@@ -110,7 +112,7 @@ public class JwtUtil {
 
     public String refreshAccessToken(String refreshToken) {
         if(validateRefreshToken(refreshToken)) {
-            return generateAccessToken(extractRefreshTokenUid(refreshToken), extractRefreshTokenPreUid(refreshToken));
+            return generateAccessToken(extractRefreshTokenUid(refreshToken), extractRefreshTokenPhoneNumber(refreshToken));
         }
         return null;
     }

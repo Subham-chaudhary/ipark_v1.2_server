@@ -42,9 +42,9 @@ public class ClientController {
     public ResponseEntity<?> clientLogin(@PathVariable String phoneNumber, HttpServletResponse res) {
         Clients client = clientService.clientLogin(phoneNumber);
         if (client != null) {
-            String roleName = client.getRole().name();
-            String accessToken = jwtUtil.generateAccessToken(client.getClientUid().toString(), roleName);
-            String refreshToken = jwtUtil.generateRefreshToken(client.getClientUid().toString(), roleName);
+
+            String accessToken = jwtUtil.generateAccessToken(client.getClientUid().toString(), phoneNumber);
+            String refreshToken = jwtUtil.generateRefreshToken(client.getClientUid().toString(), phoneNumber);
 
             ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                     .httpOnly(true)

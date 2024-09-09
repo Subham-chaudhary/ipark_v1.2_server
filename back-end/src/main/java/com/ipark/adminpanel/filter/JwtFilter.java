@@ -42,41 +42,40 @@ public class JwtFilter extends OncePerRequestFilter {
         String phoneNumber = null;
         String refreshToken = null;
         String jwt = null;
-        String preUid = null;
-        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer")) {
-            jwt = authorizationHeader.substring(7);
+        if (req.getCookies() != null) {
+            for (Cookie cookie : req.getCookies()) {
+                if (cookie.getName().equals("accessToken")) jwt = cookie.getValue();
+            }
+        }
+
+        try {
+            if (jwtUtil.validateAccessToken(jwt)) {
+                String id = jwtUtil.extractAccessTokenUid(jwt);
+                phoneNumber = jwtUtil.extractAccessTokenPhoneNumber(jwt);
+
+            }
+        } catch (RuntimeException e) {
+            log.error("Some error occurred: {}", e.getMessage());
             try {
-                if(jwtUtil.validateAccessToken(jwt)) {
-                    String id = jwtUtil.extractAccessTokenUid(jwt);
-                    preUid = jwtUtil.extractAccessTokenPreUid(jwt);
-                    if(id != null) {
-                        phoneNumber = clientRepo.findByClientUid(UUID.fromString(id)).getRegisteredPhone();
-                    }
-                }
-            } catch (RuntimeException e) {
-                log.error("Some error occurred: {}", e.getMessage());
-                try {
-                    if(req.getCookies() != null) {
-                        for(Cookie cookie : req.getCookies()) {
-                            if(cookie.getName().equals("refreshToken")) {
-                                refreshToken = cookie.getValue();
-                            }
+                if (req.getCookies() != null) {
+                    for (Cookie cookie : req.getCookies()) {
+                        if (cookie.getName().equals("refreshToken")) {
+                            refreshToken = cookie.getValue();
                         }
                     }
-                    jwt = jwtUtil.refreshAccessToken(refreshToken);
-                    String id = jwtUtil.extractAccessTokenUid(jwt);
-                    preUid = jwtUtil.extractAccessTokenPreUid(jwt);
-                    if(id != null) {
-                        phoneNumber = clientRepo.findByClientUid(UUID.fromString(id)).getRegisteredPhone();
-                    }
-                } catch (RuntimeException ex) {
-                    log.error("Some error occurred: {}", ex.getMessage());
                 }
+                jwt = jwtUtil.refreshAccessToken(refreshToken);
+                String id = jwtUtil.extractAccessTokenUid(jwt);
+                phoneNumber = jwtUtil.extractAccessTokenPhoneNumber(jwt);
+
+            } catch (RuntimeException ex) {
+                log.error("Some error occurred: {}", ex.getMessage());
             }
-            //
         }
-        System.out.println("Phone Number" + phoneNumber);
-        if(phoneNumber != null) {
+        //
+
+        System.out.println("Phone Number is JWT FILTER: " + phoneNumber);
+        if (phoneNumber != null) {
             UserDetails client = userDetailsService.loadUserByUsername(phoneNumber);
 //            UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(client, null, client.getAuthorities());
