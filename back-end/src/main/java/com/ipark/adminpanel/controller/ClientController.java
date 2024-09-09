@@ -64,9 +64,9 @@ public class ClientController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-    @GetMapping("/logout/{uid}")
-    public ResponseEntity<?> clientLogout(@PathVariable UUID uid) {
-        Clients client = clientService.clientLogout(uid);
+    @GetMapping("/logout/{phoneNumber}")
+    public ResponseEntity<?> clientLogout(@PathVariable String phoneNumber) {
+        Clients client = clientService.clientLogout(phoneNumber);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -82,8 +82,8 @@ public class ClientController {
     @PostMapping("/admin/add")
     public ResponseEntity<?> addAdmin(@RequestBody ClientDto clientDto) {
         clientDto.setRole(Role.admin);
+        System.out.println("Received clientDto: " + clientDto);
         Clients client = clientService.addClient(clientDto);
-//        System.out.println("fetched enity:: "+client);
         if (client != null) {
             return new ResponseEntity<>(client, HttpStatus.CREATED);
         }
@@ -101,7 +101,8 @@ public class ClientController {
     }
 
     @PutMapping("/admin/update/{id}")
-    public ResponseEntity<?> updateClient(@PathVariable UUID id, @RequestBody ClientDto clientDto) {
+    public ResponseEntity<?> updateClient(@PathVariable UUID id, @RequestBody ClientDto clientDto, @RequestHeader("Cookie") String Cookie) {
+        System.out.println(Cookie);
         Clients client = clientService.updateClient(id, clientDto);
         if (client != null) {
             return new ResponseEntity<>(client, HttpStatus.OK);

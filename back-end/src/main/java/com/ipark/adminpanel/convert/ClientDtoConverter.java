@@ -22,9 +22,9 @@ public class ClientDtoConverter {
         clients.setCreatedBy(clientDto.getCreatedBy());
         clients.setUpdatedBy(clientDto.getUpdatedBy());
         clients.setUpdatedAt(clientDto.getUpdatedAt());
-        clients.setBot(clientDto.isBot());
-//        clients.setActive(clientDto.isActive());
-//        clients.setOnline(clientDto.isOnline());
+        clients.setIsBot(clientDto.getIsBot());
+        clients.setIsActive(clientDto.getIsActive());
+       clients.setIsOnline(clientDto.getIsOnline());
         clients.setLotUID(clientDto.getLotUID());
         clients.setShiftSchedule(clientDto.getShiftSchedule());
         System.out.println("DTO convereted entity::  "+clients);
