@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from 'react';
+import { Popover, OverlayTrigger } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min';
 import './LeftSidebarContentMap.css';
 
 const LeftSidebarContentMap = () => {
@@ -15,7 +15,6 @@ const LeftSidebarContentMap = () => {
                 description: `This is the description for update ${updates.length + 1}.`,
                 timestamp: new Date().toLocaleTimeString()
             };
-
             setUpdates(prevUpdates => {
                 const updatedUpdates = [newUpdate, ...prevUpdates];
                 return updatedUpdates.length > 25 ? updatedUpdates.slice(0, 25) : updatedUpdates;
@@ -33,16 +32,25 @@ const LeftSidebarContentMap = () => {
         <>
             <h2>Upcoming Updates</h2>
             {updates.slice(0, visibleUpdatesCount).map(update => (
-                <div
+                <OverlayTrigger
                     key={update.id}
-                    className="card w-100 mb-3"
+                    trigger="click"
+                    placement="right"
+                    overlay={
+                        <Popover id={`popover-${update.id}`}>
+                            <Popover.Header as="h3">{update.title}</Popover.Header>
+                            <Popover.Body>{update.description}</Popover.Body>
+                        </Popover>
+                    }
                 >
-                    <div className="card-body">
-                        <h5 className="card-title">{update.title}</h5>
-                        <p className="card-text">{update.description}</p>
-                        <p className="card-text"><small className="text-muted">{update.timestamp}</small></p>
+                    <div className="card w-100 mb-3">
+                        <div className="card-body">
+                            <h5 className="card-title">{update.title}</h5>
+                            <p className="card-text">{update.description}</p>
+                            <p className="card-text"><small className="text-muted">{update.timestamp}</small></p>
+                        </div>
                     </div>
-                </div>
+                </OverlayTrigger>
             ))}
             {visibleUpdatesCount < updates.length && (
                 <button className="btn btn-primary" onClick={loadMoreUpdates}>Load More</button>
