@@ -3,7 +3,7 @@ import { Popover, OverlayTrigger } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './LeftSidebarContentMap.css';
 
-const LeftSidebarContentMap = ({ isSidebarVisible }) => {
+const LeftSidebarContentMap = ({ isSidebarVisible ,objectSectionVisible}) => {
     const [updates, setUpdates] = useState([
         {
             id: 1,
@@ -44,12 +44,23 @@ const LeftSidebarContentMap = ({ isSidebarVisible }) => {
     //     setVisibleUpdatesCount(prevCount => Math.min(prevCount + 5, updates.length));
     // };
 
+     // Trigger a resize event when the sidebar visibility changes to update the popovers
+     useEffect(() => {
+        if (isSidebarVisible) {
+            setTimeout(() => {
+                window.dispatchEvent(new Event('resize')); // Dispatch resize event
+            }, 100); // Add a slight delay to allow sidebar animation to finish
+        }
+    }, [isSidebarVisible,objectSectionVisible]);
+
     // Close all popovers when the sidebar is hidden
     useEffect(() => {
         if (!isSidebarVisible) {
             setActivePopoverId(null); // Close all popovers
         }
-    }, [isSidebarVisible]);
+        console.log(objectSectionVisible);
+        
+    }, [isSidebarVisible,objectSectionVisible]);
 
     const handlePopoverToggle = (id) => {
         setActivePopoverId((prevId) => (prevId === id ? null : id)); // Toggle the popover

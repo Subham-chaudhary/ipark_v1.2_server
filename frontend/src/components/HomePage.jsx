@@ -77,7 +77,7 @@ const HomePage = () => {
     };
 
     const getLeftSidebarContent = () => {
-        return <LeftSidebarContentMap isSidebarVisible={isUpdateSectionVisible}/>;
+        return <LeftSidebarContentMap isSidebarVisible={isUpdateSectionVisible} objectSectionVisible={objectSectionVisible}/>;
     };
 
     const getRightSidebarContent = () => {
