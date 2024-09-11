@@ -1,31 +1,58 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import { Popover, OverlayTrigger } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './LeftSidebarContentMap.css';
 
-const LeftSidebarContentMap = () => {
-    const [updates, setUpdates] = useState([]);
+const LeftSidebarContentMap = ({ isSidebarVisible }) => {
+    const [updates, setUpdates] = useState([
+        {
+            id: 1,
+            title: `Update 1`,
+            description: `This is the description for update 1.`,
+            timestamp: new Date().toLocaleTimeString(),
+        },
+        {
+            id: 2,
+            title: `Update 2`,
+            description: `This is the description for update 2.`,
+            timestamp: new Date().toLocaleTimeString(),
+        },
+    ]);
     const [visibleUpdatesCount, setVisibleUpdatesCount] = useState(5);
+    const [activePopoverId, setActivePopoverId] = useState(null); // Track which popover is open
 
+
+    // useEffect(() => {
+    //     const intervalId = setInterval(() => {
+    //         const newUpdate = {
+    //             id: updates.length + 1,
+    //             title: `Update ${updates.length + 1}`,
+    //             description: `This is the description for update ${updates.length + 1}.`,
+    //             timestamp: new Date().toLocaleTimeString()
+    //         };
+    //         setUpdates(prevUpdates => {
+    //             const updatedUpdates = [newUpdate, ...prevUpdates];
+    //             return updatedUpdates;
+    //         });
+    //     }, 1000); 
+    //     // Add a new update every 3 seconds
+
+    //     return () => clearInterval(intervalId);
+    // }, [updates]);
+
+    // const loadMoreUpdates = () => {
+    //     setVisibleUpdatesCount(prevCount => Math.min(prevCount + 5, updates.length));
+    // };
+
+    // Close all popovers when the sidebar is hidden
     useEffect(() => {
-        const intervalId = setInterval(() => {
-            const newUpdate = {
-                id: updates.length + 1,
-                title: `Update ${updates.length + 1}`,
-                description: `This is the description for update ${updates.length + 1}.`,
-                timestamp: new Date().toLocaleTimeString()
-            };
-            setUpdates(prevUpdates => {
-                const updatedUpdates = [newUpdate, ...prevUpdates];
-                return updatedUpdates.length > 25 ? updatedUpdates.slice(0, 25) : updatedUpdates;
-            });
-        }, 3000); // Add a new update every 3 seconds
+        if (!isSidebarVisible) {
+            setActivePopoverId(null); // Close all popovers
+        }
+    }, [isSidebarVisible]);
 
-        return () => clearInterval(intervalId);
-    }, [updates]);
-
-    const loadMoreUpdates = () => {
-        setVisibleUpdatesCount(prevCount => Math.min(prevCount + 5, updates.length));
+    const handlePopoverToggle = (id) => {
+        setActivePopoverId((prevId) => (prevId === id ? null : id)); // Toggle the popover
     };
 
     return (
@@ -36,6 +63,8 @@ const LeftSidebarContentMap = () => {
                     key={update.id}
                     trigger="click"
                     placement="right"
+                    show={activePopoverId === update.id} // Only show if it's the active popover
+                    onToggle={() => handlePopoverToggle(update.id)}
                     overlay={
                         <Popover id={`popover-${update.id}`}>
                             <Popover.Header as="h3">{update.title}</Popover.Header>

@@ -25,6 +25,7 @@ const HomePage = () => {
     const [updateTogglerRotated, setUpdateTogglerRotated] = useState(false);
     const [objectTogglerRotated, setObjectTogglerRotated] = useState(false);
 
+
     //to toggle the sidebar buttons
     const handleToggle = () => {
         setIsUpdateSectionVisible(!isUpdateSectionVisible);
@@ -76,7 +77,7 @@ const HomePage = () => {
     };
 
     const getLeftSidebarContent = () => {
-        return <LeftSidebarContentMap />;
+        return <LeftSidebarContentMap isSidebarVisible={isUpdateSectionVisible}/>;
     };
 
     const getRightSidebarContent = () => {
