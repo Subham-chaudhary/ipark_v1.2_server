@@ -37,6 +37,7 @@ public class JwtUtil {
     public String extractRefreshTokenUid(String token) {
         if(validateRefreshToken(token)) {
             Claims claims = extractAllClaims(token, getRefreshTokenSigningKey());
+            System.out.println("Claims" + claims.getSubject());
             return claims.getSubject();
         }
         return null;

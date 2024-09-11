@@ -5,13 +5,51 @@ import com.ipark.adminpanel.entity.Clients;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Component
 public class ClientDtoConverter {
+    public static void updateEntityFromDto(ClientDto clientDto, Clients existingClient) {
+        if (clientDto.getName() != null) {
+            existingClient.setName(clientDto.getName());
+        }
+        if (clientDto.getContacts() != null) {
+            existingClient.setContacts(clientDto.getContacts());
+        }
+        if (clientDto.getRegisteredPhone() != null) {
+            existingClient.setRegisteredPhone(clientDto.getRegisteredPhone());
+        }
+        if (clientDto.getRole() != null) {
+            existingClient.setRole(clientDto.getRole());
+        }
+        if (clientDto.getCurrentSession() != null) {
+            existingClient.setCurrentSession(clientDto.getCurrentSession());
+        }
+        if (clientDto.getUpdatedBy() != null) {
+            existingClient.setUpdatedBy(clientDto.getUpdatedBy());
+        }
+        if (clientDto.getIsBot() != null) {
+            existingClient.setIsBot(clientDto.getIsBot());
+        }
+        if (clientDto.getIsActive() != null) {
+            existingClient.setIsActive(clientDto.getIsActive());
+        }
+        if (clientDto.getIsOnline() != null) {
+            existingClient.setIsOnline(clientDto.getIsOnline());
+        }
+        if (clientDto.getLotUID() != null) {
+            existingClient.setLotUID(clientDto.getLotUID());
+        }
+        if (clientDto.getShiftSchedule() != null) {
+            existingClient.setShiftSchedule(clientDto.getShiftSchedule());
+        }
+    }
 
+    // Keep the convertToEntity method for creating new entities
     public static Clients convertToEntity(ClientDto clientDto) {
         Clients clients = new Clients();
+        updateEntityFromDto(clientDto, clients);
         clients.setClientUid(clientDto.getClientUid());
         clients.setName(clientDto.getName());
         clients.setContacts(clientDto.getContacts());
