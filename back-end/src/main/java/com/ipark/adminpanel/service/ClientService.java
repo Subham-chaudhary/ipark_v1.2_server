@@ -66,16 +66,27 @@ public class ClientService {
 //        return fetched;
 //    }
 ////
-@Transactional
-public Clients updateClient(UUID id, ClientDto clientDto) {
-    Clients existingClient = clientRepo.findById(id).orElse(null);
-    if (existingClient != null) {
-        Clients updatedClient = ClientDtoConverter.convertToEntity(clientDto);
-        updatedClient.setClientUid(existingClient.getClientUid());
-        System.out.println("updatedClient = " + updatedClient);
-        return clientRepo.save(updatedClient);
+//@Transactional
+//public Clients updateClient(UUID id, ClientDto clientDto) {
+//    Clients existingClient = clientRepo.findById(id).orElse(null);
+//    if (existingClient != null) {
+//        Clients updatedClient = ClientDtoConverter.convertToEntity(clientDto);
+//        updatedClient.setClientUid(existingClient.getClientUid());
+//        System.out.println("updatedClient = " + updatedClient);
+//        return clientRepo.save(updatedClient);
+//    }
+//    return null;}
+
+    @Transactional
+    public Clients updateClient(UUID id, ClientDto clientDto) {
+        Clients existingClient = clientRepo.findById(id).orElse(null);
+        if (existingClient != null) {
+            ClientDtoConverter.updateEntityFromDto(clientDto, existingClient);
+            System.out.println("Updated client = " + existingClient);
+            return clientRepo.save(existingClient);
+        }
+        return null;
     }
-    return null;}
 
     @Transactional
     public Clients addClient(ClientDto clientDto) {
@@ -89,6 +100,8 @@ public Clients updateClient(UUID id, ClientDto clientDto) {
 //    public Clients updateClient(UUID id, ClientDto clientDto) {
 //        Clients existingClient = clientRepo.findById(id).orElse(null);
 //        if (existingClient != null) {
+//            modelMapper.typeMap(ClientDto.class, Clients.class)
+//                    .addMappings(mapper -> mapper.skip(Clients::setClientUid));
 //            modelMapper.map(clientDto, existingClient);
 //            return clientRepo.save(existingClient);
 //        }

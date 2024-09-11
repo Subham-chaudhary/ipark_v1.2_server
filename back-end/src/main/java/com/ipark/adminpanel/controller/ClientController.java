@@ -1,6 +1,5 @@
 package com.ipark.adminpanel.controller;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ipark.adminpanel.dto.ClientDto;
 import com.ipark.adminpanel.entity.Clients;
 import com.ipark.adminpanel.enums.Role;
