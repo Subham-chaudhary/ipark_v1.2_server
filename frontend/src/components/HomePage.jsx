@@ -14,7 +14,7 @@ const RightSidebarContentStaff = lazy(() => import('./RightSidebar/RightSidebarC
 const MapHolder = lazy(() => import('./Tabs/MapHolder'))
 const AnalyticSection = lazy(() => import('./Tabs/Analytics'));
 const GraphSection = lazy(() => import('./Tabs/Graph'));
-const OperatorSection = lazy(() => import('./Tabs/Operators'));
+const StaffSection = lazy(() => import('./Tabs/Staff'));
 const RecordSection = lazy(() => import('./Tabs/Records'));
 const SettingSection = lazy(() => import('./Tabs/Settings'));
 
@@ -178,7 +178,7 @@ const HomePage = () => {
                             <GraphSection />
                         </Suspense>}
                         {activeTab === 'staff' && <Suspense fallback={<div>Loading...</div>}>
-                            <OperatorSection />
+                            <StaffSection />
                         </Suspense>}
                         {activeTab === 'records' && <Suspense fallback={<div>Loading...</div>}>
                             <RecordSection />

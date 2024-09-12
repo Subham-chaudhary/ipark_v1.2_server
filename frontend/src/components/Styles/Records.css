@@ -1,0 +1,20 @@
+.sort-toggle-icon {
+    color: #1976d2; /* Custom color for the icon */
+    font-size: 20px; /* Change icon size */
+    transition: transform 0.3s ease-in-out; /* Add a transition effect */
+  }
+  
+  /* Rotate icon for ascending sort */
+  .sort-toggle-icon.asc {
+    transform: rotate(180deg); /* Rotate the icon */
+  }
+  
+  /* Hover effect */
+  .sort-toggle-icon:hover {
+    color: #1565c0; /* Darker color on hover */
+  }
+
+  .sort-toggle-icon {
+    width: 16px;
+    height: 16px;
+  }
