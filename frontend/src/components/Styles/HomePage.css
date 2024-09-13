@@ -4,7 +4,7 @@
 }
 
 .nav-link [type="radio"] {
-  display:none; 
+  display: none;
 }
 
 .nav-link {
@@ -15,13 +15,17 @@
 }
 
 .nav-link.active {
-  background-color: #007bff; /* Active tab background color */
-  color: white; /* Active tab text color */
+  background-color: #007bff;
+  /* Active tab background color */
+  color: white;
+  /* Active tab text color */
 }
 
 .nav-link:hover {
-  background-color: #405876; /* Tab hover color */
-  color: white; /* Tab hover text color */
+  background-color: #405876;
+  /* Tab hover color */
+  color: white;
+  /* Tab hover text color */
 }
 
 .dashboard-container {
@@ -33,10 +37,20 @@
 }
 
 
-.update-section {
-  flex: 1;
-  overflow-y: auto;
-  height: 100vh;
+/* Styles for bigger screens (above 768px) */
+@media (min-width: 768px) {
+  .update-section {
+    display: none;
+    width: 20%;
+    flex: 1;
+    overflow-y: auto;
+    height: 100vh;
+    transition: all 0.3s ease;
+  }
+
+  .update-section.visible {
+    display: block;
+  }
 }
 
 .object-section {
@@ -61,7 +75,34 @@
   }
 }
 
+/* Styles for smaller screens (mobile) */
+@media (max-width: 768px) {
+  .update-section {
+    overflow-y: auto;
+    height: 100vh;
+    position: absolute;
+    left: -100%;
+    z-index: 999;
+    transition: all 0.3s ease;
+    background-color: #fff;
+  }
 
+  /* Show sidebar when visible */
+  .update-section.visible {
+    left: 0;
+  }
+
+  /* Main page content */
+  .dashboard-container {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Prevent scrolling on the whole page when sidebar is visible */
+  body.sidebar-open {
+    overflow: hidden;
+  }
+}
 
 .col {
   word-wrap: break-word;
@@ -81,7 +122,7 @@
 
 .rotated {
   transform: rotate(180deg);
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.3s ease;
 }
 
 .mini-map-container {
@@ -165,6 +206,7 @@ body.scrolled #back-to-top-btn {
   height: 100vh;
   padding: 0rem;
 }
+
 .svg-container {
   width: 100%;
   height: 100%;
@@ -174,20 +216,25 @@ body.scrolled #back-to-top-btn {
 .svg-container svg {
   width: 610px;
   height: 800px;
-  object-fit: contain; /* Ensures the SVG scales within its container */
+  object-fit: contain;
+  /* Ensures the SVG scales within its container */
 }
 
 @media (max-width: 1000px) {
   .map-section {
-    width: 100vw; /* Full viewport width on mobile */
-    overflow-x: auto; /* Enable horizontal scrolling if necessary */
+    width: 100vw;
+    /* Full viewport width on mobile */
+    overflow-x: auto;
+    /* Enable horizontal scrolling if necessary */
     margin-top: 2rem;
     margin-bottom: 2rem;
   }
 
   .map-svg {
-    width: 100%; /* Full width of the container */
-    height: auto; /* Maintain aspect ratio */
+    width: 100%;
+    /* Full width of the container */
+    height: auto;
+    /* Maintain aspect ratio */
   }
 }
 
@@ -228,109 +275,109 @@ body.scrolled #back-to-top-btn {
 
 
 
-        .btn-open-popup {
-            padding: 12px 24px;
-            font-size: 18px;
-            background-color: green;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+.btn-open-popup {
+  padding: 12px 24px;
+  font-size: 18px;
+  background-color: green;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 
-        .btn-open-popup:hover {
-            background-color: #4caf50;
-        }
+.btn-open-popup:hover {
+  background-color: #4caf50;
+}
 
-        .overlay-container {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
+.overlay-container {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
 
-        .popup-box {
-            background: #fff;
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-            width: 320px;
-            text-align: center;
-            opacity: 0;
-            transform: scale(0.8);
-            animation: fadeInUp 0.5s ease-out forwards;
-        }
+.popup-box {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  width: 320px;
+  text-align: center;
+  opacity: 0;
+  transform: scale(0.8);
+  animation: fadeInUp 0.5s ease-out forwards;
+}
 
-        .form-container {
-            display: flex;
-            flex-direction: column;
-        }
+.form-container {
+  display: flex;
+  flex-direction: column;
+}
 
-        .form-label {
-            margin-bottom: 10px;
-            font-size: 16px;
-            color: #444;
-            text-align: left;
-        }
+.form-label {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #444;
+  text-align: left;
+}
 
-        .form-input {
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 16px;
-            width: 100%;
-            box-sizing: border-box;
-        }
+.form-input {
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
 
-        .btn-submit,
-        .btn-close-popup {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
+.btn-submit,
+.btn-close-popup {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-        .btn-submit {
-            background-color: green;
-            color: #fff;
-        }
+.btn-submit {
+  background-color: green;
+  color: #fff;
+}
 
-        .btn-close-popup {
-            margin-top: 12px;
-            background-color: #e74c3c;
-            color: #fff;
-        }
+.btn-close-popup {
+  margin-top: 12px;
+  background-color: #e74c3c;
+  color: #fff;
+}
 
-        .btn-submit:hover,
-        .btn-close-popup:hover {
-            background-color: #4caf50;
-        }
+.btn-submit:hover,
+.btn-close-popup:hover {
+  background-color: #4caf50;
+}
 
-        /* Keyframes for fadeInUp animation */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
+/* Keyframes for fadeInUp animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-        /* Animation for popup */
-        .overlay-container.show {
-            display: flex;
-            opacity: 1;
-        }
+/* Animation for popup */
+.overlay-container.show {
+  display: flex;
+  opacity: 1;
+}

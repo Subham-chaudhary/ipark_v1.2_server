@@ -8,8 +8,8 @@ import us from 'frontend/public/maps/us.json';
 
 
 const MapHolder = () => {
-  // const width = 975;
-  // const height = 610;
+  const width = 975;
+  const height = 610;
   const mapRef = useRef(null);
   const initializedRef = useRef(false);
   useEffect(() => {
@@ -56,7 +56,7 @@ const MapHolder = () => {
       svg.transition().duration(750).call(
         zoom.transform,
         d3.zoomIdentity,
-        d3.zoomTransform(svg.node()).invert([svg.node().clientWidth / 2, svg.node().clientHeight / 2])
+        d3.zoomTransform(svg.node()).invert([width / 2, height / 2])
       );
     }
 
@@ -68,8 +68,8 @@ const MapHolder = () => {
       svg.transition().duration(750).call(
         zoom.transform,
         d3.zoomIdentity
-        .translate(svg.node().clientWidth / 2, svg.node().clientHeight / 2)
-        .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / svg.node().clientWidth, (y1 - y0) / svg.node().clientHeight)))
+        .translate(width / 2, height / 2)
+        .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
         .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
       d3.pointer(event, svg.node())
       );

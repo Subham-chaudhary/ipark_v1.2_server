@@ -28,6 +28,10 @@ const HomePage = () => {
 
     //to toggle the sidebar buttons
     const handleToggle = () => {
+        const sidebar = document.querySelector('.update-section');
+        const body = document.querySelector('body');
+        sidebar.classList.toggle('visible'); // Toggle visible class
+        body.classList.toggle('sidebar-open');
         setIsUpdateSectionVisible(!isUpdateSectionVisible);
         setUpdateTogglerRotated(!updateTogglerRotated);
     };
@@ -77,7 +81,7 @@ const HomePage = () => {
     };
 
     const getLeftSidebarContent = () => {
-        return <LeftSidebarContentMap isSidebarVisible={isUpdateSectionVisible} objectSectionVisible={objectSectionVisible}/>;
+        return <LeftSidebarContentMap isSidebarVisible={isUpdateSectionVisible} objectSectionVisible={objectSectionVisible} />;
     };
 
     const getRightSidebarContent = () => {
@@ -161,7 +165,7 @@ const HomePage = () => {
 
                     {/* update section container sidebar */}
                     <div className="container update-section"
-                        style={{ display: isUpdateSectionVisible ? 'block' : 'none' }}>
+                    >
                         <Suspense fallback={<div>Loading...</div>}>
                             {getLeftSidebarContent()}
                         </Suspense>
