@@ -29,6 +29,7 @@
   flex: 1;
   flex-wrap: wrap;
   margin-top: .5rem;
+  height: 100%;
 }
 
 
@@ -47,7 +48,10 @@
 
 .map-section {
   flex: 1.5;
-  /* make the map-section take up a bit more space than the other two */
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center;
+  align-items: center; */
 }
 
 @media (max-width: 1000px) {
