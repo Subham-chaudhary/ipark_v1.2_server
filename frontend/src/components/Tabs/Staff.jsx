@@ -5,6 +5,9 @@ import {uid} from "./uid"
 import { nodes } from './asset'
 import 'reactjs-popup/dist/index.css';
 import "../Styles/Records.css"
+import { useTheme } from "@table-library/react-table-library/theme";
+import { getTheme } from "@table-library/react-table-library/baseline";
+
 import {
     useSort,
     HeaderCellSort,
@@ -64,6 +67,21 @@ const Staff = () => {
         }
     
       }, [dataChanged, db]);
+      
+      const theme = useTheme({
+        HeaderRow: `
+            background-color: #eaf5fd;
+          `,
+        Row: `
+            &:nth-of-type(odd) {
+              background-color: #d2e9fb;
+            }
+    
+            &:nth-of-type(even) {
+              background-color: #eaf5fd;
+            }
+          `,
+      });
     
     
     
@@ -337,7 +355,7 @@ const Staff = () => {
       {/* table  section */}
       <div >
       
-        <Table layout={{ fixedHeader: true }} pagination={pagination}  sort={sort}  data={{ nodes: filteredNodes }}>
+        <Table layout={{ fixedHeader: true }} pagination={pagination}  sort={sort}  data={{ nodes: filteredNodes }}   theme={theme}>
           {(tableList) => (
             <>
               <Header >
