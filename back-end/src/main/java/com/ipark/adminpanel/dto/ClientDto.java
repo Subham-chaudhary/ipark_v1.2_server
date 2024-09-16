@@ -28,9 +28,9 @@ public class ClientDto {
     private UUID createdBy;
     private UUID updatedBy;
     private ZonedDateTime updatedAt;
-    private boolean isBot;
-//    private boolean isActive;
-//    private boolean isOnline;
+    private Boolean isBot;
+    private Boolean isActive;
+    private Boolean isOnline;
     private UUID lotUID;
     private Map<String, Object> shiftSchedule;
 }

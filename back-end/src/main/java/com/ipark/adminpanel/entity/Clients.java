@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -25,6 +26,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @DynamicInsert
+@DynamicUpdate
 @Table(name = "clients0")
 public class Clients {
 
@@ -71,16 +73,16 @@ public class Clients {
 
 
     // Indicates whether the client is active.
-    @Column(name = "is_active", columnDefinition = "boolean default true")
-    private boolean isActive ;
+    @Column(name = "is_active")
+    private Boolean isActive ;
 
     // Indicates whether the client is a bot.
-    @Column(name = "is_bot", columnDefinition = "boolean default false")
-    private boolean isBot;
+    @Column(name = "is_bot")
+    private Boolean isBot;
 
     // Indicates whether the client is online.
     @Column(name = "is_online", columnDefinition = "boolean default false")
-    private boolean isOnline;
+    private Boolean isOnline;
 
 
     @Column(name = "lot_uid")
