@@ -34,6 +34,9 @@ public class JwtFilter extends OncePerRequestFilter {
     private ClientRepo clientRepo;
 
     @Autowired
+    private ClientService clientService;
+
+    @Autowired
     private JwtUtil jwtUtil;
 
     @Override
@@ -42,6 +45,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String phoneNumber = null;
         String refreshToken = null;
         String jwt = null;
+        String id = null;
         if (req.getCookies() != null) {
             for (Cookie cookie : req.getCookies()) {
                 if (cookie.getName().equals("accessToken")) jwt = cookie.getValue();
@@ -50,7 +54,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         try {
             if (jwtUtil.validateAccessToken(jwt)) {
-                String id = jwtUtil.extractAccessTokenUid(jwt);
+                id = jwtUtil.extractAccessTokenUid(jwt);
                 phoneNumber = jwtUtil.extractAccessTokenPhoneNumber(jwt);
 
             }
@@ -65,7 +69,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     }
                 }
                 jwt = jwtUtil.refreshAccessToken(refreshToken);
-                String id = jwtUtil.extractAccessTokenUid(jwt);
+                id = jwtUtil.extractAccessTokenUid(jwt);
                 phoneNumber = jwtUtil.extractAccessTokenPhoneNumber(jwt);
 
             } catch (RuntimeException ex) {
@@ -73,7 +77,8 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
         //
-
+//        Clients myClient = clientRepo.findByClientUid(UUID.fromString(id));
+//        System.out.println("Retrieved the details by ID: " + myClient);
         System.out.println("Phone Number is JWT FILTER: " + phoneNumber);
         if (phoneNumber != null) {
             UserDetails client = userDetailsService.loadUserByUsername(phoneNumber);

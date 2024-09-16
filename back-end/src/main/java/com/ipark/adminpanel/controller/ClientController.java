@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ipark.adminpanel.dto.ClientDto;
 import com.ipark.adminpanel.entity.Clients;
 import com.ipark.adminpanel.enums.Role;
+import com.ipark.adminpanel.service.BookingService;
 import com.ipark.adminpanel.service.ClientService;
 import com.ipark.adminpanel.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,11 +28,19 @@ public class ClientController {
 
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private SlotSocketHandler slotSocketHandler;
+    @Autowired
+    private BookingService bookingService;
 
     @GetMapping("/list/{lotID}")
     public ResponseEntity<?> getAllClients(@RequestHeader("Cookie") String Cookie, @PathVariable UUID lotID) {
         System.out.println(Cookie);
         List<Clients> clients = clientService.getAllClients(lotID);
+        String message = "Client with phone " + lotID + " has logged in.";
+        System.out.println("Message: " + message);
+        slotSocketHandler.notifyOperators("123", message);
+        bookingService.bookSlot("123", "123456789");
         if (!clients.isEmpty()) {
             return new ResponseEntity<>(clients, HttpStatus.OK);
         }
@@ -59,6 +68,8 @@ public class ClientController {
                     .path("/")
                     .build();
             res.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+
+
 
             return new ResponseEntity<>(client, HttpStatus.OK);
         }
