@@ -3,13 +3,11 @@ import './Styles/HomePage.css';
 
 // Lazy load sidebar content components
 const LeftSidebarContentMap = lazy(() => import('./LeftSidebarContentMap'));
-
 const RightSidebarContentMap = lazy(() => import('./RightSidebar/RightSidebarContentMap'));
 const RightSidebarContentAnalytics = lazy(() => import('./RightSidebar/RightSidebarContentAnalytics'));
 const RightSidebarContentGraph = lazy(() => import('./RightSidebar/RightSidebarContentGraph'));
 const RightSidebarContentRecords = lazy(() => import('./RightSidebar/RightSidebarContentRecords'));
 const RightSidebarContentStaff = lazy(() => import('./RightSidebar/RightSidebarContentStaff'));
-
 //imports for the tabs
 const MapHolder = lazy(() => import('./Tabs/MapHolder'))
 const AnalyticSection = lazy(() => import('./Tabs/Analytics'));
@@ -24,7 +22,6 @@ const HomePage = () => {
 
     const [updateTogglerRotated, setUpdateTogglerRotated] = useState(false);
     const [objectTogglerRotated, setObjectTogglerRotated] = useState(false);
-
 
     //to toggle the sidebar buttons
     const handleToggle = () => {
@@ -114,17 +111,17 @@ const HomePage = () => {
     return (
         <>
             <div className="container-fluid mainpage-container">
-                <nav className="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+                <nav className="navbar navbar-expand-lg " style={{ backgroundColor: '#120A54' }} data-bs-theme="dark">
                     <div className="container-fluid">
                         <a className="navbar-brand" href="#">i-Park</a>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                             <span className="navbar-toggler-icon"></span>
                         </button>
-                        <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-                            <div className="navbar-nav" style={{ flex: 1, justifyContent: 'space-around' }}>
+                        <div className="collapse navbar-collapse" id="navbarNavAltMarkup" >
+                            <div className="navbar-nav btn custom-btn" style={{ flex: 1, justifyContent: 'space-around'}}  >
                                 {['map', 'analytics', 'graph', 'staff', 'records', 'settings'].map(tab => (<div>
 
-                                    <label className={`nav-link ${activeTab === tab ? 'active' : ''}`}>
+                                    <label className={`nav-link custom-btn ${activeTab === tab ? 'active' : ''}` } style={{color:'white'}}>
                                         <input
                                             key={tab}
                                             type="radio"
@@ -259,5 +256,4 @@ const HomePage = () => {
         </>
     );
 }
-
 export default HomePage;
