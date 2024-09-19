@@ -22,7 +22,7 @@ const HomePage = () => {
 
     const [updateTogglerRotated, setUpdateTogglerRotated] = useState(false);
     const [objectTogglerRotated, setObjectTogglerRotated] = useState(false);
-
+//bharti
     //to toggle the sidebar buttons
     const handleToggle = () => {
         setIsUpdateSectionVisible(!isUpdateSectionVisible);
