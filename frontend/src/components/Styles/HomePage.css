@@ -36,10 +36,7 @@
   height: 100%;
 }
 
-/* Hide the element by default */
-.visible {
-  display: none;
-}
+
 /* Styles for bigger screens (above 768px) */
 @media (min-width: 768px) {
   .update-section {
@@ -93,6 +90,7 @@
   /* Show sidebar when visible */
   .update-section.visible {
     left: 0;
+    display: block;
   }
 
   /* Main page content */

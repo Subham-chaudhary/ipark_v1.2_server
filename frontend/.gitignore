@@ -24,4 +24,5 @@ dist-ssr
 *.sw?
 
 public/Maps
+src/maps
 

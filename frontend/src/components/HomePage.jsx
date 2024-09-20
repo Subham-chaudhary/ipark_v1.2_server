@@ -29,9 +29,7 @@ const HomePage = () => {
     //to toggle the sidebar buttons
     const handleToggle = () => {
         const sidebar = document.querySelector('.update-section');
-        const body = document.querySelector('body');
         sidebar.classList.toggle('visible');
-        body.classList.toggle('sidebar-open');
         setIsUpdateSectionVisible(!isUpdateSectionVisible);
         setUpdateTogglerRotated(!updateTogglerRotated);
     };
