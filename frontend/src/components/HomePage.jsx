@@ -42,6 +42,9 @@ const HomePage = () => {
     //this is pop-up a scroll to top button when users scrolls down a bit
     const [showButton, setShowButton] = useState(false);
 
+
+
+
     useEffect(() => {
         const minimapSection = document.querySelector('.minimap-section');
 
@@ -98,20 +101,6 @@ const HomePage = () => {
                 return <div>Select a tab</div>;
         }
     };
-
-
-
-    //map section for zooming in and out
-    // const [zoomLevel, setZoomLevel] = useState(1); // Initial zoom level 
-
-    // const handleZoomIn = () => {
-    //     setZoomLevel(prevZoom => prevZoom * 1.2); // Increase zoom level by 20%
-    // };
-
-    // const handleZoomOut = () => {
-    //     setZoomLevel(prevZoom => Math.max(1, prevZoom / 1.2)); //Decrease zoom level by 20%, with a minimum zoom level of 1
-    // };
-
 
     return (
         <>
@@ -189,19 +178,6 @@ const HomePage = () => {
                         {activeTab === 'settings' && <Suspense fallback={<div>Loading...</div>}>
                             <SettingSection />
                         </Suspense>}
-                        {/* <img
-                                src="/maps/map1.svg"
-                                alt="Main Map"
-                                style={{
-                                    transform: `scale(${zoomLevel})`,
-                                    transformOrigin: 'center'
-                                }}
-                            /> */}
-
-                        {/* <div className="zoom-controls">
-                            <button className="zoom-button" onClick={handleZoomIn}>+</button>
-                            <button className="zoom-button" onClick={handleZoomOut}>-</button>
-                        </div> */}
                     </div>
 
                     <div className="container object-section" style={{ display: objectSectionVisible ? 'flex' : 'none' }}>
