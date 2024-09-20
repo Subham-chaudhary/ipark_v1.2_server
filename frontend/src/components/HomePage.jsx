@@ -30,7 +30,7 @@ const HomePage = () => {
     const handleToggle = () => {
         const sidebar = document.querySelector('.update-section');
         const body = document.querySelector('body');
-        sidebar.classList.toggle('visible'); // Toggle visible class
+        sidebar.classList.toggle('visible');
         body.classList.toggle('sidebar-open');
         setIsUpdateSectionVisible(!isUpdateSectionVisible);
         setUpdateTogglerRotated(!updateTogglerRotated);
@@ -80,8 +80,8 @@ const HomePage = () => {
         });
     };
 
-    const getLeftSidebarContent = () => {
-        return <LeftSidebarContentMap isSidebarVisible={isUpdateSectionVisible} objectSectionVisible={objectSectionVisible} />;
+    const getLeftSidebarContent = () => {        
+        return <LeftSidebarContentMap isSidebarVisible={isUpdateSectionVisible}/>;
     };
 
     const getRightSidebarContent = () => {
@@ -164,7 +164,7 @@ const HomePage = () => {
                 <div className="container-fluid dashboard-container">
 
                     {/* update section container sidebar */}
-                    <div className="container update-section"
+                    <div className="container update-section visible"
                     >
                         <Suspense fallback={<div>Loading...</div>}>
                             {getLeftSidebarContent()}
@@ -210,7 +210,7 @@ const HomePage = () => {
                         <div className="mini-map-container">
                             <div className="mini-map">
                                 <img
-                                    src="/maps/map1.svg"
+                                    src="/src/maps/map1.svg"
                                     alt="Mini Map"
                                 />
                             </div>

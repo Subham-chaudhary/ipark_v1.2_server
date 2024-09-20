@@ -1,9 +1,8 @@
 import React, { useState, useEffect} from 'react';
 import { Popover, OverlayTrigger } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './LeftSidebarContentMap.css';
 
-const LeftSidebarContentMap = ({ isSidebarVisible ,objectSectionVisible}) => {
+const LeftSidebarContentMap = ({ isSidebarVisible}) => {
     const [updates, setUpdates] = useState([
         {
             id: 1,
@@ -20,6 +19,7 @@ const LeftSidebarContentMap = ({ isSidebarVisible ,objectSectionVisible}) => {
     ]);
     const [visibleUpdatesCount, setVisibleUpdatesCount] = useState(5);
     const [activePopoverId, setActivePopoverId] = useState(null); // Track which popover is open
+    const [popoverPlacement, setPopoverPlacement] = useState('right');
 
 
     // useEffect(() => {
@@ -44,23 +44,47 @@ const LeftSidebarContentMap = ({ isSidebarVisible ,objectSectionVisible}) => {
     //     setVisibleUpdatesCount(prevCount => Math.min(prevCount + 5, updates.length));
     // };
 
+     // Adjust the popover placement based on screen size (responsive design)
+     useEffect(() => {
+        const updatePopoverPlacement = () => {
+            if (window.innerWidth <= 768) {
+                setPopoverPlacement('bottom'); // Mobile view
+            } else {
+                setPopoverPlacement('right'); // Desktop view
+            }
+        };
+
+        // Initial check
+        updatePopoverPlacement();
+
+        // Listen for window resize events
+        window.addEventListener('resize', updatePopoverPlacement);
+
+        // Clean up the event listener on unmount
+        return () => {
+            window.removeEventListener('resize', updatePopoverPlacement);
+        };
+    }, []);
+
      // Trigger a resize event when the sidebar visibility changes to update the popovers
      useEffect(() => {
+        console.log(isSidebarVisible);
+        
         if (isSidebarVisible) {
             setTimeout(() => {
                 window.dispatchEvent(new Event('resize')); // Dispatch resize event
             }, 100); // Add a slight delay to allow sidebar animation to finish
         }
-    }, [isSidebarVisible,objectSectionVisible]);
+    }, [isSidebarVisible]);
 
     // Close all popovers when the sidebar is hidden
     useEffect(() => {
         if (!isSidebarVisible) {
             setActivePopoverId(null); // Close all popovers
         }
-        console.log(objectSectionVisible);
+        // console.log(objectSectionVisible);
         
-    }, [isSidebarVisible,objectSectionVisible]);
+    }, [isSidebarVisible]);
 
     const handlePopoverToggle = (id) => {
         setActivePopoverId((prevId) => (prevId === id ? null : id)); // Toggle the popover
@@ -73,7 +97,7 @@ const LeftSidebarContentMap = ({ isSidebarVisible ,objectSectionVisible}) => {
                 <OverlayTrigger
                     key={update.id}
                     trigger="click"
-                    placement="right"
+                    placement={popoverPlacement}
                     show={activePopoverId === update.id} // Only show if it's the active popover
                     onToggle={() => handlePopoverToggle(update.id)}
                     overlay={

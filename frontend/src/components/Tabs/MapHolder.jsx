@@ -2,10 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
 import '../Styles/MapHolder.css';
 import * as topojson from "topojson-client";
-import us from 'frontend/public/maps/us.json';
-
-
-
+import us from '/src/maps/us.json';
 
 const MapHolder = () => {
   const width = 975;
