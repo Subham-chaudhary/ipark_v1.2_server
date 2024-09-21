@@ -19,9 +19,11 @@ fast_mqtt = FastMQTT(config=mqtt_config)
 
 # Global variable to store the latest message for each topic
 latest_messages = {
-    "parkingLot/v1": {"topic": "", "payload": "", "qos": 0, "properties": {}},
-    "parkingLot/v2": {"topic": "", "payload": "", "qos": 0, "properties": {}},
-    "parkingLot/v3": {"topic": "", "payload": "", "qos": 0, "properties": {}},
+    # "parkingLot/v1": {"topic": "", "payload": "", "qos": 0, "properties": {}},
+    # "parkingLot/v2": {"topic": "", "payload": "", "qos": 0, "properties": {}},
+    # "parkingLot/v3": {"topic": "", "payload": "", "qos": 0, "properties": {}},
+    "parkingLot/#": {"topic": "", "payload": "", "qos": 0, "properties": {}},
+    "parq/book/#": {"topic": "", "payload": "", "qos": 0, "properties": {}}
 }
 
 # A list to store active WebSocket connections
@@ -42,9 +44,12 @@ app = FastAPI(lifespan=_lifespan)
 @fast_mqtt.on_connect()
 def connect(client: MQTTClient, flags: int, rc: int, properties: Any):
     # Subscribe to all three topics
-    client.subscribe("parkingLot/v1")
-    client.subscribe("parkingLot/v2")
-    client.subscribe("parkingLot/v3")
+    # client.subscribe("parkingLot/v1")
+    # client.subscribe("parkingLot/v2")
+    # client.subscribe("parkingLot/v3")
+
+    # wild card entry
+    client.subscribe("parkingLot/#")
     print("Connected and subscribed to topics: parkingLot/v1, parkingLot/v2, parkingLot/v3")
 
 
