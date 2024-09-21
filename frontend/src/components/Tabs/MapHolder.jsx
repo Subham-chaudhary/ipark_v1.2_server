@@ -1,14 +1,20 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import * as d3 from 'd3';
 import '../Styles/MapHolder.css';
-import mapData from '/src/maps/demo_map.svg'
+import mapData from '/src/maps/demo_parking_mapv3.svg'
 
 const MapHolder = () => {
   const width = 1500;  //975
-  const height = 1600;  //610
+  const height = 1800;  //610
   const mapRef = useRef(null);
   const initializedRef = useRef(false);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [popoverContent, setPopoverContent] = useState(null);
+  const [popoverPosition, setPopoverPosition] = useState({ x: 0, y: 0 });
 
+  useEffect(()=>console.log(selectedSlot),
+  [selectedSlot]
+  )
 
   useEffect(() => {
     if (initializedRef.current) return;
@@ -33,7 +39,7 @@ const MapHolder = () => {
       const svgNode = data.documentElement;
       svgNode.setAttribute("width", width);
       svgNode.setAttribute("height", height);
-      
+
       // Append the SVG content to the D3 group
       g.node().appendChild(svgNode);
 
@@ -44,6 +50,7 @@ const MapHolder = () => {
     function renderSVGElements(svgNode, g) {
       // Extract rectangles
       const rectsData = Array.from(svgNode.querySelectorAll('rect')).map(rect => ({
+        id: rect.getAttribute('id'),
         x: rect.getAttribute('x'),
         y: rect.getAttribute('y'),
         width: rect.getAttribute('width'),
@@ -66,6 +73,7 @@ const MapHolder = () => {
 
       // Extract paths
       const pathsData = Array.from(svgNode.querySelectorAll('path')).map(path => ({
+        id: path.getAttribute('id'),
         d: path.getAttribute('d'),
         fill: path.getAttribute('fill'),
         stroke: path.getAttribute('stroke'),
@@ -89,7 +97,7 @@ const MapHolder = () => {
       }));
 
       // Draw rectangles
-      g.selectAll("rect")
+      const rects = g.selectAll("rect")
         .data(rectsData)
         .enter()
         .append("rect")
@@ -101,8 +109,10 @@ const MapHolder = () => {
         .attr("stroke", d => d.stroke)
         .attr("stroke-width", d => d.strokeWidth);
 
+
+
       // Draw lines
-      g.selectAll("line")
+      const lines = g.selectAll("line")
         .data(linesData)
         .enter()
         .append("line")
@@ -115,18 +125,22 @@ const MapHolder = () => {
         .attr("transform", d => d.transform);
 
       // Draw paths
-      g.selectAll("path")
+      const paths = g.selectAll("path")
+        .attr("cursor", "pointer")
+        .join("path")
+        .on("click", handleClick)
         .data(pathsData)
         .enter()
-        .append("path")
+        .append("path").on("click", handleClick)
         .attr("d", d => d.d)
         .attr("fill", d => d.fill)
         .attr("stroke", d => d.stroke)
         .attr("stroke-width", d => d.strokeWidth)
-        .attr("transform", d => d.transform);
+        .attr("transform", d => d.transform)
+
 
       // Draw texts
-      g.selectAll("text")
+      const texts = g.selectAll("text")
         .data(textsData)
         .enter()
         .append("text")
@@ -141,9 +155,42 @@ const MapHolder = () => {
         .attr("stroke-width", d => d.strokeWidth)
         .attr("transform", d => d.transform)
         .text(d => d.textContent);
+
+      console.log("Rectangles Data:", pathsData);
     }
 
     svg.call(zoom);
+
+
+    function handleClick(event, d) {
+      // Check if the clicked slot is already selected
+      if (selectedSlot === d.id) {
+        // Hide popover if same slot is clicked again
+        console.log("same slot");
+        
+        setPopoverContent(null);
+        setSelectedSlot(null); // Deselect slot
+        g.selectAll("path").attr("fill", d => d.fill); // Reset all slots to their original color
+      } else if (d.id.startsWith("slot_")) {
+        // Deselect previously selected slot
+        g.selectAll("path").attr("fill", d => d.fill);
+
+        // Highlight the clicked slot
+        d3.select(event.target).attr("fill", "yellow");
+
+        // Show popover for the clicked slot
+        setPopoverContent(`Slot ID: ${d.id}`);
+        setPopoverPosition({
+          x: event.clientX,
+          y: event.clientY
+        });
+
+        // Set the newly clicked slot as the selected slot
+        setSelectedSlot(d.id);
+      } else {
+        setPopoverContent(null); // Hide popover if not clicked on slot
+      }
+    }
 
     function reset() {
       g.transition().style("fill", null);
@@ -152,6 +199,7 @@ const MapHolder = () => {
         d3.zoomIdentity,
         d3.zoomTransform(svg.node()).invert([width / 2, height / 2])
       );
+      // setPopoverContent(null);
     }
 
     function zoomed(event) {
@@ -169,6 +217,23 @@ const MapHolder = () => {
   return (
     <div className='svg-map-holder'>
       <svg ref={mapRef}></svg>
+      {popoverContent && (
+        <div
+          className="popover bs-popover-top"
+          style={{
+            display: 'block',
+            position: 'absolute',
+            left: popoverPosition.x - 10,
+            top: popoverPosition.y - 10,
+            maxWidth: '276px',
+            width: 'auto'
+          }}
+        >
+          <div className="arrow"></div>
+          <h3 className="popover-header">Slot Details</h3>
+          <div className="popover-body">{popoverContent}</div>
+        </div>
+      )}
     </div>
   );
 };
