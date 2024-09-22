@@ -34,4 +34,4 @@ build/
 frontend/
 
 ### mqtt-service ###
-mqtt-servic/mqtt
+mqtt-service/mqtt/
