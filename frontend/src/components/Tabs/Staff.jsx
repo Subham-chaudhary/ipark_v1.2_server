@@ -272,16 +272,7 @@ const Staff = () => {
       console.log(action, state);
     }
      //searching
-     const handleSearch = (event) => {
-      setSearch(event.target.value);
-      setDataChanged(true)
-      
-    };
-  
-    // Filter data based on the search query
-    const filteredNodes = data.nodes.filter((item) =>
-      item.name.toLowerCase().includes(search.toLowerCase())
-    );
+     
     const totalPages = Math.ceil(data.nodes.length / LIMIT);
     // const isLastPage = pagination.state.page === totalPages - 1;
 
@@ -335,38 +326,38 @@ const Staff = () => {
 
 
       {/* Navbar section */}
-      <nav style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', backgroundColor: '#282c34', color: '#fff' }}>
-        <div style={{ display: 'flex', gap: '20px' }}>
-          <button style={{ backgroundColor: 'transparent', border: 'none', color: '#fff' }}>Admin</button>
-          <button style={{ backgroundColor: 'transparent', border: 'none', color: '#fff' }}>Bot</button>
-          <button style={{ backgroundColor: 'transparent', border: 'none', color: '#fff' }}>Operators</button>
+      <nav >
+        <div >
+          <button >Admin</button>
+          <button>Bot</button>
+          <button >Operators</button>
         </div>
         
-        <label htmlFor="search">
-        Search by Task:&nbsp;
-        <input id="search" type="text" value={search} onChange={handleSearch} />
-      </label>
-      <br />
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+       
+      <div>
+
+         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
           Add Row
         </button>
 
+      </div>
+       
       </nav>
       {/* table  section */}
       <div >
       
-        <Table layout={{ fixedHeader: true }} pagination={pagination}  sort={sort}  data={{ nodes: filteredNodes }}   theme={theme}>
+        <Table layout={{ fixedHeader: true }} pagination={pagination}  sort={sort}  data={{ nodes }}   theme={theme}>
           {(tableList) => (
             <>
               <Header >
-                <HeaderRow>
+               
                     {/* <HeaderCellSort sortKey="TASK">Task  </HeaderCellSort>
                     <HeaderCellSort sortKey="DEADLINE">Deadline </HeaderCellSort>
                     <HeaderCellSort sortKey="TYPE">Type </HeaderCellSort>
                     <HeaderCellSort sortKey="COMPLETE">Complete</HeaderCellSort>
                     <HeaderCellSort sortKey="TASKS">Tasks </HeaderCellSort> */}
                 
-                <HeaderRow>
+                <HeaderRow   className="headercell">
                     <HeaderCellSort  sortKey="TASK">Task</HeaderCellSort>
                     <HeaderCellSort  sortKey="DEADLINE">Deadline</HeaderCellSort>
                     <HeaderCellSort  sortKey="TYPE">Type</HeaderCellSort>
@@ -374,7 +365,7 @@ const Staff = () => {
                     <HeaderCellSort  sortKey="TASKS">Tasks</HeaderCellSort>
                   </HeaderRow>
 
-                </HeaderRow>
+                
               </Header>
 
               <Body>

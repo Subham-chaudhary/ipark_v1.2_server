@@ -17,8 +17,8 @@ const RecordSection = lazy(() => import('./Tabs/Records'));
 const SettingSection = lazy(() => import('./Tabs/Settings'));
 
 const HomePage = () => {
-    const [isUpdateSectionVisible, setIsUpdateSectionVisible] = useState(true);
-    const [objectSectionVisible, setObjectSectionVisible] = useState(true);
+    const [isUpdateSectionVisible, setIsUpdateSectionVisible] = useState(false);
+    const [objectSectionVisible, setObjectSectionVisible] = useState(false);
 
     const [updateTogglerRotated, setUpdateTogglerRotated] = useState(false);
     const [objectTogglerRotated, setObjectTogglerRotated] = useState(false);

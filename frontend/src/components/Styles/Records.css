@@ -1,20 +1,181 @@
-.sort-toggle-icon {
-    color: #1976d2; /* Custom color for the icon */
-    font-size: 20px; /* Change icon size */
-    transition: transform 0.3s ease-in-out; /* Add a transition effect */
-  }
-  
-  /* Rotate icon for ascending sort */
-  .sort-toggle-icon.asc {
-    transform: rotate(180deg); /* Rotate the icon */
-  }
-  
-  /* Hover effect */
-  .sort-toggle-icon:hover {
-    color: #1565c0; /* Darker color on hover */
-  }
+/* Table Header Styling */
+.table-header {
+  background-color: #F5F3FE;
+  color: #fff;
+  padding: 10px;
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: bold; /* Bold text */
+  font-size: 14px;
+  text-transform: uppercase; /* Uppercase for header text */
+  letter-spacing: 1px;
+  border-bottom: 2px solid #dee2e6;
+}
+table tr:nth-child(even) {
+  background-color: #710404; /* Alternate background */
+}
 
-  .sort-toggle-icon {
-    width: 16px;
-    height: 16px;
-  }
+table tr:hover {
+  background-color: #d1ecf1; /* Lighter blue on hover */
+  cursor: pointer;
+}
+table td, table th {
+  padding: 14px 18px;
+  text-align: left;
+  border-bottom: 1px solid #dee2e6;
+  color: #495057; /* Muted dark color for text */
+}
+
+table td {
+  background-color: #571212; /* White background for cells */
+  color: #333; /* Darker text color for table cells */
+}
+.table-container {
+  margin: 20px auto;
+  width: 90%;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  overflow-x: auto;
+}
+
+/* Table Row Styling */
+tr {
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effect for rows */
+tr:hover {
+  background-color: #f0f8ff; /* Light blue color when hovering */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+input[type="date"], select {
+
+  padding: 3px;
+  margin: 2px 0;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+}
+
+input[type="checkbox"] {
+  margin-left: 10px;
+}
+/* Styling for buttons */
+button {
+  background-color: #4caf50; /* Green background */
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin-right: 10px;
+}
+
+button:hover {
+  background-color: #45a049; /* Darker green on hover */
+  transform: scale(1.05);
+}
+
+/* Add styling for modal buttons */
+.modal button {
+  background-color: #007bff;
+  border-radius: 5px;
+  color: white;
+  padding: 10px 20px;
+}
+
+.modal button:hover {
+  background-color: #0056b3; /* Darker blue */
+}
+
+/* Expanded section styling */
+tr.expanded-row {
+  background-color: #e0e0e0;
+  padding: 10px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul li {
+  margin-bottom: 8px;
+}
+
+/* Pagination */
+.pagination {
+  margin-top: 20px;
+}
+
+.pagination .page-item .page-link {
+  background-color: #120a54;
+  color: #fff;
+}
+
+.pagination .page-item .page-link:hover {
+  background-color: #d2e9fb;
+  color: #120a54;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #4caf50;
+  border-color: #4caf50;
+}
+
+/* Form Input Styling */
+.form-control {
+  margin-bottom: 10px;
+}
+
+/* Hover effect for inputs */
+input[type="text"]:hover,
+input[type="date"]:hover,
+select:hover {
+  border-color: #4caf50;
+}
+
+/* Margin and Padding */
+.modal-footer, .modal-header, .modal-body {
+  margin: 10px;
+  padding: 10px;
+}
+
+.table-container {
+  margin: 20px;
+}
+nav{
+  background: 'white'
+}
+nav button{
+  background-color: rgba(242.55, 242.03, 246.13, 0.68); /* Green background for the button */
+  color: rgba(0, 0, 0, 0.51);
+  font-Size: 20;
+   font-Family: Inter;
+    font-Weight: 800;
+     word-Wrap: break-word;
+
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+nav button:hover{
+  background-color: #3514F0;
+color: white;
+ font-Size: 20;
+  font-family: Inter;
+   font-weight: '800', 
+}
+
+.btn-primary {
+  margin-left: 0; 
+  padding: 10px 20px;
+}
