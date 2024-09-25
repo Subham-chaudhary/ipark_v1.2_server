@@ -1,0 +1,79 @@
+package com.ipark.adminpanel.service;
+
+import com.ipark.adminpanel.convert.ClientDtoConverter;
+import com.ipark.adminpanel.dto.ClientDto;
+import com.ipark.adminpanel.entity.Clients;
+import com.ipark.adminpanel.repository.ClientRepo;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+
+@Slf4j
+@Service
+public class ClientService {
+    private final ClientRepo clientRepo;
+
+    @Autowired
+    ClientDtoConverter clientDtoConverter;
+
+    public ClientService(ClientRepo clientRepo) {
+        this.clientRepo = clientRepo;
+    }
+
+    public List<Clients> getAllClients(UUID lotID) {
+        return clientRepo.findByLotUID(lotID);
+    }
+
+    public Clients getClientById(UUID id) {
+        return clientRepo.findById(id).orElse(null);
+    }
+
+    public Clients ClientLogout(UUID uuid) {
+        Clients client = clientRepo.findById(uuid).orElse(null);
+        if (client != null) {
+            client.setOnline(false);
+            clientRepo.save(client);
+        }
+        return client;
+    }
+
+    public Clients ClientLogin(String phoneNumber) {
+        Clients client = clientRepo.findByRegisteredPhone(phoneNumber);
+        if (client != null) {
+            client.setOnline(true);
+           Clients saved=clientRepo.save(client);
+            System.out.println("Retrieved = " + saved);
+
+        }
+        return client;
+    }
+
+
+
+    @Transactional
+    public Clients addClient(ClientDto clientDto) {
+        Clients clients = ClientDtoConverter.convertToEntity(clientDto);
+        System.out.println("clients = " + clients);
+        clientRepo.findById(clientDto.getAddedBy()).ifPresent(addedByUid -> clients.setLotUID(addedByUid.getLotUID()));
+
+        return clientRepo.save(clients);
+    }
+
+    @Transactional
+    public Clients updateClient(UUID id, ClientDto clientDto) {
+    Clients clients = clientRepo.findById(id).orElse(null);
+//        System.out.println("clientsBeforeUpdate = " + clients);
+    if (clients != null) {
+    clients.setName(clientDto.getName());
+    clients.setSecondaryNumber(clientDto.getSecondary_number());
+    clients.setEmail(clientDto.getEmail());
+    clients.setShiftSchedule(clientDto.getShift_schedule());
+    }
+//    System.out.println("clientsAfterUpdate = " + clients);
+        assert clients != null;
+        return clientRepo.save(clients);
+    }
+}
