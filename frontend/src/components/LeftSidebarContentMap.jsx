@@ -6,6 +6,7 @@ import './LeftSidebarContentMap.css';
 const LeftSidebarContentMap = ({ isSidebarVisible ,objectSectionVisible}) => {
     const [updates, setUpdates] = useState([
         {
+            
             id: 1,
             title: `Update 1`,
             description: `This is the description for update 1.`,

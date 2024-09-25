@@ -336,7 +336,13 @@ const Staff = () => {
        
       <div>
 
-         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+         <button type="button" class="btn btn-primary btn1" data-toggle="modal" data-target="#exampleModalCenter" 
+          style={{ 
+            position: 'absolute', 
+            right: '20px', 
+            top: '0px'
+          }}
+         >
           Add Row
         </button>
 

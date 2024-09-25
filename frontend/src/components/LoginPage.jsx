@@ -103,9 +103,9 @@ const Practice01 = () => {
                 </div>
               </Form.Group>
 
-              <Form.Group controlId="formOtp">
+              <Form.Group controlId="formOtp" style={{justifyContent:'space-between'}}>
                 <Form.Label style={{ color: '#858585', fontFamily: 'Raleway', fontSize: '16px' }}>OTP</Form.Label>
-                <div>
+                <div >
                   <OtpInput
                     value={otp}
                     onChange={setOtp}
