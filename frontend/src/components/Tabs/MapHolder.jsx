@@ -3,12 +3,100 @@ import * as d3 from 'd3';
 import '../Styles/MapHolder.css';
 import mapData from '/src/maps/demo_parking_mapv3.svg'
 
+const slotData = [
+  {
+    "uid": "822db767-a173-4a53-8379-8f380009e30c",
+    "isactive": true,
+    "isoccupied": true,
+    "property": {
+      "rot": 0,
+      "posx": 0,
+      "posy": 0,
+      "type": "tilted-45",
+      "seriel": 1
+    }
+  },
+  {
+    "uid": "51a2cfbb-0a75-4567-9192-cdf18e5d9584",
+    "isactive": true,
+    "isoccupied": false,
+    "property": {
+      "rot": 0,
+      "posx": 0,
+      "posy": 0,
+      "type": "tilted-45",
+      "seriel": 2
+    }
+  },
+  {
+    "uid": "8e22d412-79ce-4900-8a79-bd0182c733d2",
+    "isactive": true,
+    "isoccupied": false,
+    "property": {
+      "rot": 0,
+      "posx": 0,
+      "posy": 0,
+      "type": "tilted-45",
+      "seriel": 3
+    }
+  },
+  {
+    "uid": "ade9c5b0-aafc-4796-b8f2-6832d1bef188",
+    "isactive": true,
+    "isoccupied": false,
+    "property": {
+      "rot": 90,
+      "posx": 0,
+      "posy": 0,
+      "type": "tilted-45",
+      "seriel": 4
+    }
+  },
+  {
+    "uid": "db487694-4929-4f0a-bb21-de1b318e29f8",
+    "isactive": true,
+    "isoccupied": false,
+    "property": {
+      "rot": 90,
+      "posx": 0,
+      "posy": 0,
+      "type": "tilted-45",
+      "seriel": 5
+    }
+  },
+  {
+    "uid": "e251f940-6f45-4319-a616-033f9f7d0de6",
+    "isactive": true,
+    "isoccupied": true,
+    "property": {
+      "rot": 90,
+      "posx": 0,
+      "posy": 0,
+      "type": "tilted-45",
+      "seriel": 6
+    }
+  }
+];
+
+function fetchSlotData() {
+  return slotData;
+}
 
 const MapHolder = () => {
   const width = 1500;
   const height = 1500;
   const mapRef = useRef(null);
   const initializedRef = useRef(false);
+
+  // Create a mapping object
+  const uidToSlotIdMap = slotData.reduce((acc, slot, index) => {
+    const slotId = `slot_${index + 1}`;
+    acc[slot.uid] = slotId;
+    return acc;
+  }, {});
+
+  console.log(uidToSlotIdMap);
+
 
   useEffect(() => {
     if (initializedRef.current) return;
@@ -166,7 +254,20 @@ const MapHolder = () => {
         .attr("transform", d => d.transform)
         .text(d => d.textContent);
 
-      // console.log(pathsData);
+    
+      function updateSlotProperties() {
+        slotData.forEach(slot => {
+          const slotId = uidToSlotIdMap[slot.uid];
+
+          const pathElement = d3.select(`#${slotId}`);
+
+          if (pathElement) {
+            pathElement.attr("fill", slot.isoccupied ? "red" : "green");
+          }
+        });
+      }
+
+      updateSlotProperties();
     }
 
     svg.call(zoom);
