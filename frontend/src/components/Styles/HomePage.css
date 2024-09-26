@@ -36,22 +36,13 @@
   height: 100%;
 }
 
-
-/* Styles for bigger screens (above 768px) */
-@media (min-width: 768px) {
   .update-section {
-    display: none;
     max-width: 400px;
     flex: 1;
     overflow-y: auto;
     transition: all 0.3s ease;
   }
 
-  .update-section.visible {
-    display: block;
-    z-index:1000;
-  }
-}
 
 .object-section {
   display: flex;
@@ -73,36 +64,6 @@
   .dashboard-container {
     flex-direction: column;
     /* make containers stack vertically on smaller screens */
-  }
-}
-
-/* Styles for smaller screens (mobile) */
-@media (max-width: 768px) {
-  .update-section {
-    overflow-y: auto;
-    height: 100vh;
-    position: absolute;
-    left: -100%;
-    z-index: 999;
-    transition: all 0.3s ease;
-    background-color: #fff;
-  }
-
-  /* Show sidebar when visible */
-  .update-section.visible {
-    left: 0;
-    display: block;
-  }
-
-  /* Main page content */
-  .dashboard-container {
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* Prevent scrolling on the whole page when sidebar is visible */
-  body.sidebar-open {
-    overflow: hidden;
   }
 }
 
