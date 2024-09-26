@@ -37,6 +37,7 @@
 }
 
   .update-section {
+    max-height: 100vh;
     max-width: 400px;
     flex: 1;
     overflow-y: auto;
