@@ -3,25 +3,20 @@ import * as d3 from 'd3';
 import '../Styles/MapHolder.css';
 import mapData from '/src/maps/demo_parking_mapv3.svg'
 
+
 const MapHolder = () => {
-  const width = 1500;  //975
-  const height = 1800;  //610
+  const width = 1500;
+  const height = 1500;
   const mapRef = useRef(null);
   const initializedRef = useRef(false);
-  const [selectedSlot, setSelectedSlot] = useState(null);
-  const [popoverContent, setPopoverContent] = useState(null);
-  const [popoverPosition, setPopoverPosition] = useState({ x: 0, y: 0 });
-
-  useEffect(()=>console.log(selectedSlot),
-  [selectedSlot]
-  )
+ 
 
   useEffect(() => {
     if (initializedRef.current) return;
     initializedRef.current = true;
 
     const zoom = d3.zoom()
-      .scaleExtent([1, 8])
+      .scaleExtent([1, 5])
       .on("zoom", zoomed);
 
     const svg = d3.select(mapRef.current)
@@ -34,21 +29,17 @@ const MapHolder = () => {
 
     const g = svg.append("g");
 
-    // Load and parse the SVG file
     d3.xml(mapData).then(data => {
       const svgNode = data.documentElement;
       svgNode.setAttribute("width", width);
       svgNode.setAttribute("height", height);
 
-      // Append the SVG content to the D3 group
       g.node().appendChild(svgNode);
 
-      // Extract and render elements from the SVG
       renderSVGElements(svgNode, g);
     });
 
     function renderSVGElements(svgNode, g) {
-      // Extract rectangles
       const rectsData = Array.from(svgNode.querySelectorAll('rect')).map(rect => ({
         id: rect.getAttribute('id'),
         x: rect.getAttribute('x'),
@@ -60,7 +51,6 @@ const MapHolder = () => {
         strokeWidth: rect.getAttribute('stroke-width')
       }));
 
-      // Extract lines
       const linesData = Array.from(svgNode.querySelectorAll('line')).map(line => ({
         x1: line.getAttribute('x1'),
         y1: line.getAttribute('y1'),
@@ -71,7 +61,6 @@ const MapHolder = () => {
         transform: line.getAttribute('transform')
       }));
 
-      // Extract paths
       const pathsData = Array.from(svgNode.querySelectorAll('path')).map(path => ({
         id: path.getAttribute('id'),
         d: path.getAttribute('d'),
@@ -81,7 +70,6 @@ const MapHolder = () => {
         transform: path.getAttribute('transform')
       }));
 
-      // Extract texts
       const textsData = Array.from(svgNode.querySelectorAll('text')).map(text => ({
         x: text.getAttribute('x'),
         y: text.getAttribute('y'),
@@ -96,7 +84,6 @@ const MapHolder = () => {
         textContent: text.textContent
       }));
 
-      // Draw rectangles
       const rects = g.selectAll("rect")
         .data(rectsData)
         .enter()
@@ -109,9 +96,6 @@ const MapHolder = () => {
         .attr("stroke", d => d.stroke)
         .attr("stroke-width", d => d.strokeWidth);
 
-
-
-      // Draw lines
       const lines = g.selectAll("line")
         .data(linesData)
         .enter()
@@ -124,22 +108,39 @@ const MapHolder = () => {
         .attr("stroke-width", d => d.strokeWidth)
         .attr("transform", d => d.transform);
 
-      // Draw paths
+      let currentPopover = null;
       const paths = g.selectAll("path")
+        .data(pathsData)
         .attr("cursor", "pointer")
         .join("path")
-        .on("click", handleClick)
-        .data(pathsData)
-        .enter()
-        .append("path").on("click", handleClick)
+        .attr("id", d => d.id)
         .attr("d", d => d.d)
         .attr("fill", d => d.fill)
         .attr("stroke", d => d.stroke)
         .attr("stroke-width", d => d.strokeWidth)
         .attr("transform", d => d.transform)
+        .on("click", function (event, d) {
+          if (d.id.startsWith("slot_")) {
+            if (currentPopover) {
+              $(currentPopover).popover('dispose');
+            }
 
 
-      // Draw texts
+            $(this).popover({
+              title: d.id,
+              content: `Details for slot ${d.slot_id}`,
+              trigger: 'manual',
+              placement: 'auto',
+            });
+
+            
+            currentPopover = this;
+            $(this).popover('toggle');
+          }
+        })
+        .enter()
+
+
       const texts = g.selectAll("text")
         .data(textsData)
         .enter()
@@ -156,41 +157,10 @@ const MapHolder = () => {
         .attr("transform", d => d.transform)
         .text(d => d.textContent);
 
-      console.log("Rectangles Data:", pathsData);
+      // console.log(pathsData);
     }
 
     svg.call(zoom);
-
-
-    function handleClick(event, d) {
-      // Check if the clicked slot is already selected
-      if (selectedSlot === d.id) {
-        // Hide popover if same slot is clicked again
-        console.log("same slot");
-        
-        setPopoverContent(null);
-        setSelectedSlot(null); // Deselect slot
-        g.selectAll("path").attr("fill", d => d.fill); // Reset all slots to their original color
-      } else if (d.id.startsWith("slot_")) {
-        // Deselect previously selected slot
-        g.selectAll("path").attr("fill", d => d.fill);
-
-        // Highlight the clicked slot
-        d3.select(event.target).attr("fill", "yellow");
-
-        // Show popover for the clicked slot
-        setPopoverContent(`Slot ID: ${d.id}`);
-        setPopoverPosition({
-          x: event.clientX,
-          y: event.clientY
-        });
-
-        // Set the newly clicked slot as the selected slot
-        setSelectedSlot(d.id);
-      } else {
-        setPopoverContent(null); // Hide popover if not clicked on slot
-      }
-    }
 
     function reset() {
       g.transition().style("fill", null);
@@ -199,8 +169,9 @@ const MapHolder = () => {
         d3.zoomIdentity,
         d3.zoomTransform(svg.node()).invert([width / 2, height / 2])
       );
-      // setPopoverContent(null);
     }
+
+
 
     function zoomed(event) {
       const { transform } = event;
@@ -215,26 +186,11 @@ const MapHolder = () => {
   }, []);
 
   return (
-    <div className='svg-map-holder'>
-      <svg ref={mapRef}></svg>
-      {popoverContent && (
-        <div
-          className="popover bs-popover-top"
-          style={{
-            display: 'block',
-            position: 'absolute',
-            left: popoverPosition.x - 10,
-            top: popoverPosition.y - 10,
-            maxWidth: '276px',
-            width: 'auto'
-          }}
-        >
-          <div className="arrow"></div>
-          <h3 className="popover-header">Slot Details</h3>
-          <div className="popover-body">{popoverContent}</div>
-        </div>
-      )}
-    </div>
+    <>
+      <div className='svg-map-holder'>
+        <svg ref={mapRef}></svg>
+      </div>
+    </>
   );
 };
 

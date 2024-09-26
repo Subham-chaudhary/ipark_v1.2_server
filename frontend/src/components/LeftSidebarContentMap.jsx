@@ -19,7 +19,6 @@ const LeftSidebarContentMap = ({ isSidebarVisible}) => {
     ]);
     const [visibleUpdatesCount, setVisibleUpdatesCount] = useState(5);
     const [activePopoverId, setActivePopoverId] = useState(null); // Track which popover is open
-    const [popoverPlacement, setPopoverPlacement] = useState('right');
 
 
     // useEffect(() => {
@@ -44,27 +43,6 @@ const LeftSidebarContentMap = ({ isSidebarVisible}) => {
     //     setVisibleUpdatesCount(prevCount => Math.min(prevCount + 5, updates.length));
     // };
 
-     // Adjust the popover placement based on screen size (responsive design)
-     useEffect(() => {
-        const updatePopoverPlacement = () => {
-            if (window.innerWidth <= 768) {
-                setPopoverPlacement('bottom'); // Mobile view
-            } else {
-                setPopoverPlacement('right'); // Desktop view
-            }
-        };
-
-        // Initial check
-        updatePopoverPlacement();
-
-        // Listen for window resize events
-        window.addEventListener('resize', updatePopoverPlacement);
-
-        // Clean up the event listener on unmount
-        return () => {
-            window.removeEventListener('resize', updatePopoverPlacement);
-        };
-    }, []);
 
      // Trigger a resize event when the sidebar visibility changes to update the popovers
      useEffect(() => {
@@ -79,7 +57,7 @@ const LeftSidebarContentMap = ({ isSidebarVisible}) => {
 
     // Close all popovers when the sidebar is hidden
     useEffect(() => {
-        if (!isSidebarVisible) {
+        if (!isSidebarVisible[0]) {
             setActivePopoverId(null); // Close all popovers
         }
         // console.log(objectSectionVisible);
@@ -97,7 +75,7 @@ const LeftSidebarContentMap = ({ isSidebarVisible}) => {
                 <OverlayTrigger
                     key={update.id}
                     trigger="click"
-                    placement={popoverPlacement}
+                    placement='auto'
                     show={activePopoverId === update.id} // Only show if it's the active popover
                     onToggle={() => handlePopoverToggle(update.id)}
                     overlay={
