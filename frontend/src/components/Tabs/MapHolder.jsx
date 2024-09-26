@@ -9,7 +9,6 @@ const MapHolder = () => {
   const height = 1500;
   const mapRef = useRef(null);
   const initializedRef = useRef(false);
- 
 
   useEffect(() => {
     if (initializedRef.current) return;
@@ -108,7 +107,8 @@ const MapHolder = () => {
         .attr("stroke-width", d => d.strokeWidth)
         .attr("transform", d => d.transform);
 
-      let currentPopover = null;
+      let activePopoverId = null;
+
       const paths = g.selectAll("path")
         .data(pathsData)
         .attr("cursor", "pointer")
@@ -120,22 +120,31 @@ const MapHolder = () => {
         .attr("stroke-width", d => d.strokeWidth)
         .attr("transform", d => d.transform)
         .on("click", function (event, d) {
+          // Check if the path id starts with "slot_"
           if (d.id.startsWith("slot_")) {
-            if (currentPopover) {
-              $(currentPopover).popover('dispose');
+            // Dispose the current popover if active
+            if (activePopoverId) {
+              $(`#${activePopoverId}`).popover('dispose');
             }
 
+            // Toggle popover visibility based on whether the clicked path is already active
+            if (activePopoverId === d.id) {
+              // If the popover is already active, reset activePopoverId to null
+              activePopoverId = null;
+            } else {
+              // Set the active popover ID to the clicked path's ID
+              activePopoverId = d.id;
 
-            $(this).popover({
-              title: d.id,
-              content: `Details for slot ${d.slot_id}`,
-              trigger: 'manual',
-              placement: 'auto',
-            });
+              // Initialize and show the new popover
+              $(this).popover({
+                title: d.id,
+                content: `Details for slot ${d.slot_id}`,
+                trigger: 'manual',
+                placement: 'auto',
+              });
 
-            
-            currentPopover = this;
-            $(this).popover('toggle');
+              $(this).popover('toggle');
+            }
           }
         })
         .enter()
@@ -171,13 +180,12 @@ const MapHolder = () => {
       );
     }
 
-
-
     function zoomed(event) {
       const { transform } = event;
       g.attr("transform", transform);
       g.attr("stroke-width", 1 / transform.k);
     }
+
 
     return () => {
       svg.selectAll("*").remove();
