@@ -1,0 +1,26 @@
+/* Practice01.css */
+.responsive-text {
+    text-align: center;
+    position: relative;
+  }
+  
+  .main-text {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
+    word-wrap: break-word;
+    color: black;
+    font-size: 8vw; /* Responsive font size */
+  }
+  
+  @media (max-width: 768px) {
+    .main-text {
+      font-size: 10vw; /* Adjust font size on smaller screens */
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .main-text {
+      font-size: 12vw; /* Even larger font size for smaller devices */
+    }
+  }
+  

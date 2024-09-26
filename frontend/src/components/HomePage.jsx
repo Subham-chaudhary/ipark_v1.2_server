@@ -1,23 +1,40 @@
-import { useState, useEffect } from "react";
-import './HomePage.css';
+import { useState, useEffect, Suspense, lazy, startTransition } from "react";
+import './Styles/HomePage.css';
+
+// Lazy load sidebar content components
+const LeftSidebarContentMap = lazy(() => import('./LeftSidebarContentMap'));
+const RightSidebarContentMap = lazy(() => import('./RightSidebar/RightSidebarContentMap'));
+const RightSidebarContentAnalytics = lazy(() => import('./RightSidebar/RightSidebarContentAnalytics'));
+const RightSidebarContentGraph = lazy(() => import('./RightSidebar/RightSidebarContentGraph'));
+const RightSidebarContentRecords = lazy(() => import('./RightSidebar/RightSidebarContentRecords'));
+const RightSidebarContentStaff = lazy(() => import('./RightSidebar/RightSidebarContentStaff'));
+//imports for the tabs
+const MapHolder = lazy(() => import('./Tabs/MapHolder'))
+const AnalyticSection = lazy(() => import('./Tabs/Analytics'));
+const GraphSection = lazy(() => import('./Tabs/Graph'));
+const StaffSection = lazy(() => import('./Tabs/Staff'));
+const RecordSection = lazy(() => import('./Tabs/Records'));
+const SettingSection = lazy(() => import('./Tabs/Settings'));
 
 const HomePage = () => {
-    const [isUpdateSectionVisible, setIsUpdateSectionVisible] = useState(true);
-    const [objectSectionVisible, setObjectSectionVisible] = useState(true);
+    const [isUpdateSectionVisible, setIsUpdateSectionVisible] = useState(false);
+    const [objectSectionVisible, setObjectSectionVisible] = useState(false);
 
     const [updateTogglerRotated, setUpdateTogglerRotated] = useState(false);
     const [objectTogglerRotated, setObjectTogglerRotated] = useState(false);
-
+//bharti
+    //to toggle the sidebar buttons
     const handleToggle = () => {
         setIsUpdateSectionVisible(!isUpdateSectionVisible);
         setUpdateTogglerRotated(!updateTogglerRotated);
     };
-
+    //to toggle the sidebars 
     const handleObjectToggle = () => {
         setObjectSectionVisible(!objectSectionVisible);
         setObjectTogglerRotated(!objectTogglerRotated);
     };
 
+    //this is pop-up a scroll to top button when users scrolls down a bit
     const [showButton, setShowButton] = useState(false);
 
     useEffect(() => {
@@ -46,51 +63,75 @@ const HomePage = () => {
         });
     };
 
-    //for updates 
 
-    const [updates, setUpdates] = useState([]);
-    const [visibleUpdatesCount, setVisibleUpdatesCount] = useState(5); // Number of updates to show initially
+    // State to manage active tab
+    const [activeTab, setActiveTab] = useState('map');
 
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            const newUpdate = {
-                id: updates.length + 1,
-                title: `Update ${updates.length + 1}`,
-                description: `This is the description for update ${updates.length + 1}.`,
-                timestamp: new Date().toLocaleTimeString()
-            };
-
-            setUpdates(prevUpdates => {
-                const updatedUpdates = [newUpdate, ...prevUpdates];
-                return updatedUpdates.length > 25 ? updatedUpdates.slice(0, 25) : updatedUpdates;
-            });
-        }, 10000); // Add a new update every 3 seconds
-
-        return () => clearInterval(intervalId);
-    }, [updates]);
-
-    const loadMoreUpdates = () => {
-        setVisibleUpdatesCount(prevCount => Math.min(prevCount + 5, updates.length));
+    const handleTabChange = (tab) => {
+        startTransition(() => {
+            setActiveTab(tab);
+        });
     };
+
+    const getLeftSidebarContent = () => {
+        return <LeftSidebarContentMap isSidebarVisible={isUpdateSectionVisible} objectSectionVisible={objectSectionVisible}/>;
+    };
+
+    const getRightSidebarContent = () => {
+        switch (activeTab) {
+            case 'map':
+                return <RightSidebarContentMap />;
+            case 'analytics':
+                return <RightSidebarContentAnalytics />;
+            case 'graph':
+                return <RightSidebarContentGraph />;
+            case 'records':
+                return <RightSidebarContentRecords />;
+            case 'staff':
+                return <RightSidebarContentStaff />;
+            default:
+                return <div>Select a tab</div>;
+        }
+    };
+
+
+
+    //map section for zooming in and out
+    // const [zoomLevel, setZoomLevel] = useState(1); // Initial zoom level 
+
+    // const handleZoomIn = () => {
+    //     setZoomLevel(prevZoom => prevZoom * 1.2); // Increase zoom level by 20%
+    // };
+
+    // const handleZoomOut = () => {
+    //     setZoomLevel(prevZoom => Math.max(1, prevZoom / 1.2)); //Decrease zoom level by 20%, with a minimum zoom level of 1
+    // };
 
 
     return (
         <>
-            <div className="container-fluid">
-                <nav className="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+            <div className="container-fluid mainpage-container">
+                <nav className="navbar navbar-expand-lg " style={{ backgroundColor: '#120A54' }} data-bs-theme="dark">
                     <div className="container-fluid">
                         <a className="navbar-brand" href="#">i-Park</a>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                             <span className="navbar-toggler-icon"></span>
                         </button>
-                        <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-                            <div className="navbar-nav" style={{ flex: 1, justifyContent: 'space-around' }}>
-                                <a className="nav-link active" href="#">Map</a>
-                                <a className="nav-link" href="#">Analytics</a>
-                                <a className="nav-link" href="#">Graph</a>
-                                <a className="nav-link" href="#">Operators</a>
-                                <a className="nav-link" href="#">Records</a>
-                                <a className="nav-link" href="#">Settings</a>
+                        <div className="collapse navbar-collapse" id="navbarNavAltMarkup" >
+                            <div className="navbar-nav btn custom-btn" style={{ flex: 1, justifyContent: 'space-around'}}  >
+                                {['map', 'analytics', 'graph', 'staff', 'records', 'settings'].map(tab => (<div>
+
+                                    <label className={`nav-link custom-btn ${activeTab === tab ? 'active' : ''}` } style={{color:'white'}}>
+                                        <input
+                                            key={tab}
+                                            type="radio"
+                                            name="piku"
+
+                                            onChange={() => handleTabChange(tab)}
+                                        />
+                                        {tab.charAt(0).toUpperCase() + tab.slice(1)}</label>
+                                </div>
+                                ))}
                             </div>
                         </div>
                     </div>
@@ -114,40 +155,57 @@ const HomePage = () => {
                 </div>
 
                 <div className="container-fluid dashboard-container">
-                <div className="container update-section"
+
+                    {/* update section container sidebar */}
+                    <div className="container update-section"
                         style={{ display: isUpdateSectionVisible ? 'block' : 'none' }}>
-                        <h2>Upcoming Updates</h2>
-                        {updates.slice(0, visibleUpdatesCount).map(update => (
-                            <div key={update.id} className="card w-100 mb-3">
-                                <div className="card-body">
-                                    <h5 className="card-title">{update.title}</h5>
-                                    <p className="card-text">{update.description}</p>
-                                    <p className="card-text"><small className="text-muted">{update.timestamp}</small></p>
-                                </div>
-                            </div>
-                        ))}
-                        {visibleUpdatesCount < updates.length && (
-                            <button className="btn btn-primary" onClick={loadMoreUpdates}>Load More</button>
-                        )}
+                        <Suspense fallback={<div>Loading...</div>}>
+                            {getLeftSidebarContent()}
+                        </Suspense>
                     </div>
 
+
                     <div className="container map-section">
-                        <div className="card w-100">
-                            <div className="card-body">
-                                {/* Map content goes here */}
-                            </div>
-                        </div>
+                        {activeTab === 'map' && <Suspense fallback={<div>Loading...</div>}>
+                            <MapHolder />
+                        </Suspense>}
+                        {activeTab === 'analytics' && <Suspense fallback={<div>Loading...</div>}>
+                            <AnalyticSection />
+                        </Suspense>}
+                        {activeTab === 'graph' && <Suspense fallback={<div>Loading...</div>}>
+                            <GraphSection />
+                        </Suspense>}
+                        {activeTab === 'staff' && <Suspense fallback={<div>Loading...</div>}>
+                            <StaffSection />
+                        </Suspense>}
+                        {activeTab === 'records' && <Suspense fallback={<div>Loading...</div>}>
+                            <RecordSection />
+                        </Suspense>}
+                        {activeTab === 'settings' && <Suspense fallback={<div>Loading...</div>}>
+                            <SettingSection />
+                        </Suspense>}
+                        {/* <img
+                                src="/maps/map1.svg"
+                                alt="Main Map"
+                                style={{
+                                    transform: `scale(${zoomLevel})`,
+                                    transformOrigin: 'center'
+                                }}
+                            /> */}
+
+                        {/* <div className="zoom-controls">
+                            <button className="zoom-button" onClick={handleZoomIn}>+</button>
+                            <button className="zoom-button" onClick={handleZoomOut}>-</button>
+                        </div> */}
                     </div>
 
                     <div className="container object-section" style={{ display: objectSectionVisible ? 'flex' : 'none' }}>
                         <div className="mini-map-container">
                             <div className="mini-map">
-                                <div className="card w-100">
-                                    <div className="card-body">
-                                        <h5 className="card-title">Mini Map</h5>
-                                        <p className="card-text">Supporting text for mini map.</p>
-                                    </div>
-                                </div>
+                                <img
+                                    src="/maps/map1.svg"
+                                    alt="Mini Map"
+                                />
                             </div>
 
                             <div className="minimap-section">
@@ -198,5 +256,4 @@ const HomePage = () => {
         </>
     );
 }
-
 export default HomePage;
