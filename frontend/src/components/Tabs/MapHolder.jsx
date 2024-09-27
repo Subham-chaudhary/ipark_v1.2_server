@@ -7,7 +7,7 @@ const slotData = [
   {
     "uid": "822db767-a173-4a53-8379-8f380009e30c",
     "isactive": true,
-    "isoccupied": true,
+    "isoccupied": false,
     "property": {
       "rot": 0,
       "posx": 0,
@@ -67,7 +67,7 @@ const slotData = [
   {
     "uid": "e251f940-6f45-4319-a616-033f9f7d0de6",
     "isactive": true,
-    "isoccupied": true,
+    "isoccupied": false,
     "property": {
       "rot": 90,
       "posx": 0,
@@ -272,34 +272,36 @@ const MapHolder = ({ update }) => {
         console.log(slotId);
 
         const pathElement = d3.select(`#${slotId}`);
-        const lastword = event.event.substring(event.event.lastIndexOf('v1/') + 3);
-        // console.log(pathElement);
+        const lastword = event.event.split('/').pop();
+        console.log(lastword);
 
         if (lastword === 'checkIn') {
-          pathElement.attr("fill", "black");
-        } else if (lastword === 'checkOut') {
           pathElement.attr("fill", "red");
-        } else if (lastword === 'trespassing') {
+        } else if (lastword === 'checkOut') {
+          pathElement.attr("fill", "green");
+        } else if (lastword === 'tresspaser') {
           // Blink for 5 seconds
+          console.log("ress");
+          // pathElement.attr("fill","white")
           blinkSlot(pathElement);
         }
       });
     }
 
     function blinkSlot(element) {
-      const originalColor = element.attr("fill");
-      let blinkCount = 0;
+      const defaultColor = "green"; // Default color after blinking
+  let blinkCount = 0;
 
-      const interval = setInterval(() => {
-        const currentColor = blinkCount % 2 === 0 ? "yellow" : originalColor;
-        element.attr("fill", currentColor);
-        blinkCount += 1;
+  const interval = setInterval(() => {
+    const currentColor = blinkCount % 2 === 0 ? "white" : defaultColor; // Blink between white and green
+    element.attr("fill", currentColor); // Set the fill color of the SVG element
+    blinkCount += 1;
 
-        if (blinkCount === 10) { // Blink 5 times (10 half-second intervals)
-          clearInterval(interval);
-          element.attr("fill", originalColor); // Reset to original color
-        }
-      }, 500); // Blink every 500 milliseconds
+    if (blinkCount === 10) { // Blink 5 times (10 half-second intervals)
+      clearInterval(interval);
+      element.attr("fill", defaultColor); // Reset to default green color
+    }
+  }, 500); // Blink every
     }
 
 

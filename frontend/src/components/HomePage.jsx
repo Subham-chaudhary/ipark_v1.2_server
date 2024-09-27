@@ -23,7 +23,7 @@ const SettingSection = lazy(() => import('./Tabs/Settings'));
 
 const HomePage = () => {
     const [isUpdateSectionVisible, setIsUpdateSectionVisible] = useState(true);
-    const [objectSectionVisible, setObjectSectionVisible] = useState(true);
+    const [objectSectionVisible, setObjectSectionVisible] = useState(false);
 
     const [updateTogglerRotated, setUpdateTogglerRotated] = useState(false);
     const [objectTogglerRotated, setObjectTogglerRotated] = useState(false);
@@ -74,9 +74,9 @@ const HomePage = () => {
     const host = "ws://broker.mqttdashboard.com:8000/mqtt";
     // Topics for different events
     const topics = {
-        checkIn: "parkingLot/v1/checkIn",
-        checkOut: "parkingLot/v1/checkOut",
-        trespassing: "parkingLot/v1/trespassing"
+        checkIn: "ParQ/checkIn",
+        checkOut: "ParQ/checkOut",
+        trespassing: "ParQ/tresspaser"
     };
 
     // Helper function to format the time from the array
@@ -116,6 +116,8 @@ const HomePage = () => {
                 // const { title, description } = jsonMessage;
 
                 var newUpdate = {};
+                console.log(jsonMessage);
+                
 
                 // Handle check-in, check-out, and trespassing messages
                 if (topic === topics.checkIn) {
@@ -143,13 +145,14 @@ const HomePage = () => {
                     };
                     // updateSVG('checkOut', { parking_spot, plate_number, time }); // Update SVG for check-out
                 } else if (topic === topics.trespassing) {
-                    const { parking_spot, time } = jsonMessage;
+                    const {uuid, plate_number, parking_spot, time } = jsonMessage;
                     newUpdate = {
-                        key: `trespassing-${Date.now()}`,
+                        uid: uuid,
                         event:topic,
+                        key: `trespassing-${Date.now()}`,
                         id: `trespassing-${Date.now()}`,
                         title: `Trespassing: Spot ${parking_spot}`,
-                        description: `Time: ${formatTime(time)}`,
+                        description: `Plate Number: ${plate_number}, Time: ${formatTime(time)}`,
                         timestamp: formatTime(time)
                     };
                     // updateSVG('trespassing', { parking_spot, time }); // Update SVG for trespassing
@@ -160,7 +163,7 @@ const HomePage = () => {
                     .then(() => {
                         // Once saved to IndexedDB, update the state
                         setUpdates((prevUpdates) => [newUpdate, ...prevUpdates]);
-                        //  console.log(updates);
+                         console.log(updates);
 
                     })
                     .catch((error) => {
@@ -187,7 +190,7 @@ const HomePage = () => {
     };
 
     const getLeftSidebarContent = () => {
-        return <LeftSidebarContentMap isSidebarVisible={[isUpdateSectionVisible, objectSectionVisible]} update={updates.length > 0 ? [updates[updates.length - 1]] : []} />;
+        return <LeftSidebarContentMap isSidebarVisible={[isUpdateSectionVisible, objectSectionVisible]} update={updates.length > 0 ? [updates[0]] : []} />;
     };
 
     const getRightSidebarContent = () => {
@@ -266,7 +269,7 @@ const HomePage = () => {
 
                     <div className="container map-section">
                         {activeTab === 'map' && <Suspense fallback={<div>Loading...</div>}>
-                            <MapHolder update={updates.length > 0 ? [updates[updates.length - 1]] : []} />
+                            <MapHolder update={updates.length > 0 ? [updates[0]] : []} />
                         </Suspense>}
                         {activeTab === 'analytics' && <Suspense fallback={<div>Loading...</div>}>
                             <AnalyticSection />
