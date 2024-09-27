@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Popover, OverlayTrigger } from 'react-bootstrap';
-import mqtt from 'mqtt';
 import './LeftSidebarContentMap.css';
 import { saveMessageToDB, getMessagesFromDB } from './Tabs/indexedDb';
 
-const LeftSidebarContentMap = ({ isSidebarVisible }) => {
+const LeftSidebarContentMap = ({ isSidebarVisible,update}) => {
     const [updates, setUpdates] = useState([]);
     const [visibleUpdatesCount, setVisibleUpdatesCount] = useState(15);
     const [activePopoverId, setActivePopoverId] = useState(null);
@@ -16,76 +15,34 @@ const LeftSidebarContentMap = ({ isSidebarVisible }) => {
             const savedMessages = await getMessagesFromDB();
             setUpdates(savedMessages.reverse()); // Reverse to show the latest message on top
         };
-
+        // console.log(update);
+        
         loadMessagesFromDB();
     }, []);
 
-    const host = "192.168.250.229";
-const port = "8000";
-const topic = "parkingLot/v1";
 
-    // Handle MQTT connection and message reception
     useEffect(() => {
-        const clientId = "mqttjs_" + Math.random().toString(16).substr(2, 8);
+          if (update && update.length > 0) {
+            const newUpdates = update.map(({ key, id, title, description, timestamp }) => ({
+                key,
+                id,
+                title,
+                description,
+                timestamp,
+            }));
 
-        const url = `ws://${host}:${port}`;
-        const options = { clientId };
-
-        // Connect to the MQTT broker
-        const client = mqtt.connect(url, options);
-
-        // On successful connection, subscribe to the topic
-        client.on('connect', () => {
-            console.log('Connected to MQTT broker');
-            client.subscribe(topic, (err) => {
-                if (!err) {
-                    console.log(`Subscribed to ${topic}`);
-                } else {
-                    console.error('Subscription error:', err);
-                }
-            });
-        });
-
-        // Handle incoming MQTT messages
-        client.on('message', (topic, message) => {
-            try {
-                const jsonMessage = JSON.parse(message.toString());
-                const { title, description } = jsonMessage;
-
-                const newUpdate = {
-                    key: `${title}-${Date.now()}`,
-                    id: `${title}-${Date.now()}`,
-                    title: `Update x` || title,
-                    description: description || "No description available",
-                    timestamp: new Date().toLocaleTimeString() 
-                };
-
-                // Save the message to IndexedDB
-                saveMessageToDB(newUpdate)
-                    .then(() => {
-                        // Once saved to IndexedDB, update the state
-                        setUpdates((prevUpdates) => [newUpdate, ...prevUpdates]);
-                    })
-                    .catch((error) => {
-                        console.error("Error saving message to IndexedDB:", error);
-                    });
-
-            } catch (error) {
-                console.error("Error parsing MQTT message:", error);
-            }
-        });
-
-        return () => {
-            client.end();
-        };
-    }, []);
+            setUpdates((prevUpdates) => [...newUpdates, ...prevUpdates]); // Prepend new updates to the list
+        }
+    }, [update]);
 
     const loadMoreUpdates = () => {
         setVisibleUpdatesCount(prevCount => Math.min(prevCount + 5, updates.length));
     };
+
+
     // Trigger a resize event when the sidebar visibility changes to update the popovers
     useEffect(() => {
-        console.log(isSidebarVisible);
+        // console.log(isSidebarVisible);
 
         if (isSidebarVisible) {
             setTimeout(() => {

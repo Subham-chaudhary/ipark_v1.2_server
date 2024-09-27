@@ -1,5 +1,8 @@
 import { useState, useEffect, Suspense, lazy, startTransition } from "react";
 import './Styles/HomePage.css';
+import mqtt from 'mqtt';
+import { saveMessageToDB, getMessagesFromDB } from './Tabs/indexedDb';
+
 
 // Lazy load sidebar content components
 const LeftSidebarContentMap = lazy(() => import('./LeftSidebarContentMap'));
@@ -40,9 +43,6 @@ const HomePage = () => {
     //this is pop-up a scroll to top button when users scrolls down a bit
     const [showButton, setShowButton] = useState(false);
 
-
-
-
     useEffect(() => {
         const minimapSection = document.querySelector('.minimap-section');
 
@@ -70,6 +70,113 @@ const HomePage = () => {
     };
 
 
+    // MQTT connection settings
+    const host = "ws://broker.mqttdashboard.com:8000/mqtt";
+    // Topics for different events
+    const topics = {
+        checkIn: "parkingLot/v1/checkIn",
+        checkOut: "parkingLot/v1/checkOut",
+        trespassing: "parkingLot/v1/trespassing"
+    };
+
+    // Helper function to format the time from the array
+    const formatTime = (timeArray) => {
+        const [year, month, day, hour, minute, second] = timeArray;
+        return new Date(year, month - 1, day, hour, minute, second).toLocaleString(); // Formatting to readable date-time
+    };
+
+    const [updates, setUpdates] = useState([]);
+    // Handle MQTT connection and message reception
+    useEffect(() => {
+        const clientId = "mqttjs_" + Math.random().toString(16).substr(2, 8);
+        const options = { clientId };
+
+        // Connect to the MQTT broker
+        const client = mqtt.connect(host, options);
+
+        // On successful connection, subscribe to the topic
+        client.on('connect', () => {
+            console.log('Connected to MQTT broker');
+            Object.values(topics).forEach((topic) => {
+                client.subscribe(topic, (err) => {
+                    if (!err) {
+                        console.log(`Subscribed to ${topic}`);
+                    } else {
+                        console.error(`Subscription error for topic ${topic}:`, err);
+                    }
+                });
+            });
+        });
+
+        // Handle incoming MQTT messages
+        client.on('message', (topic, message) => {
+            try {
+                // Convert the message to a JSON object
+                const jsonMessage = JSON.parse(message.toString());
+                // const { title, description } = jsonMessage;
+
+                var newUpdate = {};
+
+                // Handle check-in, check-out, and trespassing messages
+                if (topic === topics.checkIn) {
+                    const { uuid, plate_number, parking_spot, time } = jsonMessage;
+                    newUpdate = {
+                        uid: uuid,
+                        event:topic,
+                        key: `checkIn-${Date.now()}`,
+                        id: `checkIn-${Date.now()}`,
+                        title: `Check-In: Spot ${parking_spot}`,
+                        description: `Plate Number: ${plate_number}, Time: ${formatTime(time)}`,
+                        timestamp: formatTime(time)
+                    };
+                    // updateSVG('checkIn', { parking_spot, plate_number, time }); // Update SVG for check-in
+                } else if (topic === topics.checkOut) {
+                    const { uuid, plate_number, parking_spot, time } = jsonMessage;
+                    newUpdate = {
+                        uid: uuid,
+                        event:topic,
+                        key: `checkOut-${Date.now()}`,
+                        id: `checkOut-${Date.now()}`,
+                        title: `Check-Out: Spot ${parking_spot}`,
+                        description: `Plate Number: ${plate_number}, Time: ${formatTime(time)}`,
+                        timestamp: formatTime(time)
+                    };
+                    // updateSVG('checkOut', { parking_spot, plate_number, time }); // Update SVG for check-out
+                } else if (topic === topics.trespassing) {
+                    const { parking_spot, time } = jsonMessage;
+                    newUpdate = {
+                        key: `trespassing-${Date.now()}`,
+                        event:topic,
+                        id: `trespassing-${Date.now()}`,
+                        title: `Trespassing: Spot ${parking_spot}`,
+                        description: `Time: ${formatTime(time)}`,
+                        timestamp: formatTime(time)
+                    };
+                    // updateSVG('trespassing', { parking_spot, time }); // Update SVG for trespassing
+                }
+
+                // Save the message to IndexedDB
+                saveMessageToDB(newUpdate)
+                    .then(() => {
+                        // Once saved to IndexedDB, update the state
+                        setUpdates((prevUpdates) => [newUpdate, ...prevUpdates]);
+                        //  console.log(updates);
+
+                    })
+                    .catch((error) => {
+                        console.error("Error saving message to IndexedDB:", error);
+                    });
+            } catch (error) {
+                console.error("Error parsing MQTT message:", error);
+            }
+        });
+
+        // Cleanup function to disconnect when the component unmounts
+        return () => {
+            client.end();
+        };
+    }, []);
+
     // State to manage active tab
     const [activeTab, setActiveTab] = useState('map');
 
@@ -80,7 +187,7 @@ const HomePage = () => {
     };
 
     const getLeftSidebarContent = () => {
-        return <LeftSidebarContentMap isSidebarVisible={[isUpdateSectionVisible, objectSectionVisible]} />;
+        return <LeftSidebarContentMap isSidebarVisible={[isUpdateSectionVisible, objectSectionVisible]} update={updates.length > 0 ? [updates[updates.length - 1]] : []} />;
     };
 
     const getRightSidebarContent = () => {
@@ -105,7 +212,7 @@ const HomePage = () => {
             <div className="container-fluid mainpage-container">
                 <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#120A54' }}>
                     <div className="container-fluid">
-                        <a className="navbar-brand" style={{color:'white'}} href="#">i-Park</a>
+                        <a className="navbar-brand" style={{ color: 'white' }} href="#">i-Park</a>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                             <span className="navbar-toggler-icon"></span>
                         </button>
@@ -150,7 +257,7 @@ const HomePage = () => {
 
                     {/* update section container sidebar */}
                     <div className="container update-section"
-                     style={{ display: isUpdateSectionVisible ? 'block' : 'none' }}>
+                        style={{ display: isUpdateSectionVisible ? 'block' : 'none' }}>
                         <Suspense fallback={<div>Loading...</div>}>
                             {getLeftSidebarContent()}
                         </Suspense>
@@ -159,7 +266,7 @@ const HomePage = () => {
 
                     <div className="container map-section">
                         {activeTab === 'map' && <Suspense fallback={<div>Loading...</div>}>
-                            <MapHolder />
+                            <MapHolder update={updates.length > 0 ? [updates[updates.length - 1]] : []} />
                         </Suspense>}
                         {activeTab === 'analytics' && <Suspense fallback={<div>Loading...</div>}>
                             <AnalyticSection />

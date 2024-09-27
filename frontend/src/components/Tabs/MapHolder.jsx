@@ -82,7 +82,7 @@ function fetchSlotData() {
   return slotData;
 }
 
-const MapHolder = () => {
+const MapHolder = ({ update }) => {
   const width = 1500;
   const height = 1500;
   const mapRef = useRef(null);
@@ -95,7 +95,7 @@ const MapHolder = () => {
     return acc;
   }, {});
 
-  console.log(uidToSlotIdMap);
+  // console.log(uidToSlotIdMap);
 
 
   useEffect(() => {
@@ -123,10 +123,10 @@ const MapHolder = () => {
 
       g.node().appendChild(svgNode);
 
-      renderSVGElements(svgNode, g);
+      renderSVGElements(svgNode, g,update);
     });
 
-    function renderSVGElements(svgNode, g) {
+    function renderSVGElements(svgNode, g,udpate) {
       const rectsData = Array.from(svgNode.querySelectorAll('rect')).map(rect => ({
         id: rect.getAttribute('id'),
         x: rect.getAttribute('x'),
@@ -208,22 +208,16 @@ const MapHolder = () => {
         .attr("stroke-width", d => d.strokeWidth)
         .attr("transform", d => d.transform)
         .on("click", function (event, d) {
-          // Check if the path id starts with "slot_"
           if (d.id.startsWith("slot_")) {
-            // Dispose the current popover if active
             if (activePopoverId) {
               $(`#${activePopoverId}`).popover('dispose');
             }
 
-            // Toggle popover visibility based on whether the clicked path is already active
             if (activePopoverId === d.id) {
-              // If the popover is already active, reset activePopoverId to null
               activePopoverId = null;
             } else {
-              // Set the active popover ID to the clicked path's ID
               activePopoverId = d.id;
 
-              // Initialize and show the new popover
               $(this).popover({
                 title: d.id,
                 content: `Details for slot ${d.slot_id}`,
@@ -254,21 +248,64 @@ const MapHolder = () => {
         .attr("transform", d => d.transform)
         .text(d => d.textContent);
 
-    
-      function updateSlotProperties() {
-        slotData.forEach(slot => {
-          const slotId = uidToSlotIdMap[slot.uid];
+      updateSlotProperties();
+      handleUpdate(update);
+
+
+
+      function handleUpdate(update) {
+        console.log(update);
+
+        update.forEach(event => {
+          const slotId = uidToSlotIdMap[event.uid];
+          console.log(slotId);
 
           const pathElement = d3.select(`#${slotId}`);
+          const lastword = event.event.substring(event.event.lastIndexOf('v1/') + 3);
+          console.log(pathElement);
 
-          if (pathElement) {
-            pathElement.attr("fill", slot.isoccupied ? "red" : "green");
+          if (lastword === 'checkin') {
+            pathElement.attr("fill", "black");
+          } else if (lastword === 'checkout') {
+            pathElement.attr("fill", "red");
+          } else if (lastword === 'trespassing') {
+            // Blink for 5 seconds
+            blinkSlot(pathElement);
           }
         });
       }
 
-      updateSlotProperties();
+      function blinkSlot(element) {
+        const originalColor = element.attr("fill");
+        let blinkCount = 0;
+
+        const interval = setInterval(() => {
+          const currentColor = blinkCount % 2 === 0 ? "yellow" : originalColor;
+          element.attr("fill", currentColor);
+          blinkCount += 1;
+
+          if (blinkCount === 10) { // Blink 5 times (10 half-second intervals)
+            clearInterval(interval);
+            element.attr("fill", originalColor); // Reset to original color
+          }
+        }, 500); // Blink every 500 milliseconds
+      }
     }
+
+    function updateSlotProperties() {
+      slotData.forEach(slot => {
+        const slotId = uidToSlotIdMap[slot.uid];
+
+        const pathElement = d3.select(`#${slotId}`);
+
+        if (pathElement) {
+          pathElement.attr("fill", slot.isoccupied ? "red" : "green");
+        }
+      });
+    }
+
+
+
 
     svg.call(zoom);
 
@@ -292,7 +329,7 @@ const MapHolder = () => {
       svg.selectAll("*").remove();
       initializedRef.current = false;
     };
-  }, []);
+  }, [update]);
 
   return (
     <>
