@@ -15,7 +15,7 @@
 }
 
 .nav-link.active {
-  background-color: #007bff;
+  background-color:  #007bff;
   /* Active tab background color */
   color: white;
   /* Active tab text color */
@@ -308,3 +308,40 @@ body.scrolled #back-to-top-btn {
   display: flex;
   opacity: 1;
 }
+
+/* .custom-btn{
+          color:black; /* Default text color */
+/* background-color: white; Default background color 
+        } */
+.custom-btn {
+
+  width: 135px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: transparent;
+  color: white;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: inset;
+
+}
+
+.custom-btn:hover {
+  color: black !important;
+  /* Text color on hover */
+  background-color: white;
+  /*Keep the background color white on hover  */
+
+}
+
+.custom-btn.active {
+  background-color: white;
+  color: black !important;
+}
+
+/* .nav-link:not(.active) {
+           background-color: transparent;  
+          color:black; 
+           
+        } */

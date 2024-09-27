@@ -14,7 +14,7 @@ const RightSidebarContentStaff = lazy(() => import('./RightSidebar/RightSidebarC
 const MapHolder = lazy(() => import('./Tabs/MapHolder'))
 const AnalyticSection = lazy(() => import('./Tabs/Analytics'));
 const GraphSection = lazy(() => import('./Tabs/Graph'));
-const OperatorSection = lazy(() => import('./Tabs/Operators'));
+const OperatorSection = lazy(() => import('./Tabs/Staff'));
 const RecordSection = lazy(() => import('./Tabs/Records'));
 const SettingSection = lazy(() => import('./Tabs/Settings'));
 
@@ -103,17 +103,17 @@ const HomePage = () => {
     return (
         <>
             <div className="container-fluid mainpage-container">
-                <nav className="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+                <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#120A54' }}>
                     <div className="container-fluid">
-                        <a className="navbar-brand" href="#">i-Park</a>
+                        <a className="navbar-brand" style={{color:'white'}} href="#">i-Park</a>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                             <span className="navbar-toggler-icon"></span>
                         </button>
-                        <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+                        <div className="collapse navbar-collapse btn" id="navbarNavAltMarkup">
                             <div className="navbar-nav" style={{ flex: 1, justifyContent: 'space-around' }}>
                                 {['map', 'analytics', 'graph', 'staff', 'records', 'settings'].map(tab => (<div>
 
-                                    <label className={`nav-link ${activeTab === tab ? 'active' : ''}`}>
+                                    <label className={`nav-link custom-btn ${activeTab === tab ? 'active' : ''}`}>
                                         <input
                                             key={tab}
                                             type="radio"
