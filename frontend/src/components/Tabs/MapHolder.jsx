@@ -123,10 +123,10 @@ const MapHolder = ({ update }) => {
 
       g.node().appendChild(svgNode);
 
-      renderSVGElements(svgNode, g,update);
+      renderSVGElements(svgNode, g, update);
     });
 
-    function renderSVGElements(svgNode, g,udpate) {
+    function renderSVGElements(svgNode, g, update) {
       const rectsData = Array.from(svgNode.querySelectorAll('rect')).map(rect => ({
         id: rect.getAttribute('id'),
         x: rect.getAttribute('x'),
@@ -250,46 +250,6 @@ const MapHolder = ({ update }) => {
 
       updateSlotProperties();
       handleUpdate(update);
-
-
-
-      function handleUpdate(update) {
-        console.log(update);
-
-        update.forEach(event => {
-          const slotId = uidToSlotIdMap[event.uid];
-          console.log(slotId);
-
-          const pathElement = d3.select(`#${slotId}`);
-          const lastword = event.event.substring(event.event.lastIndexOf('v1/') + 3);
-          console.log(pathElement);
-
-          if (lastword === 'checkin') {
-            pathElement.attr("fill", "black");
-          } else if (lastword === 'checkout') {
-            pathElement.attr("fill", "red");
-          } else if (lastword === 'trespassing') {
-            // Blink for 5 seconds
-            blinkSlot(pathElement);
-          }
-        });
-      }
-
-      function blinkSlot(element) {
-        const originalColor = element.attr("fill");
-        let blinkCount = 0;
-
-        const interval = setInterval(() => {
-          const currentColor = blinkCount % 2 === 0 ? "yellow" : originalColor;
-          element.attr("fill", currentColor);
-          blinkCount += 1;
-
-          if (blinkCount === 10) { // Blink 5 times (10 half-second intervals)
-            clearInterval(interval);
-            element.attr("fill", originalColor); // Reset to original color
-          }
-        }, 500); // Blink every 500 milliseconds
-      }
     }
 
     function updateSlotProperties() {
@@ -302,6 +262,44 @@ const MapHolder = ({ update }) => {
           pathElement.attr("fill", slot.isoccupied ? "red" : "green");
         }
       });
+    }
+
+    function handleUpdate(update) {
+      console.log(update);
+
+      update.forEach(event => {
+        const slotId = uidToSlotIdMap[event.uid];
+        console.log(slotId);
+
+        const pathElement = d3.select(`#${slotId}`);
+        const lastword = event.event.substring(event.event.lastIndexOf('v1/') + 3);
+        // console.log(pathElement);
+
+        if (lastword === 'checkIn') {
+          pathElement.attr("fill", "black");
+        } else if (lastword === 'checkOut') {
+          pathElement.attr("fill", "red");
+        } else if (lastword === 'trespassing') {
+          // Blink for 5 seconds
+          blinkSlot(pathElement);
+        }
+      });
+    }
+
+    function blinkSlot(element) {
+      const originalColor = element.attr("fill");
+      let blinkCount = 0;
+
+      const interval = setInterval(() => {
+        const currentColor = blinkCount % 2 === 0 ? "yellow" : originalColor;
+        element.attr("fill", currentColor);
+        blinkCount += 1;
+
+        if (blinkCount === 10) { // Blink 5 times (10 half-second intervals)
+          clearInterval(interval);
+          element.attr("fill", originalColor); // Reset to original color
+        }
+      }, 500); // Blink every 500 milliseconds
     }
 
 
