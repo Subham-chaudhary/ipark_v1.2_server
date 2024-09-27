@@ -5,20 +5,7 @@ import './LeftSidebarContentMap.css';
 import { saveMessageToDB, getMessagesFromDB } from './Tabs/indexedDb';
 
 const LeftSidebarContentMap = ({ isSidebarVisible }) => {
-    const [updates, setUpdates] = useState([
-        // {
-        //     id: 1,
-        //     title: `Update 1`,
-        //     description: `This is the description for update 1.`,
-        //     timestamp: new Date().toLocaleTimeString(),
-        // },
-        // {
-        //     id: 2,
-        //     title: `Update 2`,
-        //     description: `This is the description for update 2.`,
-        //     timestamp: new Date().toLocaleTimeString(),
-        // },
-    ]);
+    const [updates, setUpdates] = useState([]);
     const [visibleUpdatesCount, setVisibleUpdatesCount] = useState(15);
     const [activePopoverId, setActivePopoverId] = useState(null);
 
@@ -33,17 +20,19 @@ const LeftSidebarContentMap = ({ isSidebarVisible }) => {
         loadMessagesFromDB();
     }, []);
 
-    // MQTT connection settings
-    const host = "ws://broker.mqttdashboard.com:8000/mqtt";
-    const topic = "parkingLot/v1";
+    const host = "192.168.250.229";
+const port = "8000";
+const topic = "parkingLot/v1";
 
     // Handle MQTT connection and message reception
     useEffect(() => {
         const clientId = "mqttjs_" + Math.random().toString(16).substr(2, 8);
+
+        const url = `ws://${host}:${port}`;
         const options = { clientId };
 
         // Connect to the MQTT broker
-        const client = mqtt.connect(host, options);
+        const client = mqtt.connect(url, options);
 
         // On successful connection, subscribe to the topic
         client.on('connect', () => {
@@ -60,16 +49,15 @@ const LeftSidebarContentMap = ({ isSidebarVisible }) => {
         // Handle incoming MQTT messages
         client.on('message', (topic, message) => {
             try {
-                // Convert the message to a JSON object
                 const jsonMessage = JSON.parse(message.toString());
                 const { title, description } = jsonMessage;
 
                 const newUpdate = {
                     key: `${title}-${Date.now()}`,
-                    id: `${title}-${Date.now()}`,  // Increment id
-                    title: `Update x` || title,  // Use title from JSON or fallback
-                    description: description || "No description available", // Fallback description
-                    timestamp: new Date().toLocaleTimeString() // Use timestamp from JSON or current time
+                    id: `${title}-${Date.now()}`,
+                    title: `Update x` || title,
+                    description: description || "No description available",
+                    timestamp: new Date().toLocaleTimeString() 
                 };
 
                 // Save the message to IndexedDB
@@ -87,7 +75,6 @@ const LeftSidebarContentMap = ({ isSidebarVisible }) => {
             }
         });
 
-        // Cleanup function to disconnect when the component unmounts
         return () => {
             client.end();
         };
@@ -96,8 +83,6 @@ const LeftSidebarContentMap = ({ isSidebarVisible }) => {
     const loadMoreUpdates = () => {
         setVisibleUpdatesCount(prevCount => Math.min(prevCount + 5, updates.length));
     };
-
-
     // Trigger a resize event when the sidebar visibility changes to update the popovers
     useEffect(() => {
         console.log(isSidebarVisible);
