@@ -9,7 +9,6 @@ const LeftSidebarContentMap = ({ isSidebarVisible,update}) => {
     const [activePopoverId, setActivePopoverId] = useState(null);
 
 
-    // Load messages from IndexedDB when the component mounts
     useEffect(() => {
         const loadMessagesFromDB = async () => {
             const savedMessages = await getMessagesFromDB();
@@ -46,15 +45,14 @@ const LeftSidebarContentMap = ({ isSidebarVisible,update}) => {
 
         if (isSidebarVisible) {
             setTimeout(() => {
-                window.dispatchEvent(new Event('resize')); // Dispatch resize event
-            }, 100); // Add a slight delay to allow sidebar animation to finish
+                window.dispatchEvent(new Event('resize'));
+            }, 100);
         }
     }, [isSidebarVisible]);
 
-    // Close all popovers when the sidebar is hidden
     useEffect(() => {
         if (!isSidebarVisible[0]) {
-            setActivePopoverId(null); // Close all popovers
+            setActivePopoverId(null);
         }
         // console.log(objectSectionVisible);
 
@@ -72,7 +70,7 @@ const LeftSidebarContentMap = ({ isSidebarVisible,update}) => {
                     key={update.id}
                     trigger="click"
                     placement='auto'
-                    show={activePopoverId === update.id} // Only show if it's the active popover
+                    show={activePopoverId === update.id} 
                     onToggle={() => handlePopoverToggle(update.id)}
                     overlay={
                         <Popover id={`popover-${update.id}`}>

@@ -16,16 +16,12 @@
 
 .nav-link.active {
   background-color:  #007bff;
-  /* Active tab background color */
   color: white;
-  /* Active tab text color */
 }
 
 .nav-link:hover {
   background-color: #405876;
-  /* Tab hover color */
   color: white;
-  /* Tab hover text color */
 }
 
 .dashboard-container {
@@ -93,14 +89,12 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  /* Take full height of parent */
 }
 
 /* Make mini map and minimap section each take 50% of the height */
 .mini-map,
 .minimap-section {
   overflow-y: auto;
-  /* Ensure scrolling if content overflows */
   overflow-x: hidden;
 }
 
@@ -109,22 +103,17 @@
   display: flex;
   flex: .3;
   background-color: #f8f9fa;
-  /* Light background color */
 }
 
 .mini-map img {
   width: 100%;
-  /* Ensure image covers full width */
   height: 100%;
-  /* Ensure image covers full height */
   object-fit: contain;
-  /* Adjust image scaling to fit within container */
 }
 
 .minimap-section {
   flex: .7;
   background-color: #e9ecef;
-  /* Slightly different background color */
   margin-top: 1rem;
 }
 
@@ -158,12 +147,10 @@
   background-color: #0056b3;
 }
 
-/* Show button when scrolled */
 body.scrolled #back-to-top-btn {
   display: block;
 }
 
-/* for the map section */
 .map-section {
   position: relative;
   width: 60%;
@@ -181,24 +168,19 @@ body.scrolled #back-to-top-btn {
   width: 610px;
   height: 800px;
   object-fit: contain;
-  /* Ensures the SVG scales within its container */
 }
 
 @media (max-width: 1000px) {
   .map-section {
     width: 100vw;
-    /* Full viewport width on mobile */
     overflow-x: auto;
-    /* Enable horizontal scrolling if necessary */
     margin-top: 2rem;
     margin-bottom: 2rem;
   }
 
   .map-svg {
     width: 100%;
-    /* Full width of the container */
     height: auto;
-    /* Maintain aspect ratio */
   }
 }
 
@@ -290,7 +272,6 @@ body.scrolled #back-to-top-btn {
   background-color: #4caf50;
 }
 
-/* Keyframes for fadeInUp animation */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -303,16 +284,11 @@ body.scrolled #back-to-top-btn {
   }
 }
 
-/* Animation for popup */
 .overlay-container.show {
   display: flex;
   opacity: 1;
 }
 
-/* .custom-btn{
-          color:black; /* Default text color */
-/* background-color: white; Default background color 
-        } */
 .custom-btn {
 
   width: 135px;
@@ -329,9 +305,7 @@ body.scrolled #back-to-top-btn {
 
 .custom-btn:hover {
   color: black !important;
-  /* Text color on hover */
   background-color: white;
-  /*Keep the background color white on hover  */
 
 }
 
@@ -339,9 +313,3 @@ body.scrolled #back-to-top-btn {
   background-color: white;
   color: black !important;
 }
-
-/* .nav-link:not(.active) {
-           background-color: transparent;  
-          color:black; 
-           
-        } */

@@ -82,7 +82,7 @@ const HomePage = () => {
     // Helper function to format the time from the array
     const formatTime = (timeArray) => {
         const [year, month, day, hour, minute, second] = timeArray;
-        return new Date(year, month - 1, day, hour, minute, second).toLocaleString(); // Formatting to readable date-time
+        return new Date(year, month - 1, day, hour, minute, second).toLocaleString();
     };
 
     const [updates, setUpdates] = useState([]);
@@ -91,10 +91,8 @@ const HomePage = () => {
         const clientId = "mqttjs_" + Math.random().toString(16).substr(2, 8);
         const options = { clientId };
 
-        // Connect to the MQTT broker
         const client = mqtt.connect(host, options);
 
-        // On successful connection, subscribe to the topic
         client.on('connect', () => {
             console.log('Connected to MQTT broker');
             Object.values(topics).forEach((topic) => {
@@ -111,9 +109,7 @@ const HomePage = () => {
         // Handle incoming MQTT messages
         client.on('message', (topic, message) => {
             try {
-                // Convert the message to a JSON object
                 const jsonMessage = JSON.parse(message.toString());
-                // const { title, description } = jsonMessage;
 
                 var newUpdate = {};
                 console.log(jsonMessage);
@@ -131,7 +127,6 @@ const HomePage = () => {
                         description: `Plate Number: ${plate_number}, Time: ${formatTime(time)}`,
                         timestamp: formatTime(time)
                     };
-                    // updateSVG('checkIn', { parking_spot, plate_number, time }); // Update SVG for check-in
                 } else if (topic === topics.checkOut) {
                     const { uuid, plate_number, parking_spot, time } = jsonMessage;
                     newUpdate = {
@@ -143,7 +138,6 @@ const HomePage = () => {
                         description: `Plate Number: ${plate_number}, Time: ${formatTime(time)}`,
                         timestamp: formatTime(time)
                     };
-                    // updateSVG('checkOut', { parking_spot, plate_number, time }); // Update SVG for check-out
                 } else if (topic === topics.trespassing) {
                     const {uuid, plate_number, parking_spot, time } = jsonMessage;
                     newUpdate = {
@@ -155,7 +149,6 @@ const HomePage = () => {
                         description: `Plate Number: ${plate_number}, Time: ${formatTime(time)}`,
                         timestamp: formatTime(time)
                     };
-                    // updateSVG('trespassing', { parking_spot, time }); // Update SVG for trespassing
                 }
 
                 // Save the message to IndexedDB
@@ -174,13 +167,11 @@ const HomePage = () => {
             }
         });
 
-        // Cleanup function to disconnect when the component unmounts
         return () => {
             client.end();
         };
     }, []);
 
-    // State to manage active tab
     const [activeTab, setActiveTab] = useState('map');
 
     const handleTabChange = (tab) => {

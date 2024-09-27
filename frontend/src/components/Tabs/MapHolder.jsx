@@ -280,28 +280,25 @@ const MapHolder = ({ update }) => {
         } else if (lastword === 'checkOut') {
           pathElement.attr("fill", "green");
         } else if (lastword === 'tresspaser') {
-          // Blink for 5 seconds
-          console.log("ress");
-          // pathElement.attr("fill","white")
           blinkSlot(pathElement);
         }
       });
     }
 
     function blinkSlot(element) {
-      const defaultColor = "green"; // Default color after blinking
+      const defaultColor = "green";
   let blinkCount = 0;
 
   const interval = setInterval(() => {
-    const currentColor = blinkCount % 2 === 0 ? "white" : defaultColor; // Blink between white and green
-    element.attr("fill", currentColor); // Set the fill color of the SVG element
+    const currentColor = blinkCount % 2 === 0 ? "red" : defaultColor;
+    element.attr("fill", currentColor);
     blinkCount += 1;
 
-    if (blinkCount === 10) { // Blink 5 times (10 half-second intervals)
+    if (blinkCount === 10) { 
       clearInterval(interval);
-      element.attr("fill", defaultColor); // Reset to default green color
+      element.attr("fill", defaultColor);
     }
-  }, 500); // Blink every
+  }, 500);
     }
 
 
