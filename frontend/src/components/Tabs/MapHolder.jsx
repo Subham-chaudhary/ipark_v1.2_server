@@ -97,6 +97,64 @@ const MapHolder = ({ update }) => {
 
   // console.log(uidToSlotIdMap);
 
+  //initial update of the svg map 
+  function updateSlotProperties() {
+    console.log("udpated");
+    
+    slotData.forEach(slot => {
+      const slotId = uidToSlotIdMap[slot.uid];
+
+      const pathElement = d3.select(`#${slotId}`);
+
+      if (pathElement) {
+        pathElement.attr("fill", slot.isoccupied ? "red" : "green");
+      }
+    });
+  }
+
+
+  //udpate the slots according to the incoming updates
+  function handleUpdate(update) {
+    console.log(update);
+
+    update.forEach(event => {
+      const slotId = uidToSlotIdMap[event.uid];
+      console.log(slotId);
+
+      const pathElement = d3.select(`#${slotId}`);
+      const lastword = event.event.split('/').pop();
+      console.log(lastword);
+
+      if (lastword === 'checkIn') {
+        pathElement.attr("fill", "red");
+      } else if (lastword === 'checkOut') {
+        pathElement.attr("fill", "green");
+      } else if (lastword === 'tresspaser') {
+        blinkSlot(pathElement);
+      }
+    });
+  }
+
+  function blinkSlot(element) {
+    const defaultColor = "green";
+    let blinkCount = 0;
+
+    const interval = setInterval(() => {
+      const currentColor = blinkCount % 2 === 0 ? "red" : defaultColor;
+      element.attr("fill", currentColor);
+      blinkCount += 1;
+
+      if (blinkCount === 10) {
+        clearInterval(interval);
+        element.attr("fill", defaultColor);
+      }
+    }, 500);
+  }
+
+  //update whenever the updates changes
+  useEffect(()=>{
+    handleUpdate(update)
+  },[update])
 
   useEffect(() => {
     if (initializedRef.current) return;
@@ -123,10 +181,10 @@ const MapHolder = ({ update }) => {
 
       g.node().appendChild(svgNode);
 
-      renderSVGElements(svgNode, g, update);
+      renderSVGElements(svgNode, g);
     });
 
-    function renderSVGElements(svgNode, g, update) {
+    function renderSVGElements(svgNode, g) {
       const rectsData = Array.from(svgNode.querySelectorAll('rect')).map(rect => ({
         id: rect.getAttribute('id'),
         x: rect.getAttribute('x'),
@@ -249,60 +307,7 @@ const MapHolder = ({ update }) => {
         .text(d => d.textContent);
 
       updateSlotProperties();
-      handleUpdate(update);
     }
-
-    function updateSlotProperties() {
-      slotData.forEach(slot => {
-        const slotId = uidToSlotIdMap[slot.uid];
-
-        const pathElement = d3.select(`#${slotId}`);
-
-        if (pathElement) {
-          pathElement.attr("fill", slot.isoccupied ? "red" : "green");
-        }
-      });
-    }
-
-    function handleUpdate(update) {
-      console.log(update);
-
-      update.forEach(event => {
-        const slotId = uidToSlotIdMap[event.uid];
-        console.log(slotId);
-
-        const pathElement = d3.select(`#${slotId}`);
-        const lastword = event.event.split('/').pop();
-        console.log(lastword);
-
-        if (lastword === 'checkIn') {
-          pathElement.attr("fill", "red");
-        } else if (lastword === 'checkOut') {
-          pathElement.attr("fill", "green");
-        } else if (lastword === 'tresspaser') {
-          blinkSlot(pathElement);
-        }
-      });
-    }
-
-    function blinkSlot(element) {
-      const defaultColor = "green";
-  let blinkCount = 0;
-
-  const interval = setInterval(() => {
-    const currentColor = blinkCount % 2 === 0 ? "red" : defaultColor;
-    element.attr("fill", currentColor);
-    blinkCount += 1;
-
-    if (blinkCount === 10) { 
-      clearInterval(interval);
-      element.attr("fill", defaultColor);
-    }
-  }, 500);
-    }
-
-
-
 
     svg.call(zoom);
 
@@ -326,7 +331,7 @@ const MapHolder = ({ update }) => {
       svg.selectAll("*").remove();
       initializedRef.current = false;
     };
-  }, [update]);
+  }, []);
 
   return (
     <>
