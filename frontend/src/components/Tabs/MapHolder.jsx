@@ -7,7 +7,7 @@ const slotData = [
   {
     "uid": "822db767-a173-4a53-8379-8f380009e30c",
     "isactive": true,
-    "isoccupied": true,
+    "isoccupied": false,
     "property": {
       "rot": 0,
       "posx": 0,
@@ -67,7 +67,7 @@ const slotData = [
   {
     "uid": "e251f940-6f45-4319-a616-033f9f7d0de6",
     "isactive": true,
-    "isoccupied": true,
+    "isoccupied": false,
     "property": {
       "rot": 90,
       "posx": 0,
@@ -82,7 +82,7 @@ function fetchSlotData() {
   return slotData;
 }
 
-const MapHolder = () => {
+const MapHolder = ({ update }) => {
   const width = 1500;
   const height = 1500;
   const mapRef = useRef(null);
@@ -95,8 +95,66 @@ const MapHolder = () => {
     return acc;
   }, {});
 
-  console.log(uidToSlotIdMap);
+  // console.log(uidToSlotIdMap);
 
+  //initial update of the svg map 
+  function updateSlotProperties() {
+    // console.log("udpated");
+    
+    slotData.forEach(slot => {
+      const slotId = uidToSlotIdMap[slot.uid];
+
+      const pathElement = d3.select(`#${slotId}`);
+
+      if (pathElement) {
+        pathElement.attr("fill", slot.isoccupied ? "red" : "green");
+      }
+    });
+  }
+
+
+  //udpate the slots according to the incoming updates
+  function handleUpdate(update) {
+    // console.log(update);
+
+    update.forEach(event => {
+      const slotId = uidToSlotIdMap[event.uid];
+      // console.log(slotId);
+
+      const pathElement = d3.select(`#${slotId}`);
+      const incident=event.event;
+      // console.log(event);
+
+      if (incident === 'checkIn') {
+        pathElement.attr("fill", "red");
+      } else if (incident === 'checkOut') {
+        pathElement.attr("fill", "green");
+      } else if (incident === 'tresspaser') {
+        blinkSlot(pathElement);
+      }
+    });
+  }
+
+  function blinkSlot(element) {
+    const defaultColor = "green";
+    let blinkCount = 0;
+
+    const interval = setInterval(() => {
+      const currentColor = blinkCount % 2 === 0 ? "red" : defaultColor;
+      element.attr("fill", currentColor);
+      blinkCount += 1;
+
+      if (blinkCount === 10) {
+        clearInterval(interval);
+        element.attr("fill", defaultColor);
+      }
+    }, 500);
+  }
+
+  //update whenever the updates changes
+  useEffect(()=>{
+    handleUpdate(update)
+  },[update])
 
   useEffect(() => {
     if (initializedRef.current) return;
@@ -208,22 +266,16 @@ const MapHolder = () => {
         .attr("stroke-width", d => d.strokeWidth)
         .attr("transform", d => d.transform)
         .on("click", function (event, d) {
-          // Check if the path id starts with "slot_"
           if (d.id.startsWith("slot_")) {
-            // Dispose the current popover if active
             if (activePopoverId) {
               $(`#${activePopoverId}`).popover('dispose');
             }
 
-            // Toggle popover visibility based on whether the clicked path is already active
             if (activePopoverId === d.id) {
-              // If the popover is already active, reset activePopoverId to null
               activePopoverId = null;
             } else {
-              // Set the active popover ID to the clicked path's ID
               activePopoverId = d.id;
 
-              // Initialize and show the new popover
               $(this).popover({
                 title: d.id,
                 content: `Details for slot ${d.slot_id}`,
@@ -253,19 +305,6 @@ const MapHolder = () => {
         .attr("stroke-width", d => d.strokeWidth)
         .attr("transform", d => d.transform)
         .text(d => d.textContent);
-
-    
-      function updateSlotProperties() {
-        slotData.forEach(slot => {
-          const slotId = uidToSlotIdMap[slot.uid];
-
-          const pathElement = d3.select(`#${slotId}`);
-
-          if (pathElement) {
-            pathElement.attr("fill", slot.isoccupied ? "red" : "green");
-          }
-        });
-      }
 
       updateSlotProperties();
     }

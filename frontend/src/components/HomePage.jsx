@@ -1,5 +1,8 @@
 import { useState, useEffect, Suspense, lazy, startTransition } from "react";
 import './Styles/HomePage.css';
+import mqtt from 'mqtt';
+import { saveMessageToDB, getMessagesFromDB } from './Tabs/indexedDb';
+
 
 // Lazy load sidebar content components
 const LeftSidebarContentMap = lazy(() => import('./LeftSidebarContentMap'));
@@ -14,13 +17,13 @@ const RightSidebarContentStaff = lazy(() => import('./RightSidebar/RightSidebarC
 const MapHolder = lazy(() => import('./Tabs/MapHolder'))
 const AnalyticSection = lazy(() => import('./Tabs/Analytics'));
 const GraphSection = lazy(() => import('./Tabs/Graph'));
-const OperatorSection = lazy(() => import('./Tabs/Operators'));
+const OperatorSection = lazy(() => import('./Tabs/Staff'));
 const RecordSection = lazy(() => import('./Tabs/Records'));
 const SettingSection = lazy(() => import('./Tabs/Settings'));
 
 const HomePage = () => {
     const [isUpdateSectionVisible, setIsUpdateSectionVisible] = useState(true);
-    const [objectSectionVisible, setObjectSectionVisible] = useState(true);
+    const [objectSectionVisible, setObjectSectionVisible] = useState(false);
 
     const [updateTogglerRotated, setUpdateTogglerRotated] = useState(false);
     const [objectTogglerRotated, setObjectTogglerRotated] = useState(false);
@@ -39,9 +42,6 @@ const HomePage = () => {
 
     //this is pop-up a scroll to top button when users scrolls down a bit
     const [showButton, setShowButton] = useState(false);
-
-
-
 
     useEffect(() => {
         const minimapSection = document.querySelector('.minimap-section');
@@ -70,7 +70,110 @@ const HomePage = () => {
     };
 
 
-    // State to manage active tab
+    // MQTT connection settings
+    const host = "ws://broker.mqttdashboard.com:8000/mqtt";
+    // Topics for different events
+    const topics = {
+        checkIn: "ParQ/checkIn",
+        checkOut: "ParQ/checkOut",
+        trespassing: "ParQ/tresspaser"
+    };
+
+    // Helper function to format the time from the array
+    const formatTime = (timeArray) => {
+        const [year, month, day, hour, minute, second] = timeArray;
+        return new Date(year, month - 1, day, hour, minute, second).toLocaleString();
+    };
+
+    const [updates, setUpdates] = useState([]);
+    // Handle MQTT connection and message reception
+    useEffect(() => {
+        const clientId = "mqttjs_" + Math.random().toString(16).substr(2, 8);
+        const options = { clientId };
+
+        const client = mqtt.connect(host, options);
+
+        client.on('connect', () => {
+            console.log('Connected to MQTT broker');
+            Object.values(topics).forEach((topic) => {
+                client.subscribe(topic, (err) => {
+                    if (!err) {
+                        console.log(`Subscribed to ${topic}`);
+                    } else {
+                        console.error(`Subscription error for topic ${topic}:`, err);
+                    }
+                });
+            });
+        });
+
+        // Handle incoming MQTT messages
+        client.on('message', (topic, message) => {
+            try {
+                const jsonMessage = JSON.parse(message.toString());
+                const { uuid, plate_number, parking_spot, time } = jsonMessage;
+                const event=topic.split('/').pop();
+
+                var newUpdate = {};
+                // console.log(jsonMessage);
+                
+
+                // Handle check-in, check-out, and trespassing messages
+                if (topic === topics.checkIn) {
+                    newUpdate = {
+                        uid: uuid,
+                        key: `checkIn-${Date.now()}`,
+                        id: `checkIn-${Date.now()}`,
+                        event:event,
+                        parking_spot:parking_spot,
+                        plate_number:plate_number,
+                        description: `Plate Number: ${plate_number}, Time: ${formatTime(time)}`,
+                        timestamp: formatTime(time)
+                    };
+                } else if (topic === topics.checkOut) {
+                    newUpdate = {
+                        uid: uuid,
+                        key: `checkOut-${Date.now()}`,
+                        id: `checkOut-${Date.now()}`,
+                        event:event,
+                        parking_spot:parking_spot,
+                        plate_number:plate_number,
+                        description: `Plate Number: ${plate_number}, Time: ${formatTime(time)}`,
+                        timestamp: formatTime(time)
+                    };
+                } else if (topic === topics.trespassing) {
+                    newUpdate = {
+                        uid: uuid,
+                        key: `Tresspassing-${Date.now()}`,
+                        id: `Tresspassing-${Date.now()}`,
+                        event:event,
+                        parking_spot:parking_spot,
+                        plate_number:plate_number,
+                        description: `Plate Number: ${plate_number}, Time: ${formatTime(time)}`,
+                        timestamp: formatTime(time)
+                    };
+                }
+
+                // Save the message to IndexedDB
+                saveMessageToDB(newUpdate)
+                    .then(() => {
+                        // Once saved to IndexedDB, update the state
+                        setUpdates((prevUpdates) => [newUpdate, ...prevUpdates]);
+                        //  console.log(updates);
+
+                    })
+                    .catch((error) => {
+                        console.error("Error saving message to IndexedDB:", error);
+                    });
+            } catch (error) {
+                console.error("Error parsing MQTT message:", error);
+            }
+        });
+
+        return () => {
+            client.end();
+        };
+    }, []);
+
     const [activeTab, setActiveTab] = useState('map');
 
     const handleTabChange = (tab) => {
@@ -80,7 +183,7 @@ const HomePage = () => {
     };
 
     const getLeftSidebarContent = () => {
-        return <LeftSidebarContentMap isSidebarVisible={[isUpdateSectionVisible, objectSectionVisible]} />;
+        return <LeftSidebarContentMap isSidebarVisible={[isUpdateSectionVisible, objectSectionVisible]} update={updates.length > 0 ? [updates[0]] : []} />;
     };
 
     const getRightSidebarContent = () => {
@@ -103,17 +206,17 @@ const HomePage = () => {
     return (
         <>
             <div className="container-fluid mainpage-container">
-                <nav className="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+                <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#120A54' }}>
                     <div className="container-fluid">
-                        <a className="navbar-brand" href="#">i-Park</a>
+                        <a className="navbar-brand" style={{ color: 'white' }} href="#">i-Park</a>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                             <span className="navbar-toggler-icon"></span>
                         </button>
-                        <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+                        <div className="collapse navbar-collapse btn" id="navbarNavAltMarkup">
                             <div className="navbar-nav" style={{ flex: 1, justifyContent: 'space-around' }}>
                                 {['map', 'analytics', 'graph', 'staff', 'records', 'settings'].map(tab => (<div>
 
-                                    <label className={`nav-link ${activeTab === tab ? 'active' : ''}`}>
+                                    <label className={`nav-link custom-btn ${activeTab === tab ? 'active' : ''}`}>
                                         <input
                                             key={tab}
                                             type="radio"
@@ -150,7 +253,7 @@ const HomePage = () => {
 
                     {/* update section container sidebar */}
                     <div className="container update-section"
-                     style={{ display: isUpdateSectionVisible ? 'block' : 'none' }}>
+                        style={{ display: isUpdateSectionVisible ? 'block' : 'none' }}>
                         <Suspense fallback={<div>Loading...</div>}>
                             {getLeftSidebarContent()}
                         </Suspense>
@@ -159,7 +262,7 @@ const HomePage = () => {
 
                     <div className="container map-section">
                         {activeTab === 'map' && <Suspense fallback={<div>Loading...</div>}>
-                            <MapHolder />
+                            <MapHolder update={updates.length > 0 ? [updates[0]] : []} />
                         </Suspense>}
                         {activeTab === 'analytics' && <Suspense fallback={<div>Loading...</div>}>
                             <AnalyticSection />
