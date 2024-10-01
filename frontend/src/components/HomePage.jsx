@@ -114,7 +114,7 @@ const HomePage = () => {
                 const event=topic.split('/').pop();
 
                 var newUpdate = {};
-                console.log(jsonMessage);
+                // console.log(jsonMessage);
                 
 
                 // Handle check-in, check-out, and trespassing messages
@@ -126,26 +126,29 @@ const HomePage = () => {
                         event:event,
                         parking_spot:parking_spot,
                         plate_number:plate_number,
+                        description: `Plate Number: ${plate_number}, Time: ${formatTime(time)}`,
                         timestamp: formatTime(time)
                     };
                 } else if (topic === topics.checkOut) {
                     newUpdate = {
                         uid: uuid,
-                        key: `checkIn-${Date.now()}`,
-                        id: `checkIn-${Date.now()}`,
+                        key: `checkOut-${Date.now()}`,
+                        id: `checkOut-${Date.now()}`,
                         event:event,
                         parking_spot:parking_spot,
                         plate_number:plate_number,
+                        description: `Plate Number: ${plate_number}, Time: ${formatTime(time)}`,
                         timestamp: formatTime(time)
                     };
                 } else if (topic === topics.trespassing) {
                     newUpdate = {
                         uid: uuid,
-                        key: `checkIn-${Date.now()}`,
-                        id: `checkIn-${Date.now()}`,
+                        key: `Tresspassing-${Date.now()}`,
+                        id: `Tresspassing-${Date.now()}`,
                         event:event,
                         parking_spot:parking_spot,
                         plate_number:plate_number,
+                        description: `Plate Number: ${plate_number}, Time: ${formatTime(time)}`,
                         timestamp: formatTime(time)
                     };
                 }
@@ -155,7 +158,7 @@ const HomePage = () => {
                     .then(() => {
                         // Once saved to IndexedDB, update the state
                         setUpdates((prevUpdates) => [newUpdate, ...prevUpdates]);
-                         console.log(updates);
+                        //  console.log(updates);
 
                     })
                     .catch((error) => {

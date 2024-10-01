@@ -59,7 +59,7 @@
 
 @media (max-width: 1000px) {
   .dashboard-container {
-    flex-direction: column;
+    /* flex-direction: column; */
     /* make containers stack vertically on smaller screens */
   }
 }

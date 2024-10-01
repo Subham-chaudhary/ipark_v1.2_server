@@ -2,7 +2,7 @@ import React from 'react';
 import "../EventCardsCss/CheckoutCard.css"
 
 const CheckOutCard = ({update}) => {
-  console.log(update);
+  // console.log(update);
   
   return (
     <div className="car-card">
@@ -17,7 +17,7 @@ const CheckOutCard = ({update}) => {
         <span>Black</span>
         <span className="dot"></span>
         <span><strong>06</strong>, A2</span>
-        <span>Slot {update.parking_spot}</span>
+        <span>Slot: {update.parking_spot}</span>
       </div>
       <div className="payment-info">
         <span>Payment: <span className="payment-status">Successful</span></span>

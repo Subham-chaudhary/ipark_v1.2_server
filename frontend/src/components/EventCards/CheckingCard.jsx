@@ -4,7 +4,7 @@ import "../EventCardsCss/CheckingCard.css"
 
 
 const CheckingCard = ({update}) => {
-  console.log(update);
+  // console.log(update);
   return (
     
     <div className="card-container">
@@ -20,7 +20,7 @@ const CheckingCard = ({update}) => {
           <span>Black</span>
           <span className="dot"></span>
           <span id="CheckingShru"><strong>06</strong>, A2</span>
-          <span>{update.parking_spot}</span>
+          <span>Slot: {update.parking_spot}</span>
         </div>
       </div>
       <div className="card-footer">

@@ -25,10 +25,13 @@ const LeftSidebarContentMap = ({ isSidebarVisible, update }) => {
 
     useEffect(() => {
         if (update && update.length > 0) {
-            const newUpdates = update.map(({ key, id, title, description, timestamp }) => ({
+            const newUpdates = update.map(({uid, key, id, event, parking_spot,plate_number,description, timestamp }) => ({
+                uid,
                 key,
                 id,
-                title,
+                event,
+                parking_spot,
+                plate_number,
                 description,
                 timestamp,
             }));
@@ -65,20 +68,20 @@ const LeftSidebarContentMap = ({ isSidebarVisible, update }) => {
         setActivePopoverId((prevId) => (prevId === id ? null : id));
     };
 
-    const renderCardByStatus = (update) => {
-        // console.log(update);
-        switch (update.event) {
-          case 'checkIn':
-            return <CheckInCard update={update} />;
-          case 'checkOut':
-            return <CheckOutCard update={update} />;
-          case 'tresspaser':
-            return <TresspassingCard update={update} />;
-        //   default:
-        //     return null; // Or a default card
-        }
-      };
 
+    const renderCardByStatus = (update) => {
+        console.log(update);
+        switch (update.event) {
+            case 'checkIn':
+                return <CheckInCard update={update} />;
+            case 'checkOut':
+                return <CheckOutCard update={update} />;
+            case 'tresspaser':
+                return <TresspassingCard update={update} />;
+            //   default:
+            //     return null; // Or a default card
+        }
+    };
     return (
         <>
             <h2>Upcoming Updates</h2>
@@ -91,33 +94,13 @@ const LeftSidebarContentMap = ({ isSidebarVisible, update }) => {
                     onToggle={() => handlePopoverToggle(update.id)}
                     overlay={
                         <Popover id={`popover-${update.id}`}>
-                            <Popover.Header as="h3">{update.title}</Popover.Header>
+                            <Popover.Header as="h3">{update.event}</Popover.Header>
                             <Popover.Body>{update.description}</Popover.Body>
                         </Popover>
                     }
                 >
                     <div className="w-100 mb-3">
-                    {renderCardByStatus(update)}
-                        {/* <div className="card-container">
-                            <div className="card-header1">
-                                <h3>OD 18N 6616</h3>
-                                <div className="card-icon">
-                                    <span>&#x21BB;</span>
-                                </div>
-                            </div>
-
-                            <div className="card-content">
-                                <div className="car-info">
-                                    <span>Black</span>
-                                    <span className="dot"></span>
-                                    <span id="CheckingShru"><strong>06</strong>, A2</span>
-                                    <span>ground floor</span>
-                                </div>
-                            </div>
-                            <div className="card-footer">
-                                <span>Checked in 25 min ago</span>
-                            </div>
-                        </div> */}
+                        {renderCardByStatus(update)}
                     </div>
                 </OverlayTrigger>
             ))}
