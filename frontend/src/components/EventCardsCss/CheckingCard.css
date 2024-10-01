@@ -1,0 +1,65 @@
+.card-container {
+    background-color: #EEf6f6;
+    border-radius: 15px;
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);    padding: 20px;
+    /* width: 300px; */
+    /* height:150px; */
+    font-family: 'Arial', sans-serif;
+    position: relative;
+  }
+  
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .card-header h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #222;
+  }
+  
+  .card-icon {
+    background-color: #1edb2e;
+    color: #34a853;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+  }
+  
+  .card-line {
+    margin: 10px 0;
+    width: 100%;
+    height: 2px;
+    background-color: #34a853;
+  }
+
+  
+  .car-info {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #222;
+  }
+  
+  .car-info .dot {
+    width: 8px;
+    height: 8px;
+    background-color: #000;
+    border-radius: 50%;
+    margin: 0 10px;
+  }
+  
+  .card-footer {
+    font-size: 12px;
+    color: gray;
+    text-align: right;
+    margin-top: 10px;
+  }
+  

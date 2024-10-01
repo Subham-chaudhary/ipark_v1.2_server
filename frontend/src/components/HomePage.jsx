@@ -110,6 +110,8 @@ const HomePage = () => {
         client.on('message', (topic, message) => {
             try {
                 const jsonMessage = JSON.parse(message.toString());
+                const { uuid, plate_number, parking_spot, time } = jsonMessage;
+                const event=topic.split('/').pop();
 
                 var newUpdate = {};
                 console.log(jsonMessage);
@@ -117,36 +119,33 @@ const HomePage = () => {
 
                 // Handle check-in, check-out, and trespassing messages
                 if (topic === topics.checkIn) {
-                    const { uuid, plate_number, parking_spot, time } = jsonMessage;
                     newUpdate = {
                         uid: uuid,
-                        event:topic,
                         key: `checkIn-${Date.now()}`,
                         id: `checkIn-${Date.now()}`,
-                        title: `Check-In: Spot ${parking_spot}`,
-                        description: `Plate Number: ${plate_number}, Time: ${formatTime(time)}`,
+                        event:event,
+                        parking_spot:parking_spot,
+                        plate_number:plate_number,
                         timestamp: formatTime(time)
                     };
                 } else if (topic === topics.checkOut) {
-                    const { uuid, plate_number, parking_spot, time } = jsonMessage;
                     newUpdate = {
                         uid: uuid,
-                        event:topic,
-                        key: `checkOut-${Date.now()}`,
-                        id: `checkOut-${Date.now()}`,
-                        title: `Check-Out: Spot ${parking_spot}`,
-                        description: `Plate Number: ${plate_number}, Time: ${formatTime(time)}`,
+                        key: `checkIn-${Date.now()}`,
+                        id: `checkIn-${Date.now()}`,
+                        event:event,
+                        parking_spot:parking_spot,
+                        plate_number:plate_number,
                         timestamp: formatTime(time)
                     };
                 } else if (topic === topics.trespassing) {
-                    const {uuid, plate_number, parking_spot, time } = jsonMessage;
                     newUpdate = {
                         uid: uuid,
-                        event:topic,
-                        key: `trespassing-${Date.now()}`,
-                        id: `trespassing-${Date.now()}`,
-                        title: `Trespassing: Spot ${parking_spot}`,
-                        description: `Plate Number: ${plate_number}, Time: ${formatTime(time)}`,
+                        key: `checkIn-${Date.now()}`,
+                        id: `checkIn-${Date.now()}`,
+                        event:event,
+                        parking_spot:parking_spot,
+                        plate_number:plate_number,
                         timestamp: formatTime(time)
                     };
                 }

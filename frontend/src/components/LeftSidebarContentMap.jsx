@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Popover, OverlayTrigger } from 'react-bootstrap';
 import './LeftSidebarContentMap.css';
 import { saveMessageToDB, getMessagesFromDB } from './Tabs/indexedDb';
+import CheckInCard from './EventCards/CheckingCard';
+import CheckOutCard from './EventCards/CheckoutCard';
+import TresspassingCard from './EventCards/TresspassingCard';
 
-const LeftSidebarContentMap = ({ isSidebarVisible,update}) => {
+const LeftSidebarContentMap = ({ isSidebarVisible, update }) => {
     const [updates, setUpdates] = useState([]);
     const [visibleUpdatesCount, setVisibleUpdatesCount] = useState(15);
     const [activePopoverId, setActivePopoverId] = useState(null);
@@ -15,13 +18,13 @@ const LeftSidebarContentMap = ({ isSidebarVisible,update}) => {
             setUpdates(savedMessages.reverse()); // Reverse to show the latest message on top
         };
         // console.log(update);
-        
+
         loadMessagesFromDB();
     }, []);
 
 
     useEffect(() => {
-          if (update && update.length > 0) {
+        if (update && update.length > 0) {
             const newUpdates = update.map(({ key, id, title, description, timestamp }) => ({
                 key,
                 id,
@@ -62,6 +65,20 @@ const LeftSidebarContentMap = ({ isSidebarVisible,update}) => {
         setActivePopoverId((prevId) => (prevId === id ? null : id));
     };
 
+    const renderCardByStatus = (update) => {
+        // console.log(update);
+        switch (update.event) {
+          case 'checkIn':
+            return <CheckInCard update={update} />;
+          case 'checkOut':
+            return <CheckOutCard update={update} />;
+          case 'tresspaser':
+            return <TresspassingCard update={update} />;
+        //   default:
+        //     return null; // Or a default card
+        }
+      };
+
     return (
         <>
             <h2>Upcoming Updates</h2>
@@ -70,7 +87,7 @@ const LeftSidebarContentMap = ({ isSidebarVisible,update}) => {
                     key={update.id}
                     trigger="click"
                     placement='auto'
-                    show={activePopoverId === update.id} 
+                    show={activePopoverId === update.id}
                     onToggle={() => handlePopoverToggle(update.id)}
                     overlay={
                         <Popover id={`popover-${update.id}`}>
@@ -79,12 +96,28 @@ const LeftSidebarContentMap = ({ isSidebarVisible,update}) => {
                         </Popover>
                     }
                 >
-                    <div className="card w-100 mb-3">
-                        <div className="card-body">
-                            <h5 className="card-title">{update.title}</h5>
-                            <p className="card-text">{update.description}</p>
-                            <p className="card-text"><small className="text-muted">{update.timestamp}</small></p>
-                        </div>
+                    <div className="w-100 mb-3">
+                    {renderCardByStatus(update)}
+                        {/* <div className="card-container">
+                            <div className="card-header1">
+                                <h3>OD 18N 6616</h3>
+                                <div className="card-icon">
+                                    <span>&#x21BB;</span>
+                                </div>
+                            </div>
+
+                            <div className="card-content">
+                                <div className="car-info">
+                                    <span>Black</span>
+                                    <span className="dot"></span>
+                                    <span id="CheckingShru"><strong>06</strong>, A2</span>
+                                    <span>ground floor</span>
+                                </div>
+                            </div>
+                            <div className="card-footer">
+                                <span>Checked in 25 min ago</span>
+                            </div>
+                        </div> */}
                     </div>
                 </OverlayTrigger>
             ))}

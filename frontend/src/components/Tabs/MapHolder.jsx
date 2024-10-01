@@ -99,7 +99,7 @@ const MapHolder = ({ update }) => {
 
   //initial update of the svg map 
   function updateSlotProperties() {
-    console.log("udpated");
+    // console.log("udpated");
     
     slotData.forEach(slot => {
       const slotId = uidToSlotIdMap[slot.uid];
@@ -115,21 +115,21 @@ const MapHolder = ({ update }) => {
 
   //udpate the slots according to the incoming updates
   function handleUpdate(update) {
-    console.log(update);
+    // console.log(update);
 
     update.forEach(event => {
       const slotId = uidToSlotIdMap[event.uid];
-      console.log(slotId);
+      // console.log(slotId);
 
       const pathElement = d3.select(`#${slotId}`);
-      const lastword = event.event.split('/').pop();
-      console.log(lastword);
+      const incident=event.event;
+      // console.log(event);
 
-      if (lastword === 'checkIn') {
+      if (incident === 'checkIn') {
         pathElement.attr("fill", "red");
-      } else if (lastword === 'checkOut') {
+      } else if (incident === 'checkOut') {
         pathElement.attr("fill", "green");
-      } else if (lastword === 'tresspaser') {
+      } else if (incident === 'tresspaser') {
         blinkSlot(pathElement);
       }
     });
