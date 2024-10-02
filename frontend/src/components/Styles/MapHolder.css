@@ -1,0 +1,49 @@
+.svg-map-holder{
+    flex: 1;
+    position: relative;
+}
+
+.popover {
+    position: absolute;
+    display: block;
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 4px;
+    z-index: 1000; /* Ensure it stays on top */
+    max-width: 276px;
+    width: auto; /* Adjusts based on content */
+  }
+  
+  .popover-header {
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .popover-body {
+    padding-top: 5px;
+  }
+  
+  @media (max-width: 768px) {
+    .popover {
+      width: 90%; /* Make it take most of the screen */
+      left: 5%; /* Center on small screens */
+      top: auto; /* Adjust as needed */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .popover {
+      width: 100%; /* Full width on very small screens */
+      left: 0;
+      top: auto; /* Adjust as needed */
+      border-radius: 0;
+    }
+  }
+  
+  .svg-map-holder svg {
+    position: absolute;
+  }

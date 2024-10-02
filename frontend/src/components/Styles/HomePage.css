@@ -1,0 +1,315 @@
+.mainpage-container {
+  padding: 0rem;
+  margin-bottom: 1rem;
+}
+
+.nav-link [type="radio"] {
+  display: none;
+}
+
+.nav-link {
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.nav-link.active {
+  background-color:  #007bff;
+  color: white;
+}
+
+.nav-link:hover {
+  background-color: #405876;
+  color: white;
+}
+
+.dashboard-container {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  margin-top: .5rem;
+  height: 100%;
+}
+
+  .update-section {
+    max-height: 100vh;
+    max-width: 400px;
+    flex: 1;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+  }
+
+
+.object-section {
+  display: flex;
+  flex: 1;
+  height: 100vh;
+  flex-direction: column;
+  max-width: 400px;
+}
+
+.map-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center;
+  align-items: center; */
+}
+
+@media (max-width: 1000px) {
+  .dashboard-container {
+    /* flex-direction: column; */
+    /* make containers stack vertically on smaller screens */
+  }
+}
+
+.col {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+.toggler-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.update-toggler,
+.object-toggler {
+  margin-top: .5rem;
+}
+
+.rotated {
+  transform: rotate(180deg);
+  transition: transform 0.3s ease;
+}
+
+.mini-map-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Make mini map and minimap section each take 50% of the height */
+.mini-map,
+.minimap-section {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Optional: add some spacing or styling */
+.mini-map {
+  display: flex;
+  flex: .3;
+  background-color: #f8f9fa;
+}
+
+.mini-map img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.minimap-section {
+  flex: .7;
+  background-color: #e9ecef;
+  margin-top: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+  .minimaps {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+#back-to-top-btn {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  width: 50px;
+  height: 50px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 24px;
+  text-align: center;
+  line-height: 50px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  z-index: 1000;
+}
+
+#back-to-top-btn:hover {
+  background-color: #0056b3;
+}
+
+body.scrolled #back-to-top-btn {
+  display: block;
+}
+
+.map-section {
+  position: relative;
+  width: 60%;
+  height: 100vh;
+  padding: 0rem;
+}
+
+.svg-container {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+.svg-container svg {
+  width: 610px;
+  height: 800px;
+  object-fit: contain;
+}
+
+@media (max-width: 1000px) {
+  .map-section {
+    width: 100vw;
+    overflow-x: auto;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .map-svg {
+    width: 100%;
+    height: auto;
+  }
+}
+
+.btn-open-popup {
+  padding: 12px 24px;
+  font-size: 18px;
+  background-color: green;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-open-popup:hover {
+  background-color: #4caf50;
+}
+
+.overlay-container {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.popup-box {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  width: 320px;
+  text-align: center;
+  opacity: 0;
+  transform: scale(0.8);
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #444;
+  text-align: left;
+}
+
+.form-input {
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.btn-submit,
+.btn-close-popup {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-submit {
+  background-color: green;
+  color: #fff;
+}
+
+.btn-close-popup {
+  margin-top: 12px;
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+.btn-submit:hover,
+.btn-close-popup:hover {
+  background-color: #4caf50;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.overlay-container.show {
+  display: flex;
+  opacity: 1;
+}
+
+.custom-btn {
+
+  width: 135px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: transparent;
+  color: white;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: inset;
+
+}
+
+.custom-btn:hover {
+  color: black !important;
+  background-color: white;
+
+}
+
+.custom-btn.active {
+  background-color: white;
+  color: black !important;
+}
