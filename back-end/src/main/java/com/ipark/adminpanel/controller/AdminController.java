@@ -35,7 +35,7 @@ public class AdminController {
     @GetMapping("/getEmployee")
     public ResponseEntity<?> viewEmployee() {
         List<Operator> user = operatorService.getAll();
-        if (!user.isEmpty() && user != null) return new ResponseEntity<>(user, HttpStatus.FOUND);
+        if (user != null && !user.isEmpty() ) return new ResponseEntity<>(user, HttpStatus.FOUND);
         return new ResponseEntity<>("DATABASE EMPTY", HttpStatus.NOT_FOUND);
     }
 
@@ -56,7 +56,7 @@ public class AdminController {
     @GetMapping("/getCustomer")
     public ResponseEntity<?> getCustomer() {
         List<Customer> user = customerService.getAll();
-        if (!user.isEmpty() && user != null) return new ResponseEntity<>(user, HttpStatus.FOUND);
+        if (user != null && !user.isEmpty() ) return new ResponseEntity<>(user, HttpStatus.FOUND);
         return new ResponseEntity<>("DATABASE EMPTY", HttpStatus.NOT_FOUND);
     }
 

@@ -13,6 +13,7 @@
         const host = "ws://broker.mqttdashboard.com:8000/mqtt";
         console.log(host);
         const options = {
+			protocal: 'ws',
             clientId: "mqttjs_" + Math.random().toString(16).substr(2, 8)
         };
 

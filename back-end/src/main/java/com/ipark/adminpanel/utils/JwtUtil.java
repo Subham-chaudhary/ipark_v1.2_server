@@ -2,14 +2,12 @@ package com.ipark.adminpanel.utils;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -43,20 +41,20 @@ public class JwtUtil {
         return null;
     }
 
-    public String extractAccessTokenPhoneNumber(String token) {
+    public String extractAccessTokenLotUid(String token) {
         if(validateAccessToken(token)) {
             Claims claims = extractAllClaims(token, getAccessTokenSigningKey());
-            System.out.println("Claims" + claims.get("PhoneNumber"));
-            return (String) claims.get("PhoneNumber");
+            System.out.println("Claims" + claims.get("LotUid"));
+            return (String) claims.get("LotUid");
         }
         return null;
     }
 
-    public String extractRefreshTokenPhoneNumber(String token) {
+    public String extractRefreshTokenLotUid(String token) {
         if(validateRefreshToken(token)) {
             Claims claims = extractAllClaims(token, getRefreshTokenSigningKey());
-            System.out.println("Claims" + claims.get("PhoneNumber"));
-            return (String) claims.get("PhoneNumber");
+            System.out.println("Claims" + claims.get("LotUid"));
+            return (String) claims.get("LotUid");
         }
         return null;
     }
@@ -85,16 +83,16 @@ public class JwtUtil {
         return extractRefreshTokenExpiration(token).before(new Date());
     }
 
-    public String generateAccessToken(String uid, String phoneNumber) {
+    public String generateAccessToken(String uid, String lotUid) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("PhoneNumber", phoneNumber);
+        claims.put("LotUid", lotUid);
         int ACCESS_TOKEN_EXPIRATION = 1000 * 60* 60;
         return createToken(claims, uid, ACCESS_TOKEN_EXPIRATION, getAccessTokenSigningKey());
     }
 
-    public String generateRefreshToken(String uid, String phoneNumber) {
+    public String generateRefreshToken(String uid, String LotUid) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("PhoneNumber", phoneNumber);
+        claims.put("LotUid", LotUid);
         int REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7;
         return createToken(claims, uid, REFRESH_TOKEN_EXPIRATION, getRefreshTokenSigningKey());
     }
@@ -113,7 +111,7 @@ public class JwtUtil {
 
     public String refreshAccessToken(String refreshToken) {
         if(validateRefreshToken(refreshToken)) {
-            return generateAccessToken(extractRefreshTokenUid(refreshToken), extractRefreshTokenPhoneNumber(refreshToken));
+            return generateAccessToken(extractRefreshTokenUid(refreshToken), extractRefreshTokenLotUid(refreshToken));
         }
         return null;
     }

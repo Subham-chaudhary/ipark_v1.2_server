@@ -36,24 +36,22 @@ public class ClientController {
     public ResponseEntity<?> getAllClients(@RequestHeader("Cookie") String Cookie, @PathVariable UUID lotID) {
         System.out.println(Cookie);
         List<Clients> clients = clientService.getAllClients(lotID);
-        String message = "Client with phone " + lotID + " has logged in.";
-        System.out.println("Message: " + message);
-        slotSocketHandler.notifyOperators("123", message);
-        bookingService.bookSlot("123", "123456789");
         if (!clients.isEmpty()) {
             return new ResponseEntity<>(clients, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+
     @GetMapping("/login/{phoneNumber}")
     public ResponseEntity<?> clientLogin(@PathVariable String phoneNumber, HttpServletResponse res) {
         Clients client = clientService.clientLogin(phoneNumber);
         if (client != null) {
 
-            String accessToken = jwtUtil.generateAccessToken(client.getClientUid().toString(), phoneNumber);
-            String refreshToken = jwtUtil.generateRefreshToken(client.getClientUid().toString(), phoneNumber);
-
+            String accessToken = jwtUtil.generateAccessToken(client.getClientUid().toString(), client.getLotUID().toString());
+            String refreshToken = jwtUtil.generateRefreshToken(client.getClientUid().toString(), client.getLotUID().toString());
+            System.out.println(jwtUtil.extractAccessTokenLotUid(accessToken));
+            System.out.println(jwtUtil.extractRefreshTokenLotUid(refreshToken));
             ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                     .httpOnly(true)
                     .secure(false)
@@ -68,17 +66,19 @@ public class ClientController {
                     .build();
             res.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
 
+            //adding client in websocket
+            slotSocketHandler.notifyOperators(client.getLotUID().toString(), "Client " + client.getRegisteredPhone() + " has logged in");
 
 
             return new ResponseEntity<>(client, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-    @GetMapping("/logout/{phoneNumber}")
-    public ResponseEntity<?> clientLogout(@PathVariable String phoneNumber) {
-        Clients client = clientService.clientLogout(phoneNumber);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+//    @GetMapping("/logout/{phoneNumber}")
+//    public ResponseEntity<?> clientLogout(@PathVariable String phoneNumber) {
+////        Clients client = clientService.clientLogout(phoneNumber);
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getClientById(@PathVariable UUID id) {

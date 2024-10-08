@@ -51,6 +51,4 @@ public class SpringSecurity {
         return auth.getAuthenticationManager();
     }
 
-
-
  }

@@ -36,23 +36,27 @@ public class ClientService {
         return clientRepo.findById(id).orElse(null);
     }
 
-    public Clients clientLogout(String phoneNumber) {
-        Clients client = clientRepo.findByRegisteredPhone(phoneNumber);
-        if (client != null) {
-            client.setIsOnline(false);
-            clientRepo.save(client);
-        }
-        return client;
-    }
+//    public Clients clientLogout(String phoneNumber) {
+//        Clients client = clientRepo.findByRegisteredPhone(phoneNumber);
+//        if (client != null) {
+//            clientRepo.save(client);
+//        }
+//        return client;
+//    }
 
     public Clients clientLogin(String phoneNumber) {
         Clients client = clientRepo.findByRegisteredPhone(phoneNumber);
         if (client != null) {
-//            client.setOnline(true);
             Clients saved = clientRepo.save(client);
             System.out.println("Retrieved = " + saved);
         }
         return client;
+    }
+
+    public void updateClientOnlineStatus(UUID clientId, boolean isOnline) {
+        Clients client = clientRepo.findById(clientId).orElseThrow();
+        client.setIsOnline(isOnline);
+        clientRepo.save(client);
     }
 //
 //    @Transactional

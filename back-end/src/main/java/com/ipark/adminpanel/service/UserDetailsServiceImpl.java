@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -25,10 +26,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 
     @Override
-    public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
-        Clients client = clientService.clientLogin(phoneNumber);
+    public UserDetails loadUserByUsername(String uid) throws UsernameNotFoundException {
+        Clients client = clientService.getClientById(UUID.fromString(uid));
         if (client == null) {
-            throw new UsernameNotFoundException("Phone number not found: " + phoneNumber);
+            throw new UsernameNotFoundException("Phone number not found: " + uid);
         }
 
         Role clientRole = client.getRole();
