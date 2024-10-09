@@ -19,8 +19,8 @@ public class ClientService {
     private final ClientRepo clientRepo;
     private final ModelMapper modelMapper;
 
-    @Autowired
-    private ClientDtoConverter clientDtoConverter;
+//    @Autowired
+//    private ClientDtoConverter clientDtoConverter;
 
     @Autowired
     public ClientService(ClientRepo clientRepo, ModelMapper modelMapper) {
@@ -28,8 +28,9 @@ public class ClientService {
         this.modelMapper = modelMapper;
     }
 
-    public List<Clients> getAllClients(UUID lotID) {
-        return clientRepo.findByLotUID(lotID);
+    public List<Clients> getAllClients(UUID lotUiD) {
+        System.out.println("getting all clients = " + lotUiD);
+        return clientRepo.findByLotUID(lotUiD);
     }
 
     public Clients getClientById(UUID id) {
@@ -53,33 +54,12 @@ public class ClientService {
         return client;
     }
 
+    @Transactional
     public void updateClientOnlineStatus(UUID clientId, boolean isOnline) {
         Clients client = clientRepo.findById(clientId).orElseThrow();
         client.setIsOnline(isOnline);
         clientRepo.save(client);
     }
-//
-//    @Transactional
-//    public Clients addClient(ClientDto clientDto) {
-//        Clients clients = ClientDtoConverter.convertToEntity(clientDto);
-//        System.out.println("clients before save = " + clients);
-//        clientRepo.save(clients);
-//        //Optional<Clients> fetched = Optional.ofNullable(clientRepo.findByClientUid(clients.getClientUid()));
-//        Clients fetched = clientRepo.findByClientUid(clients.getClientUid());
-//        System.out.println("Fetched after save = " + fetched);
-//        return fetched;
-//    }
-////
-//@Transactional
-//public Clients updateClient(UUID id, ClientDto clientDto) {
-//    Clients existingClient = clientRepo.findById(id).orElse(null);
-//    if (existingClient != null) {
-//        Clients updatedClient = ClientDtoConverter.convertToEntity(clientDto);
-//        updatedClient.setClientUid(existingClient.getClientUid());
-//        System.out.println("updatedClient = " + updatedClient);
-//        return clientRepo.save(updatedClient);
-//    }
-//    return null;}
 
     @Transactional
     public Clients updateClient(UUID id, ClientDto clientDto) {
@@ -100,15 +80,5 @@ public class ClientService {
         return clientRepo.findByClientUid(clients.getClientUid());
     }
 
-//    @Transactional
-//    public Clients updateClient(UUID id, ClientDto clientDto) {
-//        Clients existingClient = clientRepo.findById(id).orElse(null);
-//        if (existingClient != null) {
-//            modelMapper.typeMap(ClientDto.class, Clients.class)
-//                    .addMappings(mapper -> mapper.skip(Clients::setClientUid));
-//            modelMapper.map(clientDto, existingClient);
-//            return clientRepo.save(existingClient);
-//        }
-//        return null;
-//    }
+
 }

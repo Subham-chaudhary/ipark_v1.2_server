@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
+@Deprecated
 @RequestMapping("/public")
 public class PublicController {
 

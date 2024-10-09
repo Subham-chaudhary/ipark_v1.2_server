@@ -19,26 +19,26 @@ import java.util.UUID;
 @Component
 public class UserDetailsServiceImpl implements UserDetailsService {
 
+    private final ClientService clientService;
+
     @Autowired
-    private OperatorRepo operatorRepo;
-    @Autowired
-    private ClientService clientService;
+    public UserDetailsServiceImpl(ClientService clientService) {
+        this.clientService = clientService;
+    }
 
 
     @Override
     public UserDetails loadUserByUsername(String uid) throws UsernameNotFoundException {
         Clients client = clientService.getClientById(UUID.fromString(uid));
         if (client == null) {
-            throw new UsernameNotFoundException("Phone number not found: " + uid);
+            throw new UsernameNotFoundException("Client not found: " + uid);
         }
-
         Role clientRole = client.getRole();
         List<String> roles = new ArrayList<>();
         roles.add(clientRole.name());
         System.out.println("Client Role: " + clientRole);
-        System.out.println("Client Role List: " + roles);
         return org.springframework.security.core.userdetails.User.builder()
-                .username(client.getRegisteredPhone())
+                .username(client.getClientUid().toString())
                 .password("{noop}" + client.getClientUid())
                 .roles(roles.toArray(new String[0]))
                 .build();

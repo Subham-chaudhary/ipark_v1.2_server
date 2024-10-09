@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
+@Deprecated
 public class roomManagerService {
 
     private final Map<UUID, Set<WebSocketSession>> rooms = new ConcurrentHashMap<>();

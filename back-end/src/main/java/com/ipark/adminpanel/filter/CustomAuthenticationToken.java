@@ -1,17 +1,17 @@
 package com.ipark.adminpanel.filter;
 
-import lombok.Data;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 
 
 @Getter
 @Setter
+@Deprecated
 public class CustomAuthenticationToken extends UsernamePasswordAuthenticationToken {
     private String preUid;
 

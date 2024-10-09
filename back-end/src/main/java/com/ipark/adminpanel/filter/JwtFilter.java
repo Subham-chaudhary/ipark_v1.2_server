@@ -21,21 +21,21 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@Component
+
 @Slf4j
+@Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    private ClientRepo clientRepo;
+    public JwtFilter(UserDetailsServiceImpl userDetailsService, JwtUtil jwtUtil) {
+        this.userDetailsService = userDetailsService;
+        this.jwtUtil = jwtUtil;
+    }
 
-    @Autowired
-    private ClientService clientService;
 
-    @Autowired
-    private JwtUtil jwtUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, @NonNull HttpServletResponse res,@NonNull FilterChain chain) throws ServletException, IOException {
@@ -52,8 +52,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
         try {
             if (jwtUtil.validateAccessToken(jwt)) {
-                id = jwtUtil.extractAccessTokenUid(jwt);
-                LotUid = jwtUtil.extractAccessTokenLotUid(jwt);
+                id = jwtUtil.extractAccessTokenUid(jwt).toString();
+                LotUid = jwtUtil.extractAccessTokenLotUid(jwt).toString();
 
             }
         } catch (RuntimeException e) {
@@ -66,21 +66,18 @@ public class JwtFilter extends OncePerRequestFilter {
                         }
                     }
                 }
-                jwt = jwtUtil.refreshAccessToken(refreshToken);
-                id = jwtUtil.extractAccessTokenUid(jwt);
-                LotUid = jwtUtil.extractAccessTokenLotUid(jwt);
+                jwt = jwtUtil.refreshAccessToken(refreshToken).toString();
+                id = jwtUtil.extractAccessTokenUid(jwt).toString();
+                LotUid = jwtUtil.extractAccessTokenLotUid(jwt).toString();
 
             } catch (RuntimeException ex) {
                 log.error("Some error occurred: {}", ex.getMessage());
             }
         }
-        //
-//        Clients myClient = clientRepo.findByClientUid(UUID.fromString(id));
-//        System.out.println("Retrieved the details by ID: " + myClient);
+
         System.out.println("LotUid in JWT FILTER: " + LotUid);
         if (LotUid != null) {
             UserDetails client = userDetailsService.loadUserByUsername(id);
-//            UserDetails = userDetailsService.loadUserByUsername(userName);
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(client, null, client.getAuthorities());
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
             SecurityContextHolder.getContext().setAuthentication(auth);

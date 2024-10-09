@@ -26,25 +26,27 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SpringSecurity {
 
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    private final JwtFilter jwtFilter;
 
     @Autowired
-    private JwtFilter jwtFilter;
+    public SpringSecurity(JwtFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        return http.authorizeHttpRequests(request -> request
-                        .requestMatchers("/parkingSlot/**").authenticated()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/employee/**", "/park/**").hasRole("EMPLOYEE")
-                        .requestMatchers(("/v2/client/list/*")).hasRole("parq")
-                        .anyRequest().permitAll())
+         http.authorizeHttpRequests(request -> request
+                                .requestMatchers("/v2/client/list/**").hasAnyRole("parq","admin", "operator")
+                                .requestMatchers("/v2/client/admin/**").hasRole("parq")
+                                .requestMatchers("/v2/client/operator/**").hasRole("operator")
+                         .anyRequest().permitAll())
+                .httpBasic(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration auth) throws Exception {

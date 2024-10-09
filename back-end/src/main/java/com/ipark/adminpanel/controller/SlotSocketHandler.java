@@ -10,36 +10,44 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @Component
 public class SlotSocketHandler extends TextWebSocketHandler {
 
+
+    private final ClientService clientService;
+
     @Autowired
-    private ClientService clientService;
-
-
+    SlotSocketHandler(ClientService clientService) {
+        this.clientService = clientService;
+    }
     // bhai listed map ke badle list use kar leta use kar leta 😭😭😭
     private final ConcurrentHashMap<String, Map<String, WebSocketSession>> lotSessions = new ConcurrentHashMap<>();
 
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-//        String lotId = Objects.requireNonNull(session.getUri()).getQuery().split("=")[1];
         URI sessionUri = session.getUri();
+
+//        System.out.println("sessionUri = "+sessionUri);
+
         if(sessionUri == null || sessionUri.getQuery() == null) {
             session.close();
             return;
         }
+        System.out.println("sessionUri.getQuery() = "+sessionUri.getQuery());
             String lotUid = Objects.requireNonNull(extractParam(sessionUri.getQuery(), "lotUid"));
             String userUid = Objects.requireNonNull(extractParam(sessionUri.getQuery(), "userUid"));
+
+//        System.out.println("uid: " + lotUid + " " + userUid);
+
             session.getAttributes().put("lotUid", lotUid);
             session.getAttributes().put("userUid", userUid);
             lotSessions.computeIfAbsent(lotUid, k -> new ConcurrentHashMap<>()).put(session.getId(), session);
-        System.out.println("Connection established: " + session.getId());
-        System.out.println("LotSessions: " + lotSessions);
-        session.sendMessage(new TextMessage("Connection established: " + session.getId()));
-//        clientService.updateClientOnlineStatus(UUID.fromString(userUid), true);
+//        System.out.println("Connection established: " + session.getId());
+//        System.out.println("LotSessions: " + lotSessions);
+//        session.sendMessage(new TextMessage("Connection established: " + session.getId()));
+        clientService.updateClientOnlineStatus(UUID.fromString(userUid), true);
     }
 
     public String extractParam(String query, String paramName) {
@@ -48,7 +56,7 @@ public class SlotSocketHandler extends TextWebSocketHandler {
             for (String pair : pairs) {
                 String[] keyValue = pair.split("=");
                 if (keyValue.length == 2 && keyValue[0].equals(paramName)) {
-                    return keyValue[1].replace("\"", ""); // Remove quotes if present
+                    return keyValue[1].replace("\"", "");
                 }
             }
         }
@@ -58,7 +66,7 @@ public class SlotSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws IOException {
         lotSessions.values().forEach(sessions -> sessions.remove(session.getId()));
-//        clientService.updateClientOnlineStatus(UUID.fromString((String) session.getAttributes().get("userUid")), false);
+        clientService.updateClientOnlineStatus(UUID.fromString((String) session.getAttributes().get("userUid")), false);
         System.out.println("Connection Closes: " + session.getId());
     }
 

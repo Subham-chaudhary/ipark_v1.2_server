@@ -2,13 +2,12 @@ package com.ipark.adminpanel.utils;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -24,36 +23,50 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 
-    public String extractAccessTokenUid(String token) {
+    public UUID extractAccessTokenUid(String token) {
         if(validateAccessToken(token)) {
             Claims claims = extractAllClaims(token, getAccessTokenSigningKey());
-            return claims.getSubject();
+            return UUID.fromString(claims.getSubject());
         }
         return null;
     }
 
-    public String extractRefreshTokenUid(String token) {
+    public UUID extractRefreshTokenUid(String token) {
         if(validateRefreshToken(token)) {
             Claims claims = extractAllClaims(token, getRefreshTokenSigningKey());
-            System.out.println("Claims" + claims.getSubject());
-            return claims.getSubject();
+            System.out.println("Extract Refresh Token: " + claims.getSubject());
+            return UUID.fromString(claims.getSubject());
         }
         return null;
     }
 
-    public String extractAccessTokenLotUid(String token) {
+    public UUID extractAccessTokenLotUid(String token) {
         if(validateAccessToken(token)) {
             Claims claims = extractAllClaims(token, getAccessTokenSigningKey());
-            System.out.println("Claims" + claims.get("LotUid"));
-            return (String) claims.get("LotUid");
+            System.out.println("(Access Token) Extracting LotUid: " + claims.get("LotUid"));
+            return UUID.fromString((String) claims.get("LotUid"));
         }
         return null;
+    }
+    @Deprecated
+    public String extractTokenFromCookie(String cookie, String tokenName) {
+        if(cookie == null || cookie.trim().isEmpty()) {
+            return null;
+        }
+        String[] cookies = cookie.split(";");
+        String token = Arrays.stream(cookies)
+                .filter(c -> c.trim().startsWith(tokenName + "="))
+                .findFirst()
+                .map(c -> c.substring(tokenName.length() + 1).trim())
+                .orElse(null);
+        System.out.println("Extracting " + tokenName + " : " + token);
+        return token;
     }
 
     public String extractRefreshTokenLotUid(String token) {
         if(validateRefreshToken(token)) {
             Claims claims = extractAllClaims(token, getRefreshTokenSigningKey());
-            System.out.println("Claims" + claims.get("LotUid"));
+            System.out.println("(Refresh Token) Extracting LotUid: " + claims.get("LotUid"));
             return (String) claims.get("LotUid");
         }
         return null;
@@ -111,7 +124,7 @@ public class JwtUtil {
 
     public String refreshAccessToken(String refreshToken) {
         if(validateRefreshToken(refreshToken)) {
-            return generateAccessToken(extractRefreshTokenUid(refreshToken), extractRefreshTokenLotUid(refreshToken));
+            return generateAccessToken(extractRefreshTokenUid(refreshToken).toString(), extractRefreshTokenLotUid(refreshToken));
         }
         return null;
     }
