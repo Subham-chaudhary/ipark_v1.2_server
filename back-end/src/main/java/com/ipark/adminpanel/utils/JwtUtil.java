@@ -48,7 +48,7 @@ public class JwtUtil {
         }
         return null;
     }
-    @Deprecated
+
     public String extractTokenFromCookie(String cookie, String tokenName) {
         if(cookie == null || cookie.trim().isEmpty()) {
             return null;
