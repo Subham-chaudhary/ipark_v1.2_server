@@ -1,8 +1,6 @@
 package com.ipark.adminpanel.filter;
 
-import com.ipark.adminpanel.entity.Clients;
 import com.ipark.adminpanel.repository.ClientRepo;
-import com.ipark.adminpanel.repository.OperatorRepo;
 import com.ipark.adminpanel.service.ClientService;
 import com.ipark.adminpanel.service.UserDetailsServiceImpl;
 import com.ipark.adminpanel.utils.JwtUtil;
@@ -11,6 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,64 +20,64 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.UUID;
 
-@Component
+
 @Slf4j
+@Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    private ClientRepo clientRepo;
+    public JwtFilter(UserDetailsServiceImpl userDetailsService, JwtUtil jwtUtil) {
+        this.userDetailsService = userDetailsService;
+        this.jwtUtil = jwtUtil;
+    }
 
-    @Autowired
-    private JwtUtil jwtUtil;
+
 
     @Override
-    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws ServletException, IOException {
-        String authorizationHeader = req.getHeader("Authorization");
-        String phoneNumber = null;
+    protected void doFilterInternal(HttpServletRequest req, @NonNull HttpServletResponse res,@NonNull FilterChain chain) throws ServletException, IOException {
+//        String authorizationHeader = req.getHeader("Authorization");
+        String LotUid = null;
         String refreshToken = null;
         String jwt = null;
-        String preUid = null;
-        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer")) {
-            jwt = authorizationHeader.substring(7);
+        String id = null;
+        if (req.getCookies() != null) {
+            for (Cookie cookie : req.getCookies()) {
+                if (cookie.getName().equals("accessToken")) jwt = cookie.getValue();
+            }
+        }
+
+        try {
+            if (jwtUtil.validateAccessToken(jwt)) {
+                id = jwtUtil.extractAccessTokenUid(jwt).toString();
+                LotUid = jwtUtil.extractAccessTokenLotUid(jwt).toString();
+
+            }
+        } catch (RuntimeException e) {
+            log.error("Some error occurred: {}", e.getMessage());
             try {
-                if(jwtUtil.validateAccessToken(jwt)) {
-                    String id = jwtUtil.extractAccessTokenUid(jwt);
-                    preUid = jwtUtil.extractAccessTokenPreUid(jwt);
-                    if(id != null) {
-                        phoneNumber = clientRepo.findByClientUid(UUID.fromString(id)).getRegisteredPhone();
-                    }
-                }
-            } catch (RuntimeException e) {
-                log.error("Some error occurred: {}", e.getMessage());
-                try {
-                    if(req.getCookies() != null) {
-                        for(Cookie cookie : req.getCookies()) {
-                            if(cookie.getName().equals("refreshToken")) {
-                                refreshToken = cookie.getValue();
-                            }
+                if (req.getCookies() != null) {
+                    for (Cookie cookie : req.getCookies()) {
+                        if (cookie.getName().equals("refreshToken")) {
+                            refreshToken = cookie.getValue();
                         }
                     }
-                    jwt = jwtUtil.refreshAccessToken(refreshToken);
-                    String id = jwtUtil.extractAccessTokenUid(jwt);
-                    preUid = jwtUtil.extractAccessTokenPreUid(jwt);
-                    if(id != null) {
-                        phoneNumber = clientRepo.findByClientUid(UUID.fromString(id)).getRegisteredPhone();
-                    }
-                } catch (RuntimeException ex) {
-                    log.error("Some error occurred: {}", ex.getMessage());
                 }
+                jwt = jwtUtil.refreshAccessToken(refreshToken).toString();
+                id = jwtUtil.extractAccessTokenUid(jwt).toString();
+                LotUid = jwtUtil.extractAccessTokenLotUid(jwt).toString();
+
+            } catch (RuntimeException ex) {
+                log.error("Some error occurred: {}", ex.getMessage());
             }
-            //
         }
-        System.out.println("Phone Number" + phoneNumber);
-        if(phoneNumber != null) {
-            UserDetails client = userDetailsService.loadUserByUsername(phoneNumber);
-//            UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
+
+        System.out.println("LotUid in JWT FILTER: " + LotUid);
+        if (LotUid != null) {
+            UserDetails client = userDetailsService.loadUserByUsername(id);
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(client, null, client.getAuthorities());
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
             SecurityContextHolder.getContext().setAuthentication(auth);

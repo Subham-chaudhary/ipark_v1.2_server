@@ -3,6 +3,7 @@ package com.ipark.adminpanel.service;
 
 import com.ipark.adminpanel.entity.Clients;
 import com.ipark.adminpanel.entity.Operator;
+import com.ipark.adminpanel.enums.Role;
 import com.ipark.adminpanel.repository.OperatorRepo;
 import org.hibernate.mapping.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,28 +14,33 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class UserDetailsServiceImpl implements UserDetailsService {
 
+    private final ClientService clientService;
+
     @Autowired
-    private OperatorRepo operatorRepo;
-    @Autowired
-    private ClientService clientService;
+    public UserDetailsServiceImpl(ClientService clientService) {
+        this.clientService = clientService;
+    }
+
 
     @Override
-    public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
-//        Operator user = operatorRepo.findByUserName(userName);
-        Clients client = clientService.ClientLogin(phoneNumber);
-        if(client == null) throw new UsernameNotFoundException("Phone number not found: " + phoneNumber);
-        System.out.println("clinet role :   "+client.getRole());
+    public UserDetails loadUserByUsername(String uid) throws UsernameNotFoundException {
+        Clients client = clientService.getClientById(UUID.fromString(uid));
+        if (client == null) {
+            throw new UsernameNotFoundException("Client not found: " + uid);
+        }
+        Role clientRole = client.getRole();
         List<String> roles = new ArrayList<>();
-        roles.add(client.getRole());
-        System.out.println("roles = " + roles);
+        roles.add(clientRole.name());
+        System.out.println("Client Role: " + clientRole);
         return org.springframework.security.core.userdetails.User.builder()
-                .username(client.getPreUID())
+                .username(client.getClientUid().toString())
                 .password("{noop}" + client.getClientUid())
-               .roles(roles.toArray(new String[0]))
+                .roles(roles.toArray(new String[0]))
                 .build();
     }
 }

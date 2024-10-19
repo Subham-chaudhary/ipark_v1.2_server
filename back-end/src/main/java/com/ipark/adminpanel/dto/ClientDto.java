@@ -1,29 +1,36 @@
 package com.ipark.adminpanel.dto;
 
-
+import com.ipark.adminpanel.enums.Role;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.stereotype.Component;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
-//@Getter
-//@Setter
-@Data
-@Component
-public class ClientDto {
-    private String name;
-    private String email;
-    private String preUID;
-    private String secondary_number;
-    private LocalDateTime createdAt;
-    private String registered_phone;
-    private String shift_schedule;
-    private UUID addedBy;
-    private boolean isBot;
-    private String role;
-    private boolean isActive;
-    private boolean isOnline;
 
+/**
+ * Data Transfer Object for Clients entity.
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ClientDto {
+    private UUID clientUid;
+    private Map<String, Object> name;
+    private Map<String, Object> contacts;
+    private String registeredPhone;
+    private Role role;
+    private UUID currentSession;
+//    private ZonedDateTime createdAt;
+    private UUID createdBy;
+    private UUID updatedBy;
+    private ZonedDateTime updatedAt;
+    private Boolean isBot;
+    private Boolean isActive;
+    private Boolean isOnline;
+    private UUID lotUID;
+    private Map<String, Object> shiftSchedule;
 }

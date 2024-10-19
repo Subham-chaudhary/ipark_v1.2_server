@@ -2,15 +2,12 @@ package com.ipark.adminpanel.utils;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
+import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -26,34 +23,51 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 
-    public String extractAccessTokenUid(String token) {
+    public UUID extractAccessTokenUid(String token) {
         if(validateAccessToken(token)) {
             Claims claims = extractAllClaims(token, getAccessTokenSigningKey());
-            return claims.getSubject();
+            return UUID.fromString(claims.getSubject());
         }
         return null;
     }
 
-    public String extractRefreshTokenUid(String token) {
+    public UUID extractRefreshTokenUid(String token) {
         if(validateRefreshToken(token)) {
             Claims claims = extractAllClaims(token, getRefreshTokenSigningKey());
-            return claims.getSubject();
+            System.out.println("Extract Refresh Token: " + claims.getSubject());
+            return UUID.fromString(claims.getSubject());
         }
         return null;
     }
 
-    public String extractAccessTokenPreUid(String token) {
+    public UUID extractAccessTokenLotUid(String token) {
         if(validateAccessToken(token)) {
             Claims claims = extractAllClaims(token, getAccessTokenSigningKey());
-            return (String) claims.get("PreUid");
+            System.out.println("(Access Token) Extracting LotUid: " + claims.get("LotUid"));
+            return UUID.fromString((String) claims.get("LotUid"));
         }
         return null;
     }
 
-    public String extractRefreshTokenPreUid(String token) {
+    public String extractTokenFromCookie(String cookie, String tokenName) {
+        if(cookie == null || cookie.trim().isEmpty()) {
+            return null;
+        }
+        String[] cookies = cookie.split(";");
+        String token = Arrays.stream(cookies)
+                .filter(c -> c.trim().startsWith(tokenName + "="))
+                .findFirst()
+                .map(c -> c.substring(tokenName.length() + 1).trim())
+                .orElse(null);
+        System.out.println("Extracting " + tokenName + " : " + token);
+        return token;
+    }
+
+    public String extractRefreshTokenLotUid(String token) {
         if(validateRefreshToken(token)) {
             Claims claims = extractAllClaims(token, getRefreshTokenSigningKey());
-            return (String) claims.get("PreUid");
+            System.out.println("(Refresh Token) Extracting LotUid: " + claims.get("LotUid"));
+            return (String) claims.get("LotUid");
         }
         return null;
     }
@@ -82,16 +96,16 @@ public class JwtUtil {
         return extractRefreshTokenExpiration(token).before(new Date());
     }
 
-    public String generateAccessToken(String uid, String preUid) {
+    public String generateAccessToken(String uid, String lotUid) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("PreUid", preUid);
+        claims.put("LotUid", lotUid);
         int ACCESS_TOKEN_EXPIRATION = 1000 * 60* 60;
         return createToken(claims, uid, ACCESS_TOKEN_EXPIRATION, getAccessTokenSigningKey());
     }
 
-    public String generateRefreshToken(String uid, String preUid) {
+    public String generateRefreshToken(String uid, String LotUid) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("PreUid", preUid);
+        claims.put("LotUid", LotUid);
         int REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7;
         return createToken(claims, uid, REFRESH_TOKEN_EXPIRATION, getRefreshTokenSigningKey());
     }
@@ -110,7 +124,7 @@ public class JwtUtil {
 
     public String refreshAccessToken(String refreshToken) {
         if(validateRefreshToken(refreshToken)) {
-            return generateAccessToken(extractRefreshTokenUid(refreshToken), extractRefreshTokenPreUid(refreshToken));
+            return generateAccessToken(extractRefreshTokenUid(refreshToken).toString(), extractRefreshTokenLotUid(refreshToken));
         }
         return null;
     }

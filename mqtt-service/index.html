@@ -1,0 +1,32 @@
+<html>
+<head>
+    <title>Real-time MQTT Messages</title>
+</head>
+<body>
+    <h1>Real-time MQTT Messages</h1>
+    
+    <p> messages are retrieved from fastapi server using websocket</p>
+    <div id="messages"></div>
+
+    <script>
+        var ws = new WebSocket("ws://localhost:8000/ws");
+        
+        ws.onmessage = function(event) {
+            var messagesDiv = document.getElementById("messages");
+            var messageData = JSON.parse(event.data);
+            console.log(messageData);
+            var newMessage = document.createElement("div");
+            newMessage.textContent = `Topic: ${messageData.topic}, Message: ${messageData.payload}`;
+            messagesDiv.appendChild(newMessage);
+        };
+
+        ws.onopen = function() {
+            console.log("WebSocket connection established.");
+        };
+
+        ws.onclose = function() {
+            console.log("WebSocket connection closed.");
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<html>
+<head>
+    <title>Real-time MQTT Messages</title>
+    
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+</head>
+<body>
+    <h1>Real-time MQTT Messages From cloud broker</h1>
+    <p> messages are retrieved from cloud hivemq broker using websocket</p>
+    <div id="messages"></div>
+
+    <script>
+        const host = "ws://broker.mqttdashboard.com:8000/mqtt";
+        console.log(host);
+        const options = {
+			protocal: 'ws',
+            clientId: "mqttjs_" + Math.random().toString(16).substr(2, 8)
+        };
+
+        const socketmqtt = mqtt.connect(host, options);
+         addEventListener("load", () => {
+            socketmqtt.on("connect", () => {
+            console.log("connected to cloud broker");
+            socketmqtt.subscribe("parkingLot/#");
+        });
+
+        socketmqtt.on("message", (topic, message) => {
+            console.log(topic + ":   " + message);
+            const messages = document.getElementById("messages");
+            const p = document.createElement("p");
+            p.appendChild(document.createTextNode(topic + ":   " + message));
+            messages.appendChild(p);
+        });
+
+        socketmqtt.on("error", (err) => {
+            console.log(err);
+        });
+        socketmqtt.on("reconnect", () => {
+            console.log("reconnected to cloud broker");
+        });
+        socketmqtt.on("close", () => {
+            console.log("closed cloud broker connection");
+        });
+         })
+       
+    </script>
+</body>
+</html>
